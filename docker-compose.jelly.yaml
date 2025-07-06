@@ -10,10 +10,10 @@ services:
     
     volumes:
       - ${JELLY_PATH}/config:/config
-      - ${ARRPATH}/movies:/data/Movies
-      - ${ARRPATH}/tvshows:/data/TVShows
-      - ${ARRPATH}/music:/data/Music
-      - ${ARRPATH}/books:/data/Books
+      - ${ARR_PATH}/movies:/data/Movies
+      - ${ARR_PATH}/tvshows:/data/TVShows
+      - ${ARR_PATH}/music:/data/Music
+      - ${ARR_PATH}/books:/data/Books
     
     env_file:
       - 'jelly.env'
