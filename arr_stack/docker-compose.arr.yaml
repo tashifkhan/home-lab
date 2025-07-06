@@ -8,7 +8,7 @@ services:
       - ${ARR_PATH}/backup/prowlarr:/data/Backup
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 6241:9696
+      - 4204:9696
     restart: unless-stopped
     env_file:
       - 'arr.env'
@@ -23,7 +23,7 @@ services:
       - ${ARR_PATH}/shows:/data/tvshows
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 8989:8989
+      - 4205:8989
     restart: unless-stopped
     env_file:
       - 'arr.env'
@@ -38,7 +38,7 @@ services:
       - ${ARR_PATH}/backup/radarr:/data/Backup
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 7878:7878
+      - 4206:7878
     restart: unless-stopped
     env_file:
       - 'arr.env'
@@ -52,7 +52,7 @@ services:
       - ${ARR_PATH}/music:/data/musicfolder
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 8686:8686
+      - 4207:8686
     restart: unless-stopped
     env_file:
       - 'arr.env'
@@ -66,7 +66,7 @@ services:
       - ${ARR_PATH}/books:/data/books
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 8787:8787
+      - 4208:8787
     restart: unless-stopped
     env_file:
       - 'arr.env'
@@ -80,7 +80,7 @@ services:
       - ${ARR_PATH}/icons/homarr:/app/public/icons
       - ${ARR_PATH}/data/homarr:/data
     ports:
-      - '7575:7575'
+      - '4209:7575'
     env_file:
       - 'arr.env'
 
@@ -95,13 +95,15 @@ services:
       - ${ARR_PATH}/config/qbittorrent:/config
       - ${ARR_PATH}/downloads:/downloads
     ports:
-      - 8080:8080
+      - 4203:8080
       - 6881:6881
       - 6881:6881/udp
     environment:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
+    
     healthcheck:
       start_period: 15s
+    
     env_file:
       - 'arr.env'
