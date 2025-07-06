@@ -4,7 +4,7 @@ services:
     container_name: jellyfin
     
     ports:
-      - '8096:8096/tcp'   # Jellyfin web interface
+      - '4201:8096/tcp'   # Jellyfin web interface
       - '7359:7359/udp'   # Network discovery
       - '1900:1900/udp'   # DLNA port
     
@@ -33,6 +33,6 @@ services:
         - ${JELLY_PATH}/jellyseerr:/app/config
       
       ports:
-        - 5055:5055
+        - 4202:5055
       
       restart: unless-stopped
