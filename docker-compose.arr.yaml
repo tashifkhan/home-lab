@@ -18,10 +18,10 @@ services:
     container_name: sonarr
     hostname: sonarr
     volumes:
-      - ${ARRPATH}/config:/config
-      - ${ARRPATH}/backup:/data/Backup
-      - ${ARRPATH}Sonarr/tvshows:/data/tvshows
-      - ${ARRPATH}Downloads:/downloads
+      - ${ARRPATH}/config/sonarr:/config
+      - ${ARRPATH}/backup/sonarr:/data/Backup
+      - ${ARRPATH}/shows:/data/tvshows
+      - ${ARRPATH}/downloads:/downloads
     ports:
       - 8989:8989
     restart: unless-stopped
@@ -33,10 +33,10 @@ services:
     container_name: radarr
     hostname: radarr
     volumes:
-      - ${ARRPATH}Radarr/config:/config
-      - ${ARRPATH}Radarr/movies:/data/movies
-      - ${ARRPATH}Radarr/backup:/data/Backup
-      - ${ARRPATH}Downloads:/downloads
+      - ${ARRPATH}/config/radarr:/config
+      - ${ARRPATH}/movies:/data/movies
+      - ${ARRPATH}/backup/radarr:/data/Backup
+      - ${ARRPATH}/downloads:/downloads
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -48,9 +48,9 @@ services:
     container_name: lidarr
     hostname: lidarr
     volumes:
-      - ${ARRPATH}Lidarr/config:/config
-      - ${ARRPATH}Lidarr/music:/data/musicfolder
-      - ${ARRPATH}Downloads:/downloads
+      - ${ARRPATH}/config/lidarr:/config
+      - ${ARRPATH}/music:/data/musicfolder
+      - ${ARRPATH}/downloads:/downloads
     ports:
       - 8686:8686
     restart: unless-stopped
@@ -62,9 +62,9 @@ services:
     container_name: readarr
     hostname: readarr
     volumes:
-      - ${ARRPATH}Readarr/config:/config
-      - ${ARRPATH}Readarr/books:/data/books
-      - ${ARRPATH}Downloads:/downloads
+      - ${ARRPATH}/config/readarr:/config
+      - ${ARRPATH}/books:/data/books
+      - ${ARRPATH}/downloads:/downloads
     ports:
       - 8787:8787
     restart: unless-stopped
@@ -76,30 +76,13 @@ services:
     image: ghcr.io/ajnart/homarr:latest
     restart: unless-stopped
     volumes:
-      - ${ARRPATH}Homarr/configs:/app/data/configs
-      - ${ARRPATH}Homarr/icons:/app/public/icons
-      - ${ARRPATH}Homarr/data:/data
+      - ${ARRPATH}/configs/homarr:/app/data/configs
+      - ${ARRPATH}/icons/homarr:/app/public/icons
+      - ${ARRPATH}/data/homarr:/data
     ports:
       - '7575:7575'
     env_file:
       - 'arr.env'
-
-  jellyfin:
-    image: linuxserver/jellyfin
-    container_name: jellyfin
-    ports:
-      - '8096:8096/tcp'   # Jellyfin web interface
-      - '7359:7359/udp'   # Network discovery
-      - '1900:1900/udp'   # DLNA port
-    volumes:
-      - ${ARRPATH}Jellyfin/config:/config
-      - ${ARRPATH}Radarr/movies:/data/Movies
-      - ${ARRPATH}Sonarr/tvshows:/data/TVShows
-      - ${ARRPATH}Lidarr/music:/data/Music
-      - ${ARRPATH}Readarr/books:/data/Books
-    env_file:
-      - '.env'
-    restart: unless-stopped
 
   qbittorrent:
     image: linuxserver/qbittorrent:latest
@@ -109,8 +92,8 @@ services:
     labels:
       - "com.centurylinklabs.watchtower.enable=false"
     volumes:
-      - ${ARRPATH}qbittorrent/config:/config
-      - ${ARRPATH}Downloads:/downloads
+      - ${ARRPATH}/config/qbittorrent:/config
+      - ${ARRPATH}/downloads:/downloads
     ports:
       - 8080:8080
       - 6881:6881
