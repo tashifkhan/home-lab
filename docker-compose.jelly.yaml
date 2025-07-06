@@ -27,7 +27,7 @@ services:
       environment:
         - PUID=1000
         - PGID=1000
-        - TZ='Asia/Kolkata'
+        - TZ=${TIME_ZONE}
       
       volumes:
         - ${JELLY_PATH}/jellyseerr:/app/config
