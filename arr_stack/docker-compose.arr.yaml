@@ -55,7 +55,7 @@ services:
       - 4207:8686
     restart: unless-stopped
     env_file:
-      - 'arr.env'
+      - '.env'
 
   readarr:
     image: lscr.io/linuxserver/readarr:develop
@@ -69,7 +69,7 @@ services:
       - 4208:8787
     restart: unless-stopped
     env_file:
-      - 'arr.env'
+      - '.env'
 
   homarr:
     container_name: homarr
