@@ -7,10 +7,9 @@ services:
       - 4433:443
     
     environment:
-      - TZ=Asia/Kolkata
+      - TZ=${TIME_ZONE}
       - PGID=1000
       - PUID=1000
-      - NEXTCLOUD_TRUSTED_DOMAINS=localhost,${TRUSTED_DOMAINS} # comma-separated list
 
     env_file:
       - '.env'
