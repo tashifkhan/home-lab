@@ -1,6 +1,7 @@
 services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
+    platform: linux/amd64
     container_name: prowlarr
     hostname: prowlarr
     volumes:
@@ -15,6 +16,7 @@ services:
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
+    platform: linux/amd64
     container_name: sonarr
     hostname: sonarr
     volumes:
@@ -30,6 +32,7 @@ services:
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
+    platform: linux/amd64
     container_name: radarr
     hostname: radarr
     volumes:
@@ -45,6 +48,7 @@ services:
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
+    platform: linux/amd64
     container_name: lidarr
     hostname: lidarr
     volumes:
@@ -58,7 +62,7 @@ services:
       - '.env'
 
   readarr:
-    image: lscr.io/linuxserver/readarr:develop
+    image: hotio/readarr:latest
     container_name: readarr
     hostname: readarr
     volumes:
@@ -85,7 +89,7 @@ services:
       - '.env'
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: hotio/qbittorrent:latest
     container_name: qbittorrent
     hostname: qbittorrent
     restart: unless-stopped
@@ -101,9 +105,9 @@ services:
     environment:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
-    
+
     healthcheck:
       start_period: 15s
-    
+
     env_file:
       - '.env'
