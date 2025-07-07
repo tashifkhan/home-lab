@@ -11,7 +11,7 @@ services:
       - 4204:9696
     restart: unless-stopped
     env_file:
-      - 'arr.env'
+      - '.env'
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -26,7 +26,7 @@ services:
       - 4205:8989
     restart: unless-stopped
     env_file:
-      - 'arr.env'
+      - '.env'
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -41,7 +41,7 @@ services:
       - 4206:7878
     restart: unless-stopped
     env_file:
-      - 'arr.env'
+      - '.env'
 
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
@@ -82,7 +82,7 @@ services:
     ports:
       - '4209:7575'
     env_file:
-      - 'arr.env'
+      - '.env'
 
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -106,4 +106,4 @@ services:
       start_period: 15s
     
     env_file:
-      - 'arr.env'
+      - '.env'
