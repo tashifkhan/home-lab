@@ -73,7 +73,7 @@ services:
 
   homarr:
     container_name: homarr
-    image: lscr.io/linuxserver/homarr:latest
+    image: ghcr.io/homarr-labs/homarr:latest
     restart: unless-stopped
     volumes:
       - ${ARR_PATH}/configs/homarr:/app/data/configs
