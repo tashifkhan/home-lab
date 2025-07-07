@@ -16,23 +16,26 @@ services:
       - ${ARR_PATH}/books:/data/Books
     
     env_file:
-      - 'jelly.env'
+      - '.env'
     
     restart: unless-stopped
 
-    jellyseerr:
-      image: fallenbagel/jellyseerr:latest
-      container_name: jellyseerr
-      
-      environment:
-        - PUID=1000
-        - PGID=1000
-        - TZ=${TIME_ZONE}
-      
-      volumes:
-        - ${JELLY_PATH}/jellyseerr:/app/config
-      
-      ports:
-        - 4202:5055
-      
-      restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TIME_ZONE}
+    
+    env_file:
+      - '.env'
+    
+    volumes:
+      - ${JELLY_PATH}/jellyseerr:/app/config
+    
+    ports:
+      - 4202:5055
+    
+    restart: unless-stopped
