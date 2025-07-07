@@ -13,7 +13,7 @@ services:
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost,${TRUSTED_DOMAINS} # comma-separated list
 
     env_file:
-      - 'nc.env'
+      - '.env'
     
     volumes:
       - ${CLOUD_PATH}/data:/data
