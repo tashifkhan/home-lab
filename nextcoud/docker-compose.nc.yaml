@@ -7,7 +7,7 @@ services:
       - 4433:443
     
     environment:
-      - TZ=IND
+      - TZ=Asia/Kolkata
       - PGID=1000
       - PUID=1000
       - NEXTCLOUD_TRUSTED_DOMAINS=localhost,${TRUSTED_DOMAINS} # comma-separated list
