@@ -11,7 +11,7 @@ services:
     volumes:
       - ${JELLY_PATH}/config:/config
       - ${ARR_PATH}/movies:/data/Movies
-      - ${ARR_PATH}/tvshows:/data/TVShows
+      - ${ARR_PATH}/shows:/data/TVShows
       - ${ARR_PATH}/music:/data/Music
       - ${ARR_PATH}/books:/data/Books
     
@@ -37,5 +37,8 @@ services:
     
     ports:
       - 4202:5055
+
+    dns:
+      - 8.8.8.8
     
     restart: unless-stopped
