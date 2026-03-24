@@ -14,7 +14,11 @@ services:
     env_file:
       - '.env'
     dns:
+      - 1.1.1.1
       - 8.8.8.8
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -27,6 +31,12 @@ services:
       - TZ=Asia/Kolkata
     ports:
       - 8191:8191
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
     restart: unless-stopped
 
   sonarr:
