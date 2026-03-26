@@ -1,5 +1,10 @@
 CATEGORIES: list[dict] = [
     {
+        "id": "storage",
+        "label": "Storage",
+        "wide": True,
+    },
+    {
         "id": "media",
         "label": "Media",
         "wide": True,
@@ -18,11 +23,6 @@ CATEGORIES: list[dict] = [
         "id": "library",
         "label": "Library Managers",
         "cols": 4,
-    },
-    {
-        "id": "storage",
-        "label": "Storage",
-        "wide": True,
     },
     {
         "id": "productivity",
