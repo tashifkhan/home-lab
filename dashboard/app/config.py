@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_days: int = 30
 
+    tailscale_client_id: str = ""
+    tailscale_client_secret: str = ""
+    tailscale_tailnet: str = "-"
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

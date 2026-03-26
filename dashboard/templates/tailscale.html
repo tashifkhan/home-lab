@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Network — arr.tashif.codes</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,200;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap"
+            rel="stylesheet"
+        />
+
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            display: ["Fraunces", "Georgia", "serif"],
+                            mono: ["DM Mono", "Courier New", "monospace"],
+                        },
+                        colors: {
+                            canvas: "#09080a",
+                            surface: { DEFAULT: "#100f14", hi: "#18171f" },
+                            rim: { DEFAULT: "#1f1e28", hi: "#2d2c3c" },
+                            accent: "#c8924a",
+                            flocal: "#52cc7a",
+                        },
+                        keyframes: {
+                            rise: {
+                                from: {
+                                    opacity: "0",
+                                    transform: "translateY(14px)",
+                                },
+                                to: {
+                                    opacity: "1",
+                                    transform: "translateY(0)",
+                                },
+                            },
+                            blink: {
+                                "0%, 100%": { opacity: "1" },
+                                "50%": { opacity: "0.25" },
+                            },
+                        },
+                        animation: {
+                            rise: "rise 0.55s cubic-bezier(0.16,1,0.3,1) both",
+                            blink: "blink 2.8s ease-in-out infinite",
+                        },
+                    },
+                },
+            };
+        </script>
+
+        <style>
+            body::after {
+                content: "";
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 9999;
+                opacity: 0.032;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)'/%3E%3C/svg%3E");
+                background-size: 180px;
+            }
+        </style>
+    </head>
+
+    <body
+        class="bg-canvas text-stone-100 font-mono min-h-screen overflow-x-hidden"
+        style="
+            background-image:
+                radial-gradient(
+                    ellipse 90% 50% at 15% 0%,
+                    rgba(200, 146, 74, 0.055) 0%,
+                    transparent 65%
+                ),
+                radial-gradient(
+                    ellipse 70% 55% at 85% 100%,
+                    rgba(200, 146, 74, 0.04) 0%,
+                    transparent 55%
+                );
+        "
+    >
+        <div class="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8">
+            {# ── NAV ── #}
+            <nav class="flex items-center gap-5 pt-5 sm:pt-6 pb-0">
+                <a
+                    href="/"
+                    class="text-[0.52rem] tracking-[0.16em] uppercase font-mono text-stone-600 hover:text-stone-300 transition-colors duration-150"
+                >
+                    Dashboard
+                </a>
+                <span class="text-rim-hi text-[0.5rem]">/</span>
+                <span
+                    class="text-[0.52rem] tracking-[0.16em] uppercase font-mono text-accent"
+                >
+                    Network
+                </span>
+            </nav>
+
+            {# ── HEADER ── #}
+            <header class="py-8 sm:py-12 border-b border-rim animate-rise">
+                <div
+                    class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 sm:gap-6"
+                >
+                    <div>
+                        <h1
+                            class="font-display font-light leading-[0.92] tracking-tight mt-2"
+                            style="
+                                font-size: clamp(2.4rem, 9vw, 5.6rem);
+                                font-optical-sizing: auto;
+                            "
+                        >
+                            Net<em
+                                class="text-accent"
+                                style="font-style: italic"
+                                >work</em
+                            >
+                        </h1>
+                    </div>
+
+                    <div
+                        class="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-end gap-3 sm:gap-3"
+                    >
+                        <div
+                            class="text-[0.6rem] tracking-[0.14em] uppercase text-stone-500 leading-[2.1] text-left sm:text-right"
+                        >
+                            {% if total > 0 %}
+                            <div>
+                                <span
+                                    class="inline-block w-1.5 h-1.5 rounded-full bg-flocal align-middle mr-1.5 animate-blink"
+                                ></span>
+                                <span class="text-stone-300"
+                                    >{{ online_count }} online</span
+                                >
+                            </div>
+                            {% endif %}
+                            <div class="hidden sm:block">
+                                {{ total }} device{{ 's' if total != 1 else ''
+                                }} &middot; Tailscale
+                            </div>
+                        </div>
+                        <form method="post" action="/logout">
+                            <button
+                                type="submit"
+                                style="touch-action: manipulation"
+                                class="text-[0.52rem] tracking-[0.16em] uppercase text-stone-600 hover:text-stone-400 active:text-stone-300 transition-colors duration-150 cursor-pointer border-0 bg-transparent font-mono px-0 py-1"
+                            >
+                                Sign out →
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            {# ── MAIN ── #}
+            <main class="py-10 sm:py-14">
+                {% if error %}
+                <div
+                    class="border border-red-900/60 bg-red-950/30 p-5 sm:p-6 animate-rise"
+                >
+                    <div
+                        class="text-[0.58rem] tracking-[0.14em] uppercase text-red-400 mb-2"
+                    >
+                        Error fetching devices
+                    </div>
+                    <div
+                        class="text-[0.7rem] text-stone-400 font-mono break-all"
+                    >
+                        {{ error }}
+                    </div>
+                    <div
+                        class="mt-4 flex flex-col gap-1.5 text-[0.58rem] text-stone-500 leading-relaxed"
+                    >
+                        <div>
+                            Using tailnet:
+                            <code class="text-stone-400 bg-stone-800/60 px-1"
+                                >{{ tailnet }}</code
+                            >
+                        </div>
+                        <div>
+                            &rarr;
+                            <code class="text-stone-400"
+                                >TAILSCALE_TAILNET</code
+                            >
+                            should be just
+                            <code class="text-stone-400 bg-stone-800/60 px-1"
+                                >-</code
+                            >
+                            (a single dash) or your tailnet name (e.g.
+                            <code class="text-stone-400 bg-stone-800/60 px-1"
+                                >you@gmail.com</code
+                            >).
+                        </div>
+                        <div>
+                            &rarr; OAuth client needs
+                            <code class="text-stone-400">devices:read</code>
+                            scope. Create one at
+                            <span class="text-stone-400"
+                                >login.tailscale.com &rsaquo; Settings &rsaquo;
+                                OAuth clients</span
+                            >.
+                        </div>
+                    </div>
+                </div>
+
+                {% elif total == 0 %}
+                <div class="border border-rim p-8 text-center animate-rise">
+                    <div
+                        class="text-[0.58rem] tracking-[0.14em] uppercase text-stone-600"
+                    >
+                        No devices found
+                    </div>
+                </div>
+
+                {% else %} {# ── section header ── #}
+                <div
+                    class="flex items-center gap-3 sm:gap-4 mb-px animate-rise"
+                >
+                    <span
+                        class="text-[0.57rem] tracking-[0.22em] uppercase text-accent whitespace-nowrap"
+                        >Devices</span
+                    >
+                    <div class="flex-1 h-px bg-rim"></div>
+                    <span class="text-[0.52rem] text-rim-hi"
+                        >&times; {{ total }}</span
+                    >
+                </div>
+
+                {# ── device table — desktop #}
+                <div
+                    class="hidden sm:block border border-rim animate-rise"
+                    style="animation-delay: 70ms"
+                >
+                    {# header row #}
+                    <div
+                        class="grid border-b border-rim px-6 py-2.5 bg-surface"
+                        style="
+                            grid-template-columns: 1fr 1fr 10rem 6rem 6rem 7rem;
+                        "
+                    >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >Hostname</span
+                        >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >User</span
+                        >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >Tailscale IP</span
+                        >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >OS</span
+                        >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >Status</span
+                        >
+                        <span
+                            class="text-[0.47rem] tracking-[0.2em] uppercase text-stone-600"
+                            >Last Seen</span
+                        >
+                    </div>
+
+                    {% for device in devices %}
+                    <div
+                        class="group grid items-center px-6 py-4 border-b border-rim last:border-b-0 bg-surface hover:bg-surface-hi transition-colors duration-150 relative"
+                        style="
+                            grid-template-columns: 1fr 1fr 10rem 6rem 6rem 7rem;
+                        "
+                    >
+                        <div
+                            class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"
+                        ></div>
+
+                        {# hostname #}
+                        <div class="pr-4">
+                            <div
+                                class="text-[0.8rem] text-stone-100 tracking-tight truncate"
+                            >
+                                {{ device.hostname }}
+                            </div>
+                            {% if device.client_version %}
+                            <div
+                                class="text-[0.47rem] text-stone-600 mt-0.5 truncate"
+                            >
+                                v{{ device.client_version }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        {# user #}
+                        <div
+                            class="pr-4 text-[0.65rem] text-stone-400 truncate"
+                        >
+                            {{ device.user }}
+                        </div>
+
+                        {# ip #}
+                        <div class="flex items-center gap-1.5 group/ip">
+                            <span
+                                class="text-[0.65rem] text-flocal/80 font-mono tracking-tight"
+                                >{{ device.tailscale_ip }}</span
+                            >
+                            {% if device.tailscale_ip != '—' %}
+                            <button
+                                onclick="copyIP(this, '{{ device.tailscale_ip }}')"
+                                title="Copy IP"
+                                class="opacity-0 group-hover/ip:opacity-60 hover:!opacity-100 transition-opacity duration-150 bg-transparent border-0 cursor-pointer text-flocal p-0.5"
+                            >
+                                <svg
+                                    class="w-3 h-3"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect
+                                        x="9"
+                                        y="9"
+                                        width="13"
+                                        height="13"
+                                        rx="2"
+                                    />
+                                    <path
+                                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                                    />
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+
+                        {# os #}
+                        <div class="text-[0.65rem] text-stone-500 capitalize">
+                            {{ device.os }}
+                        </div>
+
+                        {# status #}
+                        <div class="flex items-center gap-1.5">
+                            {% if device.online %}
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-flocal shrink-0 animate-blink"
+                            ></span>
+                            <span
+                                class="text-[0.58rem] text-flocal tracking-wide"
+                                >Online</span
+                            >
+                            {% else %}
+                            <span
+                                class="w-1.5 h-1.5 rounded-full bg-stone-600 shrink-0"
+                            ></span>
+                            <span
+                                class="text-[0.58rem] text-stone-600 tracking-wide"
+                                >Offline</span
+                            >
+                            {% endif %}
+                        </div>
+
+                        {# last seen #}
+                        <div class="text-[0.58rem] text-stone-500">
+                            {{ device.last_seen }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {# ── device cards — mobile #}
+                <div
+                    class="sm:hidden flex flex-col gap-px bg-rim border border-rim animate-rise"
+                    style="animation-delay: 70ms"
+                >
+                    {% for device in devices %}
+                    <div
+                        class="group relative bg-surface hover:bg-surface-hi transition-colors duration-200 p-4"
+                    >
+                        <div
+                            class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"
+                        ></div>
+
+                        <div class="flex items-start justify-between mb-2">
+                            <div
+                                class="text-[0.85rem] text-stone-100 tracking-tight leading-tight"
+                            >
+                                {{ device.hostname }}
+                            </div>
+                            <div
+                                class="flex items-center gap-1.5 shrink-0 ml-3"
+                            >
+                                {% if device.online %}
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-flocal animate-blink"
+                                ></span>
+                                <span
+                                    class="text-[0.5rem] text-flocal tracking-wide uppercase"
+                                    >Online</span
+                                >
+                                {% else %}
+                                <span
+                                    class="w-1.5 h-1.5 rounded-full bg-stone-600"
+                                ></span>
+                                <span
+                                    class="text-[0.5rem] text-stone-600 tracking-wide uppercase"
+                                    >Offline</span
+                                >
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 mb-1">
+                            <span
+                                class="text-[0.65rem] text-flocal/80 font-mono"
+                                >{{ device.tailscale_ip }}</span
+                            >
+                            {% if device.tailscale_ip != '—' %}
+                            <button
+                                onclick="copyIP(this, '{{ device.tailscale_ip }}')"
+                                title="Copy IP"
+                                class="bg-transparent border-0 cursor-pointer text-flocal/50 active:text-flocal p-0.5 -ml-1"
+                            >
+                                <svg
+                                    class="w-3.5 h-3.5"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect
+                                        x="9"
+                                        y="9"
+                                        width="13"
+                                        height="13"
+                                        rx="2"
+                                    />
+                                    <path
+                                        d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"
+                                    />
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+
+                        <div
+                            class="flex items-center gap-3 text-[0.55rem] text-stone-500 tracking-wide uppercase"
+                        >
+                            <span>{{ device.os }}</span>
+                            <span class="text-rim-hi">&middot;</span>
+                            <span>{{ device.last_seen }}</span>
+                            {% if device.user %}
+                            <span class="text-rim-hi">&middot;</span>
+                            <span class="lowercase normal-case"
+                                >{{ device.user }}</span
+                            >
+                            {% endif %}
+                        </div>
+
+                        {% if device.client_version %}
+                        <div class="text-[0.47rem] text-stone-700 mt-1.5">
+                            v{{ device.client_version }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% endif %} {# ── refresh meta ── #} {% if checked_at %}
+                <div
+                    class="mt-6 flex items-center justify-between animate-rise"
+                    style="animation-delay: 140ms"
+                >
+                    <span class="text-[0.5rem] text-stone-700 tracking-wide">
+                        Cached for {{ cache_ttl }}s &middot; refreshes
+                        automatically
+                    </span>
+                    <span
+                        id="ts-checked"
+                        class="text-[0.5rem] text-stone-700 tracking-wide"
+                    ></span>
+                </div>
+                {% endif %}
+            </main>
+
+            {# ── FOOTER ── #}
+            <footer
+                class="border-t border-rim py-5 sm:py-6 animate-rise"
+                style="animation-delay: 420ms"
+            >
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                    <span
+                        class="text-[0.57rem] tracking-[0.12em] uppercase text-stone-600"
+                    >
+                        <span class="text-accent">arr</span>.tashif.codes
+                        &mdash; Home Lab
+                    </span>
+                    <span
+                        class="text-[0.57rem] tracking-[0.12em] uppercase text-stone-600"
+                    >
+                        Tailscale Network
+                    </span>
+                </div>
+            </footer>
+        </div>
+
+        <script>
+            const CACHE_TTL  = {{ cache_ttl }};
+            const checkedAt  = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
+
+            // show human-readable checked_at
+            if (checkedAt) {
+              const el = document.getElementById('ts-checked');
+              if (el) {
+                const dt  = new Date(checkedAt);
+                el.textContent = 'Checked ' + dt.toLocaleTimeString();
+              }
+            }
+
+            // auto-reload page after cache expires
+            if (CACHE_TTL) {
+              setTimeout(() => location.reload(), (CACHE_TTL + 2) * 1000);
+            }
+
+            function copyIP(btn, ip) {
+              navigator.clipboard.writeText(ip).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                btn.style.opacity = '1';
+                setTimeout(() => { btn.innerHTML = orig; btn.style.opacity = ''; }, 1500);
+              });
+            }
+        </script>
+    </body>
+</html>
