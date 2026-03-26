@@ -2,7 +2,7 @@ from fastapi import APIRouter, Cookie, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.data.services import SERVICES, get_sections
+from app.data.services import SERVICES, get_pinned_folders, get_sections
 from app.deps.auth import verify_token
 
 router = APIRouter(tags=["dashboard"])
@@ -21,7 +21,8 @@ async def index(
         request,
         "index.html",
         {
-            "sections": get_sections(),
-            "total": len(SERVICES),
+            "sections":       get_sections(),
+            "pinned_folders": get_pinned_folders(),
+            "total":          len(SERVICES),
         },
     )
