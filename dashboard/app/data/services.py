@@ -24,6 +24,11 @@ CATEGORIES: list[dict] = [
         "label": "Storage",
         "wide": True,
     },
+    {
+        "id": "productivity",
+        "label": "Productivity",
+        "wide": True,
+    },
 ]
 
 SERVICES: list[dict] = [
@@ -118,30 +123,83 @@ SERVICES: list[dict] = [
         "num": 9,
         "local_proto": "https",
     },
+    {
+        "name": "Tasks",
+        "app": "Nextcloud Tasks",
+        "desc": "Task Management",
+        "port": 4433,
+        "public": "drive.tashif.codes",
+        "category": "productivity",
+        "icon": "tasks",
+        "num": 10,
+        "local_proto": "https",
+        "local_path": "/apps/tasks/collections/all",
+        "public_path": "/apps/tasks/collections/all",
+    },
+]
+
+# Pinned Nextcloud folder shortcuts
+_DRIVE_LOCAL = "https://home-server:4433"
+_DRIVE_PUBLIC = "https://drive.tashif.codes"
+
+PINNED_FOLDERS: list[dict] = [
+    {
+        "name": "Documents",
+        "path": "/apps/files/files/9243?dir=/Documents/Identity",
+    },
+    {
+        "name": "Resume",
+        "path": "/apps/files/files/20913?dir=/Documents/Resume",
+    },
+    {
+        "name": "Invoices",
+        "path": "/apps/files/files/1594929?dir=/Documents/Invoices%20SITG",
+    },
+    {
+        "name": "Call Records",
+        "path": "/apps/files/files/17256?dir=/Documents/Phone%20Docs/VRecords/Call",
+    },
 ]
 
 
 def _enrich(service: dict) -> dict:
     proto = service.get("local_proto", "http")
+    local_path = service.get("local_path", "")
+    pub_path = service.get("public_path", "")
     return {
         **service,
-        "local_url": f"{proto}://home-server:{service['port']}",
+        "local_url": f"{proto}://home-server:{service['port']}{local_path}",
         "local_display": f"home-server:{service['port']}",
-        "public_url": f"https://{service['public']}",
+        "public_url": f"https://{service['public']}{pub_path}",
         "public_display": service["public"],
+    }
+
+
+def _enrich_folder(folder: dict) -> dict:
+    return {
+        **folder,
+        "local_url": f"{_DRIVE_LOCAL}{folder['path']}",
+        "public_url": f"{_DRIVE_PUBLIC}{folder['path']}",
     }
 
 
 def get_sections() -> list[dict]:
     sections = []
-
     for cat in CATEGORIES:
         services = [
-            _enrich(s) for s in SERVICES
+            _enrich(s) for s in SERVICES 
             if s["category"] == cat["id"]
         ]
-        sections.append({
-            **cat, "services": services,
-        })
-
+        sections.append(
+            {
+                **cat,
+                "services": services,
+            }
+        )
     return sections
+
+
+def get_pinned_folders() -> list[dict]:
+    return [
+        _enrich_folder(f) for f in PINNED_FOLDERS
+    ]
