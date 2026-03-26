@@ -128,16 +128,20 @@
 
 {# Vertical card — used in 2-col and 4-col grids #}
 {%- macro card_v(svc) -%}
-<div class="group relative bg-surface hover:bg-surface-hi transition-colors duration-200 p-5 sm:p-7">
+<div class="group relative bg-surface hover:bg-surface-hi transition-colors duration-200 p-5 sm:p-7"
+     data-svc="{{ svc.name | lower }}">
   <div class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"></div>
 
   <div class="flex items-start justify-between mb-4 sm:mb-5">
     <div class="text-accent opacity-70 group-hover:opacity-100 transition-opacity duration-200">
       {{ icon(svc.icon) }}
     </div>
-    <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
-      {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
-    </span>
+    <div class="flex items-center gap-1.5">
+      <span class="svc-status w-1.5 h-1.5 rounded-full bg-stone-700 transition-colors duration-500"></span>
+      <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
+        {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
+      </span>
+    </div>
   </div>
 
   <div class="font-display font-light leading-none tracking-tight text-stone-100 mb-1"
@@ -159,7 +163,8 @@
 {%- macro card_w(svc) -%}
 <div class="group relative flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8
             bg-surface hover:bg-surface-hi border border-rim
-            transition-colors duration-200 p-5 sm:px-7 sm:py-6">
+            transition-colors duration-200 p-5 sm:px-7 sm:py-6"
+     data-svc="{{ svc.name | lower }}">
   <div class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"></div>
 
   {# top row on mobile: icon + number side by side #}
@@ -167,9 +172,12 @@
     <div class="text-accent opacity-70 group-hover:opacity-100 transition-opacity duration-200 shrink-0">
       {{ icon(svc.icon, "w-6 h-6 sm:w-7 sm:h-7") }}
     </div>
-    <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums sm:hidden">
-      {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
-    </span>
+    <div class="flex items-center gap-1.5 sm:hidden">
+      <span class="svc-status w-1.5 h-1.5 rounded-full bg-stone-700 transition-colors duration-500"></span>
+      <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
+        {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
+      </span>
+    </div>
   </div>
 
   <div class="flex-1 min-w-0">
@@ -187,10 +195,13 @@
     {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
   </div>
 
-  {# number badge — desktop only (mobile shows in top row above) #}
-  <span class="hidden sm:block absolute top-4 right-5 text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
-    {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
-  </span>
+  {# number badge + status dot — desktop only (mobile shows in top row above) #}
+  <div class="hidden sm:flex items-center gap-1.5 absolute top-4 right-5">
+    <span class="svc-status w-1.5 h-1.5 rounded-full bg-stone-700 transition-colors duration-500"></span>
+    <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
+      {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
+    </span>
+  </div>
 </div>
 {%- endmacro -%}
 
@@ -326,5 +337,49 @@
     </footer>
 
   </div>
+  <script>
+    (async function poll() {
+      // collect all dots indexed by service id
+      function getDots() {
+        const map = {};
+        document.querySelectorAll('[data-svc]').forEach(card => {
+          map[card.dataset.svc] = card.querySelectorAll('.svc-status');
+        });
+        return map;
+      }
+
+      function applyResults(results) {
+        const dots = getDots();
+        for (const [id, active] of Object.entries(results)) {
+          const nodelist = dots[id];
+          if (!nodelist) continue;
+          nodelist.forEach(dot => {
+            dot.classList.remove('bg-stone-700', 'bg-flocal', 'bg-red-500', 'animate-blink');
+            if (active) {
+              dot.classList.add('bg-flocal', 'animate-blink');
+            } else {
+              dot.classList.add('bg-red-500');
+            }
+          });
+        }
+      }
+
+      async function check() {
+        try {
+          const r = await fetch('/api/health');
+          if (!r.ok) return;
+          const { results, cached_for } = await r.json();
+          applyResults(results);
+          // re-poll after cache expires + 2 s buffer
+          setTimeout(check, (cached_for + 2) * 1000);
+        } catch {
+          // network error — retry in 15 s
+          setTimeout(check, 15_000);
+        }
+      }
+
+      check();
+    })();
+  </script>
 </body>
 </html>
