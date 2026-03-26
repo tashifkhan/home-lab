@@ -198,13 +198,22 @@
           arr.<em class="text-accent" style="font-style: italic;">tashif</em>.codes
         </h1>
 
-        <div class="text-right text-[0.6rem] tracking-[0.14em] uppercase text-stone-500 leading-[2.1]">
-          <div>
-            <span class="inline-block w-1.5 h-1.5 rounded-full bg-flocal align-middle mr-1.5 animate-blink"></span>
-            <span class="text-stone-300">All services online</span>
+        <div class="flex flex-col items-end gap-3">
+          <div class="text-right text-[0.6rem] tracking-[0.14em] uppercase text-stone-500 leading-[2.1]">
+            <div>
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-flocal align-middle mr-1.5 animate-blink"></span>
+              <span class="text-stone-300">All services online</span>
+            </div>
+            <div>{{ total }} services &middot; Home Lab</div>
+            <div>Tailscale &middot; Cloudflare Tunnel</div>
           </div>
-          <div>{{ total }} services &middot; Home Lab</div>
-          <div>Tailscale &middot; Cloudflare Tunnel</div>
+          <form method="post" action="/logout">
+            <button type="submit"
+                    class="text-[0.52rem] tracking-[0.16em] uppercase text-stone-600
+                           hover:text-stone-400 transition-colors duration-150 cursor-pointer border-0 bg-transparent font-mono">
+              Sign out →
+            </button>
+          </form>
         </div>
 
       </div>

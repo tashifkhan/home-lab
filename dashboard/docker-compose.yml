@@ -3,5 +3,6 @@ services:
     build: .
     container_name: arr-dashboard
     ports:
-      - "4200:5000"
+      - "4200:4200"
+    env_file: .env
     restart: unless-stopped
