@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arr.tashif.codes — Sign In</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,200;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            mono:    ['DM Mono', 'Courier New', 'monospace'],
+          },
+          colors: {
+            canvas:  '#09080a',
+            surface: { DEFAULT: '#100f14', hi: '#18171f' },
+            rim:     { DEFAULT: '#1f1e28', hi: '#2d2c3c' },
+            accent:  '#c8924a',
+            flocal:  '#52cc7a',
+          },
+          keyframes: {
+            rise: {
+              from: { opacity: '0', transform: 'translateY(16px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-6px)' },
+              '40%, 80%': { transform: 'translateX(6px)' },
+            },
+          },
+          animation: {
+            rise:  'rise 0.5s cubic-bezier(0.16,1,0.3,1) both',
+            shake: 'shake 0.4s ease both',
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.032;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+  </style>
+</head>
+
+<body class="bg-canvas text-stone-100 font-mono min-h-screen flex items-center justify-center px-6"
+      style="background-image:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(200,146,74,0.06) 0%, transparent 65%);">
+
+  <div class="w-full max-w-sm animate-rise">
+
+    {# logo #}
+    <div class="text-center mb-10">
+      <h1 class="font-display font-light leading-none tracking-tight mb-2"
+          style="font-size: 3.2rem; font-optical-sizing: auto;">
+        arr.<em class="text-accent" style="font-style:italic;">tashif</em>.codes
+      </h1>
+      <p class="text-[0.58rem] tracking-[0.2em] uppercase text-stone-500">Private Access</p>
+    </div>
+
+    {# card #}
+    <div class="bg-surface border border-rim p-8 relative {{ 'animate-shake' if error else '' }}">
+      <div class="absolute inset-y-0 left-0 w-0.5 bg-accent"></div>
+
+      {# error #}
+      {% if error %}
+      <div class="flex items-center gap-2.5 mb-5 px-3 py-2.5 border border-red-500/20 bg-red-500/[0.07] text-red-400 text-[0.6rem] tracking-wide">
+        <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ error }}
+      </div>
+      {% endif %}
+
+      <form method="post" action="/login" class="flex flex-col gap-4">
+
+        <div class="flex flex-col gap-1.5">
+          <label for="password" class="text-[0.55rem] tracking-[0.18em] uppercase text-stone-500">
+            Password
+          </label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            autofocus
+            required
+            placeholder="················"
+            class="bg-canvas border border-rim focus:border-accent/50 focus:outline-none
+                   text-stone-200 text-[0.75rem] font-mono tracking-widest
+                   px-3 py-2.5 placeholder-stone-700
+                   transition-colors duration-150"
+          >
+        </div>
+
+        <button
+          type="submit"
+          class="mt-1 px-4 py-2.5 bg-accent/[0.12] border border-accent/25 text-accent
+                 text-[0.6rem] tracking-[0.18em] uppercase font-mono
+                 hover:bg-accent/[0.2] hover:border-accent/40
+                 transition-all duration-150 cursor-pointer"
+        >
+          Sign In →
+        </button>
+
+      </form>
+    </div>
+
+    <p class="text-center text-[0.52rem] tracking-[0.1em] uppercase text-stone-700 mt-6">
+      Home Lab · Tailscale · Cloudflare
+    </p>
+
+  </div>
+</body>
+</html>
