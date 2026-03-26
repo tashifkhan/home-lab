@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from .routers import auth, dashboard, health
+from .routers import auth, dashboard, health, tailscale
 
 
 def create_app() -> FastAPI:
@@ -8,4 +8,5 @@ def create_app() -> FastAPI:
     app.include_router(auth.router)
     app.include_router(dashboard.router)
     app.include_router(health.router)
+    app.include_router(tailscale.router)
     return app
