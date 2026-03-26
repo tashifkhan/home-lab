@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>arr.tashif.codes — Home Lab</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;1,9..144,200;1,9..144,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Fraunces', 'Georgia', 'serif'],
+            mono:    ['DM Mono', 'Courier New', 'monospace'],
+          },
+          colors: {
+            canvas:  '#09080a',
+            surface: { DEFAULT: '#100f14', hi: '#18171f' },
+            rim:     { DEFAULT: '#1f1e28', hi: '#2d2c3c' },
+            accent:  '#c8924a',
+            flocal:  '#52cc7a',
+          },
+          keyframes: {
+            rise: {
+              from: { opacity: '0', transform: 'translateY(14px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+            blink: {
+              '0%, 100%': { opacity: '1' },
+              '50%':      { opacity: '0.25' },
+            },
+          },
+          animation: {
+            rise:  'rise 0.55s cubic-bezier(0.16,1,0.3,1) both',
+            blink: 'blink 2.8s ease-in-out infinite',
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.032;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)'/%3E%3C/svg%3E");
+      background-size: 180px;
+    }
+  </style>
+</head>
+
+{# ══════════════════════════════════════════════════════
+   MACROS
+══════════════════════════════════════════════════════ #}
+
+{%- macro icon(name, cls="w-5 h-5") -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+     stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  {%- if name == 'play' -%}
+    <circle cx="12" cy="12" r="10"/>
+    <polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/>
+  {%- elif name == 'clipboard' -%}
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+    <rect x="8" y="2" width="8" height="4" rx="1"/>
+    <path d="M9 12l2 2 4-4"/>
+  {%- elif name == 'download' -%}
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+    <polyline points="7 10 12 15 17 10"/>
+    <line x1="12" y1="15" x2="12" y2="3"/>
+  {%- elif name == 'search' -%}
+    <circle cx="11" cy="11" r="8"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  {%- elif name == 'monitor' -%}
+    <rect x="2" y="3" width="20" height="14" rx="2"/>
+    <line x1="8" y1="21" x2="16" y2="21"/>
+    <line x1="12" y1="17" x2="12" y2="21"/>
+  {%- elif name == 'film' -%}
+    <rect x="2" y="2" width="20" height="20" rx="2"/>
+    <line x1="2" y1="8" x2="22" y2="8"/>
+    <line x1="7" y1="2" x2="7" y2="8"/>
+    <line x1="13" y1="2" x2="13" y2="8"/>
+    <line x1="19" y1="2" x2="19" y2="8"/>
+  {%- elif name == 'music' -%}
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+  {%- elif name == 'book' -%}
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+  {%- elif name == 'cloud' -%}
+    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+  {%- endif -%}
+</svg>
+{%- endmacro -%}
+
+{%- macro link_btn(label, url, display, arrow, variant) -%}
+{%- set local = variant == 'local' -%}
+<a href="{{ url }}"
+   target="_blank"
+   rel="noopener noreferrer"
+   class="flex items-center gap-2 px-3 py-2 border no-underline
+          text-[0.58rem] tracking-wide leading-none font-mono
+          transition-all duration-150
+          {{ 'text-flocal  bg-flocal/[0.07]  border-flocal/20  hover:bg-flocal/[0.13]  hover:border-flocal/[0.35]'
+             if local else
+             'text-accent  bg-accent/[0.07]  border-accent/20  hover:bg-accent/[0.13]  hover:border-accent/[0.36]' }}">
+  <span class="text-[0.47rem] tracking-[0.16em] uppercase opacity-50 shrink-0 min-w-[2.6rem]">{{ label }}</span>
+  <span class="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{{ display }}</span>
+  <span class="shrink-0 opacity-40">{{ arrow }}</span>
+</a>
+{%- endmacro -%}
+
+{%- macro card_v(svc) -%}
+<div class="group relative bg-surface hover:bg-surface-hi transition-colors duration-200 p-7">
+  <div class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"></div>
+
+  <div class="flex items-start justify-between mb-5">
+    <div class="text-accent opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+      {{ icon(svc.icon) }}
+    </div>
+    <span class="text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
+      {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
+    </span>
+  </div>
+
+  <div class="font-display font-light text-[2rem] leading-none tracking-tight text-stone-100 mb-1"
+       style="font-optical-sizing: auto;">
+    {{ svc.name }}
+  </div>
+  <div class="text-[0.58rem] text-stone-500 uppercase tracking-[0.05em] mb-5">
+    {{ svc.app }} &middot; {{ svc.desc }}
+  </div>
+
+  <div class="flex flex-col gap-1.5">
+    {{ link_btn("Local",  svc.local_url,  svc.local_display,  "→", "local")  }}
+    {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
+  </div>
+</div>
+{%- endmacro -%}
+
+{%- macro card_w(svc) -%}
+<div class="group relative flex flex-col md:flex-row md:items-center gap-6 md:gap-8
+            bg-surface hover:bg-surface-hi border border-rim
+            transition-colors duration-200 px-7 py-6">
+  <div class="absolute inset-y-0 left-0 w-0.5 bg-transparent group-hover:bg-accent transition-colors duration-200"></div>
+
+  <div class="text-accent opacity-70 group-hover:opacity-100 transition-opacity duration-200 shrink-0">
+    {{ icon(svc.icon, "w-7 h-7") }}
+  </div>
+
+  <div class="flex-1 min-w-0">
+    <div class="font-display font-light text-[2.4rem] leading-none tracking-tight text-stone-100 mb-1"
+         style="font-optical-sizing: auto;">
+      {{ svc.name }}
+    </div>
+    <div class="text-[0.58rem] text-stone-500 uppercase tracking-[0.06em]">
+      {{ svc.app }} &middot; {{ svc.desc }}
+    </div>
+  </div>
+
+  <div class="flex flex-col sm:flex-row gap-2 md:min-w-[380px] shrink-0">
+    {{ link_btn("Local",  svc.local_url,  svc.local_display,  "→", "local")  }}
+    {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
+  </div>
+
+  <span class="absolute top-4 right-5 text-[0.5rem] text-rim-hi tracking-wide tabular-nums">
+    {{ '%02d'|format(svc.num) }} / {{ '%02d'|format(total) }}
+  </span>
+</div>
+{%- endmacro -%}
+
+{# ══════════════════════════════════════════════════════
+   PAGE
+══════════════════════════════════════════════════════ #}
+
+<body class="bg-canvas text-stone-100 font-mono min-h-screen overflow-x-hidden"
+      style="background-image:
+        radial-gradient(ellipse 90% 50% at 15% 0%,   rgba(200,146,74,0.055) 0%, transparent 65%),
+        radial-gradient(ellipse 70% 55% at 85% 100%,  rgba(200,146,74,0.04)  0%, transparent 55%);">
+
+  <div class="max-w-[1120px] mx-auto px-6 sm:px-8">
+
+    {# ── HEADER ── #}
+    <header class="py-16 border-b border-rim animate-rise">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+
+        <h1 class="font-display font-light leading-[0.92] tracking-tight"
+            style="font-size: clamp(3rem, 6.5vw, 5.6rem); font-optical-sizing: auto;">
+          arr.<em class="text-accent" style="font-style: italic;">tashif</em>.codes
+        </h1>
+
+        <div class="text-right text-[0.6rem] tracking-[0.14em] uppercase text-stone-500 leading-[2.1]">
+          <div>
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-flocal align-middle mr-1.5 animate-blink"></span>
+            <span class="text-stone-300">All services online</span>
+          </div>
+          <div>{{ total }} services &middot; Home Lab</div>
+          <div>Tailscale &middot; Cloudflare Tunnel</div>
+        </div>
+
+      </div>
+    </header>
+
+    {# ── SECTIONS ── #}
+    <main class="py-14 flex flex-col gap-10">
+
+      {% for section in sections %}
+      <section class="animate-rise" style="animation-delay: {{ loop.index * 70 }}ms">
+
+        {# label row #}
+        <div class="flex items-center gap-4 mb-px">
+          <span class="text-[0.57rem] tracking-[0.22em] uppercase text-accent whitespace-nowrap">
+            {{ section.label }}
+          </span>
+          <div class="flex-1 h-px bg-rim"></div>
+          <span class="text-[0.52rem] text-rim-hi">&times; {{ section.services | length }}</span>
+        </div>
+
+        {# card layout #}
+        {% if section.get('wide') %}
+          <div class="flex flex-col gap-px">
+            {% for svc in section.services %}{{ card_w(svc) }}{% endfor %}
+          </div>
+
+        {% elif section.cols == 4 %}
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-rim border border-rim">
+            {% for svc in section.services %}{{ card_v(svc) }}{% endfor %}
+          </div>
+
+        {% elif section.cols == 2 %}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-rim border border-rim">
+            {% for svc in section.services %}{{ card_v(svc) }}{% endfor %}
+          </div>
+
+        {% endif %}
+
+      </section>
+      {% endfor %}
+
+    </main>
+
+    {# ── FOOTER ── #}
+    <footer class="border-t border-rim py-6 animate-rise" style="animation-delay: 420ms">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span class="text-[0.57rem] tracking-[0.12em] uppercase text-stone-600">
+          <span class="text-accent">arr</span>.tashif.codes &mdash; Home Lab
+        </span>
+        <span class="text-[0.57rem] tracking-[0.12em] uppercase text-stone-600">
+          Docker &middot; Tailscale &middot; Cloudflare
+        </span>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
