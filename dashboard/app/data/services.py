@@ -122,6 +122,8 @@ SERVICES: list[dict] = [
         "icon": "cloud",
         "num": 9,
         "local_proto": "https",
+        "local_path": "/apps/files/files",
+        "public_path": "/apps/files/files",
     },
     {
         "name": "Tasks",
@@ -187,7 +189,7 @@ def get_sections() -> list[dict]:
     sections = []
     for cat in CATEGORIES:
         services = [
-            _enrich(s) for s in SERVICES 
+            _enrich(s) for s in SERVICES
             if s["category"] == cat["id"]
         ]
         sections.append(
