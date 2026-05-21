@@ -6,7 +6,7 @@ having self hosted `nextcloud`, `jellyfin` and `arr stack (radarr and stuff)`
 ## planing to self host
 
 - [ ] Beeper Bridges
-- [ ] Valt Warden (Bitwarden Selfhosted)
+
 
 ## Major Drawback
 

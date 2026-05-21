@@ -136,3 +136,59 @@ services:
 
     env_file:
       - '.env'
+
+  tdarr:
+    image: ghcr.io/haveagitgat/tdarr:latest
+    container_name: tdarr
+    hostname: tdarr
+    ports:
+      - '4210:8265' # Tdarr web interface
+      - '4211:8266' # Tdarr server port used by external nodes
+    volumes:
+      - ${ARR_PATH}/config/tdarr/server:/app/server
+      - ${ARR_PATH}/config/tdarr/configs:/app/configs
+      - ${ARR_PATH}/config/tdarr/logs:/app/logs
+      - ${ARR_PATH}/movies:/media/movies
+      - ${ARR_PATH}/shows:/media/shows
+      - ${TDARR_TRANSCODE_CACHE}:/temp
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK_SET=${UMASK_SET}
+      - serverIP=0.0.0.0
+      - serverPort=8266
+      - webUIPort=8265
+      - internalNode=false
+      - inContainer=true
+      - ffmpegVersion=6
+    env_file:
+      - '.env'
+    restart: unless-stopped
+
+  tdarr-node:
+    image: ghcr.io/haveagitgat/tdarr_node:latest
+    container_name: tdarr-node
+    hostname: tdarr-node
+    volumes:
+      - ${ARR_PATH}/config/tdarr/configs:/app/configs
+      - ${ARR_PATH}/config/tdarr/logs:/app/logs
+      - ${ARR_PATH}/movies:/media/movies
+      - ${ARR_PATH}/shows:/media/shows
+      - ${TDARR_TRANSCODE_CACHE}:/temp
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK_SET=${UMASK_SET}
+      - nodeName=tdarr-node-main
+      - nodeID=tdarr-node-main
+      - serverIP=tdarr
+      - serverPort=8266
+      - inContainer=true
+      - ffmpegVersion=6
+    env_file:
+      - '.env'
+    depends_on:
+      - tdarr
+    restart: unless-stopped
