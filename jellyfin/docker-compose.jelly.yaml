@@ -14,6 +14,9 @@ services:
       - ${ARR_PATH}/shows:/data/TVShows
       - ${ARR_PATH}/music:/data/Music
       - ${ARR_PATH}/books:/data/Books
+      - /mnt/hdd01:/data/hdd01
+      - /mnt/hdd02:/data/hdd02
+      - /mnt/hdd03:/data/hdd03
     
     env_file:
       - '.env'
