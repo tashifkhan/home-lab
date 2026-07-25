@@ -17,3 +17,6 @@ services:
     volumes:
       - ${CLOUD_PATH}/data:/data
       - ${CLOUD_PATH}/config:/config
+      - /mnt/hdd01:/data/hdd01
+      - /mnt/hdd02:/data/hdd02
+      - /mnt/hdd03:/data/hdd03
