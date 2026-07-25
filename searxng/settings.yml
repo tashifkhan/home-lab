@@ -16,6 +16,8 @@ search:
   formats:
     - html
     - json
+    - csv
+    - rss
 
 server:
   secret_key: "${SEARXNG_SECRET}"
@@ -23,7 +25,7 @@ server:
   port: 8080
   base_url: "http://localhost:4212/"
   image_proxy: true
-  limiter: true
+  limiter: false
   method: "GET"
 
 ui:
