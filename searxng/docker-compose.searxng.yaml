@@ -1,0 +1,46 @@
+services:
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    hostname: searxng
+    restart: unless-stopped
+    ports:
+      - 4212:8080
+    volumes:
+      - ${SEARXNG_PATH}/settings.yml:/etc/searxng/settings.yml:ro
+      - ${SEARXNG_PATH}/limiter.toml:/etc/searxng/limiter.toml:ro
+    environment:
+      - SEARXNG_BASE_URL=http://localhost:4212/
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - TZ=${TIME_ZONE}
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    depends_on:
+      - redis
+    env_file:
+      - '.env'
+
+  redis:
+    image: redis:7-alpine
+    container_name: searxng-redis
+    hostname: redis
+    restart: unless-stopped
+    command: redis-server --save 30 1 --loglevel warning
+    volumes:
+      - ${SEARXNG_PATH}/redis:/data
+    cap_drop:
+      - ALL
+    cap_add:
+      - SETGID
+      - SETUID
+      - DAC_OVERRIDE
