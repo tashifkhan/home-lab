@@ -1,6 +1,6 @@
 services:
   jellyfin:
-    image: linuxserver/jellyfin
+    image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
     
     ports:
@@ -27,12 +27,11 @@ services:
     restart: unless-stopped
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
+    image: ghcr.io/seerr-team/seerr:latest
+    container_name: seerr
+    init: true
     
     environment:
-      - PUID=1000
-      - PGID=1000
       - TZ=${TIME_ZONE}
     
     env_file:
