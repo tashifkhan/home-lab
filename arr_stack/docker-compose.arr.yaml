@@ -102,7 +102,9 @@ services:
 
   homarr:
     container_name: homarr
-    image: ghcr.io/homarr-labs/homarr:latest
+    # Homarr 1.x needs an explicit export/import migration from 0.15.x.
+    # Keep the legacy dashboard on the final 0.x release until that is done.
+    image: ghcr.io/ajnart/homarr:0.15.10
     restart: unless-stopped
     volumes:
       - ${ARR_PATH}/configs/homarr:/app/data/configs
@@ -114,7 +116,7 @@ services:
       - '.env'
 
   qbittorrent:
-    image: hotio/qbittorrent:latest
+    image: ghcr.io/hotio/qbittorrent:latest
     container_name: qbittorrent
     hostname: qbittorrent
     restart: unless-stopped
