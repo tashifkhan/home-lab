@@ -23,10 +23,14 @@ server:
   secret_key: "${SEARXNG_SECRET}"
   bind_address: "0.0.0.0"
   port: 8080
-  base_url: "http://localhost:4212/"
+  base_url: "https://search.taf.sh/"
   image_proxy: true
-  limiter: false
+  limiter: true
+  public_instance: true
   method: "GET"
+
+valkey:
+  url: valkey://valkey:6379/0
 
 ui:
   static_use_hash: true
@@ -51,6 +55,12 @@ engines:
   - name: google
     engine: google
     shortcut: go
+    inactive: true
+    disabled: true
+
+  - name: google cse
+    engine: google_cse
+    shortcut: g
     disabled: false
 
   - name: duckduckgo
@@ -76,11 +86,6 @@ engines:
   - name: github
     engine: github
     shortcut: gh
-    disabled: false
-
-  - name: stackoverflow
-    engine: stackoverflow
-    shortcut: so
     disabled: false
 
   - name: arxiv
