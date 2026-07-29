@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+imagick_support_file="/app/www/public/lib/private/Preview/IMagickSupport.php"
+
+# Remove the two local emergency-disable lines if they are present. The
+# surrounding Nextcloud checks still verify both the extension and each format.
+sed -i '/public function hasExtension(): bool {/{n;/^[[:space:]]*return false;[[:space:]]*$/d;}' "${imagick_support_file}"
+sed -i '/public function supportsFormat(string \$format): bool {/{n;/^[[:space:]]*return false;[[:space:]]*$/d;}' "${imagick_support_file}"

@@ -17,6 +17,26 @@ services:
     volumes:
       - ${CLOUD_PATH}/data:/data
       - ${CLOUD_PATH}/config:/config
+      - ${CLOUD_PATH}/config/custom-cont-init.d:/custom-cont-init.d:ro
       - /mnt/hdd01:/data/hdd01
       - /mnt/hdd02:/data/hdd02
       - /mnt/hdd03:/data/hdd03
+
+  euro-office:
+    image: ghcr.io/euro-office/documentserver:latest
+    container_name: euro-office
+    restart: unless-stopped
+    ports:
+      - "100.64.126.69:4213:80"
+
+    environment:
+      - JWT_ENABLED=true
+      - JWT_HEADER=AuthorizationJwt
+      - JWT_SECRET=${EURO_OFFICE_JWT_SECRET}
+      - TZ=${TIME_ZONE}
+
+    env_file:
+      - '.env'
+
+    volumes:
+      - ${EURO_OFFICE_PATH}/data:/var/lib/euro-office
