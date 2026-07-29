@@ -138,6 +138,16 @@ SERVICES: list[dict] = [
         "local_path": "/apps/tasks/collections/all",
         "public_path": "/apps/tasks/collections/all",
     },
+    {
+        "name": "Office",
+        "app": "Euro-Office",
+        "desc": "Collaborative Documents",
+        "port": 4213,
+        "public": "office.taf.sh",
+        "category": "productivity",
+        "icon": "document-edit",
+        "num": 11,
+    },
 ]
 
 # Pinned Nextcloud folder shortcuts
