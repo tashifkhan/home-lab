@@ -1,0 +1,66 @@
+#!/usr/bin/with-contenv bash
+set -euo pipefail
+
+office_bundle="/app/www/public/apps/office/js/office-main.mjs"
+
+if [[ ! -f "${office_bundle}" ]]; then
+	echo "Office overview bundle is not installed; skipping search fix"
+	exit 0
+fi
+
+php /dev/stdin "${office_bundle}" <<'PHP'
+<?php
+$path = $argv[1];
+$source = file_get_contents($path);
+
+$oldFetch = <<<'JS'
+async function IA(e){return Da||(Da=(await RA().search("/",{details:!0,data:LA(e)})).data.results.map(t=>FA(t)).filter(t=>t.type==="file"),Da)}
+JS;
+$newFetch = <<<'JS'
+async function IA(e){if(Da)return Da;const t=RA(),n=[];for(const r of e)n.push(...(await t.search("/",{details:!0,data:LA([r])})).data.results);return Da=n.map(r=>FA(r)).filter(r=>r.type==="file"),Da}
+JS;
+
+$oldLimit = <<<'JS'
+		</d:where>
+	</d:basicsearch>
+JS;
+$newLimit = <<<'JS'
+		</d:where>
+		<d:limit>
+			<d:nresults>${g0}</d:nresults>
+		</d:limit>
+	</d:basicsearch>
+JS;
+
+$fetchIsPatched = str_contains($source, $newFetch);
+$limitIsPatched = str_contains($source, $newLimit);
+
+if ($fetchIsPatched && $limitIsPatched) {
+	echo "Office overview search fix is already applied\n";
+	exit(0);
+}
+
+if (!$fetchIsPatched && substr_count($source, $oldFetch) !== 1) {
+	fwrite(STDERR, "Office overview fetch code changed; skipping the compatibility patch\n");
+	exit(0);
+}
+
+if (!$limitIsPatched && substr_count($source, $oldLimit) !== 1) {
+	fwrite(STDERR, "Office overview search XML changed; skipping the compatibility patch\n");
+	exit(0);
+}
+
+if (!$fetchIsPatched) {
+	$source = str_replace($oldFetch, $newFetch, $source);
+}
+if (!$limitIsPatched) {
+	$source = str_replace($oldLimit, $newLimit, $source);
+}
+
+if (file_put_contents($path, $source) === false) {
+	fwrite(STDERR, "Failed to write the Office overview bundle\n");
+	exit(1);
+}
+
+echo "Applied Office overview per-MIME search fix\n";
+PHP
