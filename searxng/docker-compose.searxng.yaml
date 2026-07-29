@@ -13,9 +13,6 @@ services:
       - SEARXNG_BASE_URL=https://search.taf.sh/
       - SEARXNG_SECRET=${SEARXNG_SECRET}
       - TZ=${TIME_ZONE}
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1
       - net.ipv6.conf.default.disable_ipv6=1
