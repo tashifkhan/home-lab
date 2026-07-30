@@ -19,7 +19,7 @@ docker compose -f docker-compose.bentopdf.yaml ps
 Nginx Proxy Manager forwards `pdf.taf.sh` to:
 
 ```text
-http://bentopdf:8080
+http://bentopdf-ui:3000
 ```
 
 Its advanced configuration disables proxy buffering so large WebAssembly
@@ -29,22 +29,22 @@ assets are streamed without NPM writing temporary copies to the VPS disk:
 proxy_buffering off;
 ```
 
-The official image supplies the cross-origin isolation headers required by
-LibreOffice WebAssembly. BentoPDF 2.8.7 uses the `credentialless` COEP mode:
+The application supplies cross-origin isolation headers for browser-side
+PDF processing:
 
 ```text
 Cross-Origin-Opener-Policy: same-origin
-Cross-Origin-Embedder-Policy: credentialless
+Cross-Origin-Embedder-Policy: require-corp
 ```
 
 Do not embed BentoPDF in an iframe. Cross-origin isolation is required for the
-Office conversion tools.
+browser-side WebAssembly modules used by supported tools.
 
 ## Version upgrades
 
-The image is pinned by both release and manifest digest. Before upgrading:
+The image is pinned by both source commit and manifest digest. Before upgrading:
 
-1. Read the BentoPDF release notes and security notices.
+1. Review the fork's release, dependency, and security checks.
 2. Resolve the new multi-platform manifest digest.
 3. Update both the version and digest in the Compose file.
 4. Deploy and run the checks below.
@@ -53,7 +53,8 @@ The image is pinned by both release and manifest digest. Before upgrading:
 
 ```bash
 curl -fsSI https://pdf.taf.sh/
-curl -fsS https://pdf.taf.sh/config.json
+curl -fsSI https://pdf.taf.sh/tools/merge-pdf
+curl -fsSI https://pdf.taf.sh/tools/pdf-multi-tool
 ```
 
 In browser developer tools, verify:
@@ -63,12 +64,12 @@ window.crossOriginIsolated === true
 typeof SharedArrayBuffer !== "undefined"
 ```
 
-Test at least one page operation, one Office-to-PDF conversion, OCR, repair,
-compression, and a PDF-to-DOCX conversion after each upgrade.
+Test Merge PDF and PDF Multi Tool with non-sensitive sample documents after
+each upgrade.
 
-## Redesigned UI preview
+## Redesigned UI fork
 
-The public UI fork is available as a separate, opt-in Compose profile:
+The production application uses the public TanStack Start/Bun UI fork:
 
 ```text
 https://github.com/tashifkhan/bentopdf
@@ -77,20 +78,12 @@ ghcr.io/tashifkhan/bentopdf-ui
 
 It is pinned to commit `40babf9` and multi-platform image digest
 `sha256:ab0762514fa352c49bc0870c4c824249e5422e17024049cce5afcd42f5e3cfd0`.
-Start it without changing the production container:
-
-```bash
-docker compose -f docker-compose.bentopdf.yaml --profile ui-preview pull bentopdf-ui
-docker compose -f docker-compose.bentopdf.yaml --profile ui-preview up -d bentopdf-ui
-docker compose -f docker-compose.bentopdf.yaml --profile ui-preview ps
-```
-
-The preview listens on `http://bentopdf-ui:3000` inside the Nginx Proxy
-Manager network. It is deliberately not routed from the public internet.
+The container listens on `http://bentopdf-ui:3000` only inside the Nginx Proxy
+Manager network; NPM is its sole public entry point.
 
 The current React port implements Merge PDF and PDF Multi Tool. Other catalog
-routes are placeholders, so `pdf.taf.sh` remains on the full upstream image
-until those processors are ported or a compatibility path is approved.
+routes are currently placeholders and must be ported before they become
+functional.
 
 ## Scope
 
