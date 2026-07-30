@@ -66,6 +66,32 @@ typeof SharedArrayBuffer !== "undefined"
 Test at least one page operation, one Office-to-PDF conversion, OCR, repair,
 compression, and a PDF-to-DOCX conversion after each upgrade.
 
+## Redesigned UI preview
+
+The public UI fork is available as a separate, opt-in Compose profile:
+
+```text
+https://github.com/tashifkhan/bentopdf
+ghcr.io/tashifkhan/bentopdf-ui
+```
+
+It is pinned to commit `40babf9` and multi-platform image digest
+`sha256:ab0762514fa352c49bc0870c4c824249e5422e17024049cce5afcd42f5e3cfd0`.
+Start it without changing the production container:
+
+```bash
+docker compose -f docker-compose.bentopdf.yaml --profile ui-preview pull bentopdf-ui
+docker compose -f docker-compose.bentopdf.yaml --profile ui-preview up -d bentopdf-ui
+docker compose -f docker-compose.bentopdf.yaml --profile ui-preview ps
+```
+
+The preview listens on `http://bentopdf-ui:3000` inside the Nginx Proxy
+Manager network. It is deliberately not routed from the public internet.
+
+The current React port implements Merge PDF and PDF Multi Tool. Other catalog
+routes are placeholders, so `pdf.taf.sh` remains on the full upstream image
+until those processors are ported or a compatibility path is approved.
+
 ## Scope
 
 The deployment uses BentoPDF's existing tools. It does not add AI summary or

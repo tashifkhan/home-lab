@@ -37,6 +37,35 @@ services:
         max-size: 10m
         max-file: "3"
 
+  # Opt-in preview of the public TanStack/Bun UI fork. This does not replace
+  # the production service or receive traffic from pdf.taf.sh.
+  bentopdf-ui:
+    profiles:
+      - ui-preview
+    image: ghcr.io/tashifkhan/bentopdf-ui:sha-40babf9@sha256:ab0762514fa352c49bc0870c4c824249e5422e17024049cce5afcd42f5e3cfd0
+    container_name: bentopdf-ui
+    hostname: bentopdf-ui
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    networks:
+      nginx-proxy-manager:
+        aliases:
+          - bentopdf-ui
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 100
+    mem_limit: 384m
+    cpus: 0.50
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
 networks:
   nginx-proxy-manager:
     name: nginx-proxy-manager_nginxproxyman
