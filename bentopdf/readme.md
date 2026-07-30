@@ -30,7 +30,7 @@ proxy_buffering off;
 ```
 
 The application supplies cross-origin isolation headers for browser-side
-PDF processing:
+PDF processing and the LibreOffice WASM converter:
 
 ```text
 Cross-Origin-Opener-Policy: same-origin
@@ -76,16 +76,16 @@ https://github.com/tashifkhan/bentopdf
 ghcr.io/tashifkhan/bentopdf-ui
 ```
 
-It is pinned to commit `40babf9` and multi-platform image digest
-`sha256:ab0762514fa352c49bc0870c4c824249e5422e17024049cce5afcd42f5e3cfd0`.
+It is pinned to commit `ef85e6f` and multi-platform image digest
+`sha256:3a4508fe437b0aebf30e263a60d36e7be56bcbe4b99007cc632c8db12a09fea2`.
 The container listens on `http://bentopdf-ui:3000` only inside the Nginx Proxy
 Manager network; NPM is its sole public entry point.
 
-The current React port implements Merge PDF and PDF Multi Tool. Other catalog
-routes are currently placeholders and must be ported before they become
-functional.
+The current TanStack Start port includes real processors for 106 of the 116
+catalog tools. The remaining 10 tools are marked unavailable in the UI rather
+than silently pretending to process a file.
 
 ## Scope
 
-The deployment uses BentoPDF's existing tools. It does not add AI summary or
+The deployment keeps processing in the browser. It does not add AI summary or
 translation, PDF-to-PowerPoint, or camera-scanning extensions.
