@@ -1,0 +1,43 @@
+name: bentopdf
+
+services:
+  bentopdf:
+    image: ghcr.io/alam00000/bentopdf-simple:2.8.7@sha256:ba67d44f07ec0d2d636c945eef1c186f71bceda3d11b1e9809d7dbfbbaaacfa4
+    container_name: bentopdf
+    hostname: bentopdf
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+      - /etc/nginx/tmp:size=16m,mode=0755,uid=101,gid=101
+      - /var/cache/nginx:size=16m,mode=0755,uid=101,gid=101
+      - /var/run:size=1m,mode=0755,uid=101,gid=101
+    volumes:
+      - ./config.json:/usr/share/nginx/html/config.json:ro
+    networks:
+      nginx-proxy-manager:
+        aliases:
+          - bentopdf
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 100
+    mem_limit: 256m
+    cpus: 0.50
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+networks:
+  nginx-proxy-manager:
+    name: nginx-proxy-manager_nginxproxyman
+    external: true

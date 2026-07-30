@@ -1,7 +1,12 @@
 # HOME LAB
 
 this is a repo for my home server
-having self hosted `nextcloud`, `jellyfin` and `arr stack (radarr and stuff)`
+having self hosted `nextcloud`, `jellyfin`, `arr stack (radarr and stuff)`,
+`searxng`, and a client-side PDF toolkit.
+
+## Services
+
+- BentoPDF: `https://pdf.taf.sh`
 
 ## planing to self host
 
