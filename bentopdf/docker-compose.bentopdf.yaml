@@ -2,7 +2,7 @@ name: bentopdf
 
 services:
   bentopdf-ui:
-    image: ghcr.io/tashifkhan/bentopdf-ui:sha-77b90e2@sha256:b5f4923f4bddd81a507727eeeb52724eac70991ad245aa9cfd78d7e2af5e4af2
+    image: ghcr.io/tashifkhan/bentopdf-ui:sha-4295dd5@sha256:fe040e1290f11a80f701f2e1a8ad354d6873b6dfaccebbf54588869ee6865a23
     container_name: bentopdf-ui
     hostname: bentopdf-ui
     restart: unless-stopped
