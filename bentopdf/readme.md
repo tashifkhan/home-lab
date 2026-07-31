@@ -76,8 +76,8 @@ https://github.com/tashifkhan/bentopdf
 ghcr.io/tashifkhan/bentopdf-ui
 ```
 
-It is pinned to commit `95ad9fb` and multi-platform image digest
-`sha256:637d512c789b0e83a528c54e7ddd962873f3ced2d0fe755531ec7267885d6c85`.
+It is pinned to commit `77b90e2` and multi-platform image digest
+`sha256:b5f4923f4bddd81a507727eeeb52724eac70991ad245aa9cfd78d7e2af5e4af2`.
 The container listens on `http://bentopdf-ui:3000` only inside the Nginx Proxy
 Manager network; NPM is its sole public entry point.
 
