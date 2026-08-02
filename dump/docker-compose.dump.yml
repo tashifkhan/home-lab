@@ -1,0 +1,24 @@
+name: dump
+
+services:
+  dump:
+    build:
+      context: /home/taf/dump
+      dockerfile: Dockerfile
+    image: dump-lab:latest
+    container_name: dump-lab
+    ports:
+      - "100.64.126.69:4214:80"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    mem_limit: 128m
+    cpus: 0.25
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
