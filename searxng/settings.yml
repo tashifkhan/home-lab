@@ -1,4 +1,8 @@
-use_default_settings: true
+use_default_settings:
+  engines:
+    remove:
+      - google cse
+      - google cse images
 
 general:
   instance_name: "SearXNG"
@@ -55,27 +59,31 @@ engines:
   - name: google
     engine: google
     shortcut: go
-    inactive: true
-    disabled: true
-
-  - name: google cse
-    engine: google_cse
-    shortcut: g
+    weight: 2.0
     disabled: false
 
-  - name: duckduckgo
-    engine: duckduckgo
-    shortcut: ddg
-    disabled: false
-
-  - name: bing
-    engine: bing
-    shortcut: bi
+  - name: startpage
+    engine: startpage
+    shortcut: sp
+    weight: 2.0
     disabled: false
 
   - name: brave
     engine: brave
     shortcut: br
+    weight: 1.5
+    disabled: false
+
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    weight: 1.0
+    disabled: false
+
+  - name: bing
+    engine: bing
+    shortcut: bi
+    weight: 0.75
     disabled: false
 
   - name: wikipedia
@@ -101,4 +109,24 @@ engines:
   - name: pypi
     engine: pypi
     shortcut: py
+    disabled: false
+
+  - name: mojeek
+    engine: mojeek
+    shortcut: mj
+    disabled: false
+
+  - name: marginalia
+    engine: marginalia
+    shortcut: mg
+    disabled: false
+
+  - name: wiby
+    engine: wiby
+    shortcut: wy
+    disabled: false
+
+  - name: yep
+    engine: yep
+    shortcut: yp
     disabled: false
