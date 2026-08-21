@@ -12,6 +12,8 @@ services:
     environment:
       - SEARXNG_BASE_URL=https://search.taf.sh/
       - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - GOOGLE_CSE_API_KEY=${GOOGLE_CSE_API_KEY:-}
+      - GOOGLE_CSE_CX=${GOOGLE_CSE_CX:-}
       - TZ=${TIME_ZONE}
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1

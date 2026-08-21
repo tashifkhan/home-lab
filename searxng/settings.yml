@@ -86,6 +86,14 @@ engines:
     weight: 0.75
     disabled: false
 
+  - name: google cse
+    engine: google_cse
+    shortcut: g
+    api_key: '${GOOGLE_CSE_API_KEY}'
+    cx: '${GOOGLE_CSE_CX}'
+    weight: 2.0
+    disabled: false
+
   - name: wikipedia
     engine: wikipedia
     shortcut: w
