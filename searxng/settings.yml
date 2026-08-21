@@ -123,7 +123,7 @@ engines:
 
   - name: wiby
     engine: json_engine
-    shortcut: wy
+    shortcut: wib
     disabled: false
 
   - name: yep
