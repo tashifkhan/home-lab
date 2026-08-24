@@ -40,3 +40,4 @@ services:
 
     volumes:
       - ${EURO_OFFICE_PATH}/data:/var/lib/euro-office
+      - ${EURO_OFFICE_PATH}/sdkjs-plugins:/var/www/euro-office/documentserver/sdkjs-plugins
