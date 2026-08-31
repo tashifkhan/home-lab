@@ -41,6 +41,7 @@ SERVICES: list[dict] = [
         "category": "media",
         "icon": "play",
         "num": 1,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Manage",
@@ -51,6 +52,7 @@ SERVICES: list[dict] = [
         "category": "management",
         "icon": "clipboard",
         "num": 2,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Torrent",
@@ -61,6 +63,7 @@ SERVICES: list[dict] = [
         "category": "downloads",
         "icon": "download",
         "num": 3,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Crawl",
@@ -71,6 +74,7 @@ SERVICES: list[dict] = [
         "category": "downloads",
         "icon": "search",
         "num": 4,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Shows",
@@ -81,6 +85,7 @@ SERVICES: list[dict] = [
         "category": "library",
         "icon": "monitor",
         "num": 5,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Movies",
@@ -91,6 +96,7 @@ SERVICES: list[dict] = [
         "category": "library",
         "icon": "film",
         "num": 6,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Music",
@@ -101,6 +107,7 @@ SERVICES: list[dict] = [
         "category": "library",
         "icon": "music",
         "num": 7,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Books",
@@ -111,6 +118,7 @@ SERVICES: list[dict] = [
         "category": "library",
         "icon": "book",
         "num": 8,
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Drive",
@@ -124,6 +132,7 @@ SERVICES: list[dict] = [
         "local_proto": "https",
         "local_path": "/apps/files/files",
         "public_path": "/apps/files/files",
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Tasks",
@@ -137,6 +146,7 @@ SERVICES: list[dict] = [
         "local_proto": "https",
         "local_path": "/apps/tasks/collections/all",
         "public_path": "/apps/tasks/collections/all",
+        "hosts": ["home-server", "mac-air"],
     },
     {
         "name": "Office",
@@ -150,6 +160,7 @@ SERVICES: list[dict] = [
         "local_proto": "https",
         "local_path": "/apps/office",
         "public_path": "/apps/office",
+        "hosts": ["home-server", "mac-air"],
     },
 ]
 
@@ -181,10 +192,15 @@ def _enrich(service: dict) -> dict:
     proto = service.get("local_proto", "http")
     local_path = service.get("local_path", "")
     pub_path = service.get("public_path", "")
+    hosts = service.get("hosts", ["home-server"])
     return {
         **service,
+        "hosts": hosts,
+        "hosts_display": " · ".join(hosts),
         "local_url": f"{proto}://home-server:{service['port']}{local_path}",
         "local_display": f"home-server:{service['port']}",
+        "mac_url": f"{proto}://mac-air:{service['port']}{local_path}",
+        "mac_display": f"mac-air:{service['port']}",
         "public_url": f"https://{service['public']}{pub_path}",
         "public_display": service["public"],
     }
