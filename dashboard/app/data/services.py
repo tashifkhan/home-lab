@@ -21,7 +21,7 @@ CATEGORIES: list[dict] = [
     },
     {
         "id": "library",
-        "label": "Library Managers",
+        "label": "Library managers",
         "cols": 4,
     },
     {
@@ -35,7 +35,7 @@ SERVICES: list[dict] = [
     {
         "name": "Taflix",
         "app": "Jellyfin",
-        "desc": "Media Streaming",
+        "desc": "Media streaming",
         "port": 4201,
         "public": "taflix.tashif.codes",
         "category": "media",
@@ -45,7 +45,7 @@ SERVICES: list[dict] = [
     {
         "name": "Manage",
         "app": "Overseerr",
-        "desc": "Request Management",
+        "desc": "Request management",
         "port": 4202,
         "public": "manage.arr.tashif.codes",
         "category": "management",
@@ -55,7 +55,7 @@ SERVICES: list[dict] = [
     {
         "name": "Torrent",
         "app": "qBittorrent",
-        "desc": "Download Client",
+        "desc": "Download client",
         "port": 4203,
         "public": "torrent.arr.tashif.codes",
         "category": "downloads",
@@ -65,7 +65,7 @@ SERVICES: list[dict] = [
     {
         "name": "Crawl",
         "app": "Prowlarr",
-        "desc": "Indexer Manager",
+        "desc": "Indexer manager",
         "port": 4204,
         "public": "crawl.arr.tashif.codes",
         "category": "downloads",
@@ -75,7 +75,7 @@ SERVICES: list[dict] = [
     {
         "name": "Shows",
         "app": "Sonarr",
-        "desc": "TV Series",
+        "desc": "TV series",
         "port": 4205,
         "public": "shows.arr.tashif.codes",
         "category": "library",
@@ -95,7 +95,7 @@ SERVICES: list[dict] = [
     {
         "name": "Music",
         "app": "Lidarr",
-        "desc": "Audio Library",
+        "desc": "Audio library",
         "port": 4207,
         "public": "music.arr.tashif.codes",
         "category": "library",
@@ -115,7 +115,7 @@ SERVICES: list[dict] = [
     {
         "name": "Drive",
         "app": "Nextcloud",
-        "desc": "File Storage & Sync",
+        "desc": "File storage & sync",
         "port": 4433,
         "public": "drive.tashif.codes",
         "category": "storage",
@@ -128,7 +128,7 @@ SERVICES: list[dict] = [
     {
         "name": "Tasks",
         "app": "Nextcloud Tasks",
-        "desc": "Task Management",
+        "desc": "Task management",
         "port": 4433,
         "public": "drive.tashif.codes",
         "category": "productivity",
@@ -141,7 +141,7 @@ SERVICES: list[dict] = [
     {
         "name": "Office",
         "app": "Euro-Office",
-        "desc": "Collaborative Documents",
+        "desc": "Collaborative documents",
         "port": 4433,
         "public": "drive.tashif.codes",
         "category": "productivity",

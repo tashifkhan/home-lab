@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>arr.tashif.codes — Home Lab</title>
+    <title>arr.tashif.codes · home lab</title>
     <link rel="icon" type="image/png" href="/static/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,7 +81,7 @@
         </div>
     </div>
     <div class="text-[18px] font-semibold tracking-tight text-white leading-none mb-1.5">{{ svc.name }}</div>
-    <div class="text-[12px] font-papyrus text-zinc-400 mb-5 leading-relaxed">{{ svc.app }} — {{ svc.desc }}</div>
+    <div class="text-[12px] font-papyrus text-zinc-400 mb-5 leading-relaxed">{{ svc.app }} · {{ svc.desc }}</div>
     <div class="flex flex-col gap-1.5 mt-auto">
         {{ link_btn("Local", svc.local_url, svc.local_display, "→", "local") }}
         {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
@@ -97,9 +97,9 @@
     <div class="flex-1 min-w-0">
         <div class="flex items-baseline gap-2.5">
             <span class="text-[19px] font-semibold tracking-tight text-white leading-none">{{ svc.name }}</span>
-            <span class="hidden sm:inline text-[12px] font-papyrus text-zinc-400">{{ svc.app }} — {{ svc.desc }}</span>
+            <span class="hidden sm:inline text-[12px] font-papyrus text-zinc-400">{{ svc.app }} · {{ svc.desc }}</span>
         </div>
-        <div class="sm:hidden text-[12px] font-papyrus text-zinc-400 mt-1">{{ svc.app }} — {{ svc.desc }}</div>
+        <div class="sm:hidden text-[12px] font-papyrus text-zinc-400 mt-1">{{ svc.app }} · {{ svc.desc }}</div>
     </div>
     <div class="flex flex-col sm:flex-row gap-1.5 sm:w-[400px] shrink-0 min-w-0">
         {{ link_btn("Local", svc.local_url, svc.local_display, "→", "local") }}
@@ -213,7 +213,7 @@
     </main>
 
     <footer class="border-t border-line py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[12px] font-papyrus text-zinc-500">
-        <span>arr.tashif.codes — home lab on home-server</span>
+        <span>arr.tashif.codes · home lab on home-server</span>
         <span class="text-zinc-600">Docker · Tailscale · Cloudflare</span>
     </footer>
 </div>
