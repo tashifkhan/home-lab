@@ -12,7 +12,7 @@ CATEGORIES: list[dict] = [
     {
         "id": "management",
         "label": "Management",
-        "wide": True,
+        "cols": 2,
     },
     {
         "id": "downloads",
@@ -29,9 +29,35 @@ CATEGORIES: list[dict] = [
         "label": "Productivity",
         "wide": True,
     },
+    {
+        "id": "sites",
+        "label": "Sites & tools",
+        "cols": 2,
+    },
+    {
+        "id": "ai",
+        "label": "MacBook Air · AI",
+        "cols": 2,
+    },
 ]
 
 SERVICES: list[dict] = [
+    # ── storage ──────────────────────────────────────────────
+    {
+        "name": "Drive",
+        "app": "Nextcloud",
+        "desc": "File storage & sync",
+        "port": 4433,
+        "public": "drive.tashif.codes",
+        "category": "storage",
+        "icon": "cloud",
+        "num": 1,
+        "local_proto": "https",
+        "local_path": "/apps/files/files",
+        "public_path": "/apps/files/files",
+        "hosts": ["home-server"],
+    },
+    # ── media ────────────────────────────────────────────────
     {
         "name": "Taflix",
         "app": "Jellyfin",
@@ -40,20 +66,44 @@ SERVICES: list[dict] = [
         "public": "taflix.tashif.codes",
         "category": "media",
         "icon": "play",
-        "num": 1,
-        "hosts": ["home-server", "mac-air"],
+        "num": 2,
+        "hosts": ["home-server"],
     },
     {
+        "name": "Encode",
+        "app": "Tdarr",
+        "desc": "Transcode queue",
+        "port": 4210,
+        "public": None,
+        "category": "media",
+        "icon": "encode",
+        "num": 3,
+        "hosts": ["home-server"],
+    },
+    # ── management ───────────────────────────────────────────
+    {
         "name": "Manage",
-        "app": "Overseerr",
+        "app": "Seerr",
         "desc": "Request management",
         "port": 4202,
         "public": "manage.arr.tashif.codes",
         "category": "management",
         "icon": "clipboard",
-        "num": 2,
-        "hosts": ["home-server", "mac-air"],
+        "num": 4,
+        "hosts": ["home-server"],
     },
+    {
+        "name": "Homarr",
+        "app": "Homarr",
+        "desc": "Legacy dashboard",
+        "port": 4209,
+        "public": None,
+        "category": "management",
+        "icon": "layout",
+        "num": 5,
+        "hosts": ["home-server"],
+    },
+    # ── downloads ────────────────────────────────────────────
     {
         "name": "Torrent",
         "app": "qBittorrent",
@@ -62,8 +112,8 @@ SERVICES: list[dict] = [
         "public": "torrent.arr.tashif.codes",
         "category": "downloads",
         "icon": "download",
-        "num": 3,
-        "hosts": ["home-server", "mac-air"],
+        "num": 6,
+        "hosts": ["home-server"],
     },
     {
         "name": "Crawl",
@@ -73,9 +123,10 @@ SERVICES: list[dict] = [
         "public": "crawl.arr.tashif.codes",
         "category": "downloads",
         "icon": "search",
-        "num": 4,
-        "hosts": ["home-server", "mac-air"],
+        "num": 7,
+        "hosts": ["home-server"],
     },
+    # ── library ──────────────────────────────────────────────
     {
         "name": "Shows",
         "app": "Sonarr",
@@ -84,8 +135,8 @@ SERVICES: list[dict] = [
         "public": "shows.arr.tashif.codes",
         "category": "library",
         "icon": "monitor",
-        "num": 5,
-        "hosts": ["home-server", "mac-air"],
+        "num": 8,
+        "hosts": ["home-server"],
     },
     {
         "name": "Movies",
@@ -95,8 +146,8 @@ SERVICES: list[dict] = [
         "public": "movies.arr.tashif.codes",
         "category": "library",
         "icon": "film",
-        "num": 6,
-        "hosts": ["home-server", "mac-air"],
+        "num": 9,
+        "hosts": ["home-server"],
     },
     {
         "name": "Music",
@@ -106,8 +157,8 @@ SERVICES: list[dict] = [
         "public": "music.arr.tashif.codes",
         "category": "library",
         "icon": "music",
-        "num": 7,
-        "hosts": ["home-server", "mac-air"],
+        "num": 10,
+        "hosts": ["home-server"],
     },
     {
         "name": "Books",
@@ -117,23 +168,10 @@ SERVICES: list[dict] = [
         "public": "books.arr.tashif.codes",
         "category": "library",
         "icon": "book",
-        "num": 8,
-        "hosts": ["home-server", "mac-air"],
+        "num": 11,
+        "hosts": ["home-server"],
     },
-    {
-        "name": "Drive",
-        "app": "Nextcloud",
-        "desc": "File storage & sync",
-        "port": 4433,
-        "public": "drive.tashif.codes",
-        "category": "storage",
-        "icon": "cloud",
-        "num": 9,
-        "local_proto": "https",
-        "local_path": "/apps/files/files",
-        "public_path": "/apps/files/files",
-        "hosts": ["home-server", "mac-air"],
-    },
+    # ── productivity ─────────────────────────────────────────
     {
         "name": "Tasks",
         "app": "Nextcloud Tasks",
@@ -142,30 +180,147 @@ SERVICES: list[dict] = [
         "public": "drive.tashif.codes",
         "category": "productivity",
         "icon": "tasks",
-        "num": 10,
+        "num": 12,
         "local_proto": "https",
         "local_path": "/apps/tasks/collections/all",
         "public_path": "/apps/tasks/collections/all",
-        "hosts": ["home-server", "mac-air"],
+        "hosts": ["home-server"],
     },
     {
         "name": "Office",
-        "app": "Euro-Office",
-        "desc": "Collaborative documents",
+        "app": "Nextcloud Office",
+        "desc": "Docs inside Drive",
         "port": 4433,
         "public": "drive.tashif.codes",
         "category": "productivity",
         "icon": "document-edit",
-        "num": 11,
+        "num": 13,
         "local_proto": "https",
         "local_path": "/apps/office",
         "public_path": "/apps/office",
-        "hosts": ["home-server", "mac-air"],
+        "hosts": ["home-server"],
+    },
+    {
+        "name": "Docs",
+        "app": "Euro-Office",
+        "desc": "Document server",
+        "port": 4213,
+        "public": "office.taf.sh",
+        "category": "productivity",
+        "icon": "document-edit",
+        "num": 14,
+        # Bound on Tailscale only; LAN hostname resolves to ${HOME_SERVER_LAN_IP}
+        "local_host": "${TAILSCALE_IP}",
+        "hosts": ["home-server"],
+    },
+    {
+        "name": "PDF",
+        "app": "BentoPDF",
+        "desc": "Client-side PDF toolkit",
+        "port": 3000,
+        "public": "pdf.taf.sh",
+        "category": "productivity",
+        "icon": "pdf",
+        "num": 15,
+        # LAN-only bind; Tailscale :3000 is Forgejo
+        "local_host": "${HOME_SERVER_LAN_IP}",
+        "hosts": ["home-server"],
+    },
+    {
+        "name": "Press",
+        "app": "Pressroom",
+        "desc": "Markdown editor",
+        "port": 3100,
+        "public": None,
+        "category": "productivity",
+        "icon": "pen",
+        "num": 16,
+        "hosts": ["home-server"],
+    },
+    # ── sites & tools ────────────────────────────────────────
+    {
+        "name": "Search",
+        "app": "SearXNG",
+        "desc": "Metasearch",
+        "port": 4212,
+        "public": "search.taf.sh",
+        "category": "sites",
+        "icon": "globe",
+        "num": 17,
+        "hosts": ["home-server"],
+    },
+    {
+        "name": "Dump",
+        "app": "dump.lab",
+        "desc": "Personal zine",
+        "port": 4214,
+        "public": "dump.taf.sh",
+        "category": "sites",
+        "icon": "zine",
+        "num": 18,
+        "local_host": "${TAILSCALE_IP}",
+        "health_path": "/healthz",
+        "hosts": ["home-server"],
+    },
+    {
+        "name": "Git",
+        "app": "Forgejo",
+        "desc": "Self-hosted git",
+        "port": 3000,
+        "public": "git.taf.sh",
+        "category": "sites",
+        "icon": "git",
+        "num": 19,
+        # Same host port as BentoPDF on LAN; Forgejo is Tailscale-only
+        "local_host": "${TAILSCALE_IP}",
+        "hosts": ["home-server"],
+    },
+    # ── mac-air AI ───────────────────────────────────────────
+    {
+        "name": "Gateway",
+        "app": "Relay Room",
+        "desc": "OpenAI-compat AI relay",
+        "port": 8317,
+        "public": None,
+        "category": "ai",
+        "icon": "zap",
+        "num": 20,
+        "health_path": "/v1/models",
+        "hosts": ["mac-air"],
+    },
+    {
+        "name": "Relay",
+        "app": "Relay Room",
+        "desc": "Gateway admin console",
+        "port": 8320,
+        "public": None,
+        "category": "ai",
+        "icon": "terminal",
+        "num": 21,
+        "hosts": ["mac-air"],
+    },
+    {
+        "name": "T3",
+        "app": "T3 Code",
+        "desc": "Remote coding agent",
+        "port": 3773,
+        "public": None,
+        "category": "ai",
+        "icon": "code",
+        "num": 22,
+        "hosts": ["mac-air"],
     },
 ]
 
+# Tailscale IPv4 for local links (MagicDNS names are not shown in the UI)
+HOST_IPS: dict[str, str] = {
+    "home-server": "${TAILSCALE_IP}",
+    "mac-air": "${MAC_AIR_TS_IP}",
+}
+
 # Pinned Nextcloud folder shortcuts
-_DRIVE_LOCAL = "https://home-server:4433"
+_DRIVE_IP = HOST_IPS["home-server"]
+_DRIVE_LOCAL = f"https://{_DRIVE_IP}:4433"
 _DRIVE_PUBLIC = "https://drive.tashif.codes"
 
 PINNED_FOLDERS: list[dict] = [
@@ -188,29 +343,48 @@ PINNED_FOLDERS: list[dict] = [
 ]
 
 
+def _host_ip(name: str) -> str:
+    return HOST_IPS.get(name, name)
+
+
+def _primary_host(service: dict) -> str:
+    if service.get("local_host"):
+        return service["local_host"]
+    hosts = service.get("hosts") or ["home-server"]
+    return _host_ip(hosts[0])
+
+
 def _enrich(service: dict) -> dict:
     proto = service.get("local_proto", "http")
     local_path = service.get("local_path", "")
     pub_path = service.get("public_path", "")
     hosts = service.get("hosts", ["home-server"])
-    return {
+    host = _primary_host(service)
+    public = service.get("public")
+    port = service["port"]
+    local_url = f"{proto}://{host}:{port}{local_path}"
+    public_url = f"https://{public}{pub_path}" if public else None
+    out = {
         **service,
         "hosts": hosts,
-        "hosts_display": " · ".join(hosts),
-        "local_url": f"{proto}://home-server:{service['port']}{local_path}",
-        "local_display": f"home-server:{service['port']}",
-        "mac_url": f"{proto}://mac-air:{service['port']}{local_path}",
-        "mac_display": f"mac-air:{service['port']}",
-        "public_url": f"https://{service['public']}{pub_path}",
-        "public_display": service["public"],
+        "hosts_display": " · ".join(_host_ip(h) for h in hosts),
+        "local_url": local_url,
+        # Compact mono label; full URL stays on href / title
+        "local_display": f"{host}:{port}",
+        "has_public": bool(public),
+        "public_url": public_url,
+        "public_display": public,
     }
+    return out
 
 
 def _enrich_folder(folder: dict) -> dict:
     return {
         **folder,
         "local_url": f"{_DRIVE_LOCAL}{folder['path']}",
+        "local_display": f"{_DRIVE_IP}:4433",
         "public_url": f"{_DRIVE_PUBLIC}{folder['path']}",
+        "public_display": "drive.tashif.codes",
     }
 
 
@@ -221,6 +395,8 @@ def get_sections() -> list[dict]:
             _enrich(s) for s in SERVICES
             if s["category"] == cat["id"]
         ]
+        if not services:
+            continue
         sections.append(
             {
                 **cat,

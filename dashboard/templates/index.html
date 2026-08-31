@@ -54,17 +54,27 @@
     {%- elif name == 'tasks' -%}<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
     {%- elif name == 'document-edit' -%}<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 17.5V15l6.8-6.8a1.4 1.4 0 0 1 2 2L11 17z"/>
     {%- elif name == 'folder' -%}<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+    {%- elif name == 'encode' -%}<polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/>
+    {%- elif name == 'layout' -%}<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
+    {%- elif name == 'pdf' -%}<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M10 13h4M10 17h4M10 9h1"/>
+    {%- elif name == 'pen' -%}<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+    {%- elif name == 'globe' -%}<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18"/><path d="M12 3a15 15 0 0 0 0 18"/>
+    {%- elif name == 'zine' -%}<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/>
+    {%- elif name == 'git' -%}<circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M6 8.5v3.5a3 3 0 0 0 3 3h3"/><path d="M18 8.5V12"/>
+    {%- elif name == 'zap' -%}<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    {%- elif name == 'terminal' -%}<polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/>
+    {%- elif name == 'code' -%}<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
     {%- endif -%}
 </svg>
 {%- endmacro -%}
 
 {%- macro link_btn(label, url, display, arrow, variant) -%}
 {%- set is_local = variant == 'local' -%}
-<a href="{{ url }}" target="_blank" rel="noopener noreferrer"
-   class="group/link flex items-center gap-2.5 px-3 py-2.5 border text-[13px] leading-none no-underline transition-colors duration-150
+<a href="{{ url }}" title="{{ url }}" target="_blank" rel="noopener noreferrer"
+   class="group/link flex items-center gap-2 min-w-0 w-full px-3 py-2.5 border text-[13px] leading-none no-underline transition-colors duration-150
    {{ 'bg-white/[0.04] border-line text-zinc-200 hover:bg-white/[0.08] hover:border-line-strong hover:text-white' if is_local else 'bg-accent/[0.10] border-accent/25 text-accent hover:bg-accent/[0.16] hover:border-accent/35' }}">
-    <span class="text-[11px] font-semibold tracking-widest uppercase opacity-70 shrink-0">{{ label }}</span>
-    <span class="flex-1 truncate font-papyrus text-[12px] font-medium tracking-tight">{{ display }}</span>
+    <span class="text-[10px] font-semibold tracking-widest uppercase opacity-70 shrink-0 w-[3.25rem]">{{ label }}</span>
+    <span class="flex-1 min-w-0 truncate font-mono text-[11px] sm:text-[12px] font-medium tracking-tight">{{ display }}</span>
     <span class="text-[13px] opacity-50 group-hover/link:opacity-90 transition-opacity shrink-0">{{ arrow }}</span>
 </a>
 {%- endmacro -%}
@@ -85,30 +95,35 @@
     <div class="text-[11px] font-mono text-zinc-500 mb-4 tracking-wide">{{ svc.hosts_display }}</div>
     <div class="flex flex-col gap-1.5 mt-auto">
         {{ link_btn("Local", svc.local_url, svc.local_display, "→", "local") }}
-        {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
+        {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}{% endif %}
     </div>
 </div>
 {%- endmacro -%}
 
 {%- macro card_w(svc) -%}
-<div class="group flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5 sm:py-5 sm:px-6 overflow-hidden" data-svc="{{ svc.name | lower }}">
-    <div class="w-10 h-10 rounded-lg bg-white/[0.07] border border-white/[0.08] flex items-center justify-center text-zinc-300 group-hover:text-white transition-colors shrink-0">
-        {{ icon(svc.icon, "w-5 h-5") }}
-    </div>
-    <div class="flex-1 min-w-0">
-        <div class="flex items-baseline gap-2.5">
-            <span class="text-[19px] font-semibold tracking-tight text-white leading-none">{{ svc.name }}</span>
-            <span class="hidden sm:inline text-[12px] font-papyrus text-zinc-400">{{ svc.app }} · {{ svc.desc }}</span>
+<div class="group flex flex-col lg:flex-row lg:items-center gap-4 bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5 sm:px-6 overflow-hidden" data-svc="{{ svc.name | lower }}">
+    <div class="flex items-center gap-3 min-w-0 flex-1">
+        <div class="w-10 h-10 rounded-lg bg-white/[0.07] border border-white/[0.08] flex items-center justify-center text-zinc-300 group-hover:text-white transition-colors shrink-0">
+            {{ icon(svc.icon, "w-5 h-5") }}
         </div>
-        <div class="sm:hidden text-[12px] font-papyrus text-zinc-400 mt-1">{{ svc.app }} · {{ svc.desc }}</div>
-        <div class="hidden sm:block text-[11px] font-mono text-zinc-500 mt-1 tracking-wide">{{ svc.hosts_display }}</div>
-        <div class="sm:hidden text-[11px] font-mono text-zinc-500 mt-1 tracking-wide">{{ svc.hosts_display }}</div>
+        <div class="min-w-0 flex-1">
+            <div class="flex items-baseline gap-2.5 min-w-0">
+                <span class="text-[19px] font-semibold tracking-tight text-white leading-none shrink-0">{{ svc.name }}</span>
+                <span class="hidden sm:inline text-[12px] font-papyrus text-zinc-400 truncate">{{ svc.app }} · {{ svc.desc }}</span>
+            </div>
+            <div class="sm:hidden text-[12px] font-papyrus text-zinc-400 mt-1">{{ svc.app }} · {{ svc.desc }}</div>
+            <div class="text-[11px] font-mono text-zinc-500 mt-1 tracking-wide">{{ svc.hosts_display }}</div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0 lg:hidden">
+            <span class="svc-status w-2 h-2 rounded-full bg-zinc-600"></span>
+            <span class="text-[11px] font-papyrus font-medium text-zinc-400 tabular-nums">{{ '%02d'|format(svc.num) }}</span>
+        </div>
     </div>
-    <div class="flex flex-col sm:flex-row gap-1.5 sm:w-[400px] shrink-0 min-w-0">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 w-full lg:w-[26rem] shrink-0 min-w-0">
         {{ link_btn("Local", svc.local_url, svc.local_display, "→", "local") }}
-        {{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}
+        {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "↗", "public") }}{% else %}<div class="hidden sm:block"></div>{% endif %}
     </div>
-    <div class="hidden sm:flex items-center gap-2 shrink-0 ml-2 pl-4 border-l border-line/60 self-stretch">
+    <div class="hidden lg:flex items-center gap-2 shrink-0 pl-4 border-l border-line/60 self-stretch">
         <span class="svc-status w-2 h-2 rounded-full bg-zinc-600"></span>
         <span class="text-[11px] font-papyrus font-medium text-zinc-400 tabular-nums">{{ '%02d'|format(svc.num) }}</span>
     </div>
@@ -124,8 +139,8 @@
         <span class="text-[14px] font-semibold tracking-tight text-zinc-100 truncate">{{ folder.name }}</span>
     </div>
     <div class="flex flex-col gap-1.5">
-        {{ link_btn("Local", folder.local_url, "home-server:4433", "→", "local") }}
-        {{ link_btn("Public", folder.public_url, "drive.tashif.codes", "↗", "public") }}
+        {{ link_btn("Local", folder.local_url, folder.local_display, "→", "local") }}
+        {{ link_btn("Public", folder.public_url, folder.public_display, "↗", "public") }}
     </div>
 </div>
 {%- endmacro -%}
@@ -176,7 +191,6 @@
         <h1 class="text-[34px] sm:text-[44px] font-bold tracking-tight leading-none text-white">
             arr<span class="text-accent">.tashif</span>.codes
         </h1>
-        <div class="text-[11px] font-mono font-medium tracking-widest uppercase text-zinc-500 mt-3">home-server · MacBook Air · 11 services</div>
     </header>
 
     <main class="pb-6 flex flex-col gap-8">
@@ -185,7 +199,7 @@
             <div class="flex items-center gap-3 mb-3.5">
                 <h2 class="text-[12px] font-bold tracking-widest uppercase text-zinc-200">{{ section.label }}</h2>
                 <div class="flex-1 h-px bg-line"></div>
-                <span class="text-[12px] font-papyrus font-medium text-zinc-400">{{ section.services | length }} services</span>
+                <span class="text-[12px] font-papyrus font-medium text-zinc-400">{{ section.services | length }} service{{ '' if section.services | length == 1 else 's' }}</span>
             </div>
             {% if section.get('wide') %}
             <div class="flex flex-col gap-2.5">
@@ -217,7 +231,7 @@
     </main>
 
     <footer class="border-t border-line py-4 text-[12px] font-papyrus text-zinc-500">
-        <span>arr.tashif.codes · home lab on home-server</span>
+        <span>arr.tashif.codes · home-server + MacBook Air</span>
     </footer>
 </div>
 

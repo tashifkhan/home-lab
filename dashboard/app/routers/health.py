@@ -5,7 +5,7 @@ import httpx
 from fastapi import APIRouter, Cookie
 from fastapi.responses import JSONResponse
 
-from app.data.services import SERVICES
+from app.data.services import SERVICES, _primary_host
 from app.deps.auth import verify_token
 
 router = APIRouter(prefix="/api", tags=["health"])
@@ -19,12 +19,13 @@ _cache_at: datetime | None = None
 
 async def _ping(client: httpx.AsyncClient, service: dict) -> tuple[str, bool]:
     proto = service.get("local_proto", "http")
-    path  = service.get("local_path", "")
-    url   = f"{proto}://home-server:{service['port']}{path}"
+    path = service.get("health_path", service.get("local_path", ""))
+    host = _primary_host(service)
+    url = f"{proto}://{host}:{service['port']}{path}"
     svc_id = service["name"].lower()
     try:
         await client.get(url, follow_redirects=False)
-        return svc_id, True   # any HTTP response = port is alive
+        return svc_id, True  # any HTTP response = port is alive
     except Exception:
         return svc_id, False
 
@@ -47,7 +48,7 @@ async def health(access_token: str | None = Cookie(default=None)):
         pairs = await asyncio.gather(*[_ping(client, s) for s in SERVICES])
 
     _cache = {
-        "results":    dict(pairs),
+        "results": dict(pairs),
         "checked_at": now.isoformat(),
         "cached_for": _CACHE_TTL,
     }
