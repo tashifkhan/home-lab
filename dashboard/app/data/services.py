@@ -142,11 +142,14 @@ SERVICES: list[dict] = [
         "name": "Office",
         "app": "Euro-Office",
         "desc": "Collaborative Documents",
-        "port": 4213,
-        "public": "office.taf.sh",
+        "port": 4433,
+        "public": "drive.tashif.codes",
         "category": "productivity",
         "icon": "document-edit",
         "num": 11,
+        "local_proto": "https",
+        "local_path": "/apps/office",
+        "public_path": "/apps/office",
     },
 ]
 
