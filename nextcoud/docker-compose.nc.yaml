@@ -3,6 +3,11 @@ services:
     image: lscr.io/linuxserver/nextcloud:latest
     container_name: nextcloud
     restart: unless-stopped
+    depends_on:
+      nextcloud-db:
+        condition: service_healthy
+      nextcloud-redis:
+        condition: service_started
     ports:
       - 4433:443
     
@@ -26,6 +31,9 @@ services:
     image: ghcr.io/euro-office/documentserver:latest
     container_name: euro-office
     restart: unless-stopped
+    # PDF rendering uses native workers and large WASM buffers. Docker's 64 MiB
+    # default shared-memory segment is too small for realistic documents.
+    shm_size: "1gb"
     ports:
       - "${TAILSCALE_IP}:4213:80"
 
@@ -34,6 +42,11 @@ services:
       - JWT_HEADER=AuthorizationJwt
       - JWT_SECRET=${EURO_OFFICE_JWT_SECRET}
       - TZ=${TIME_ZONE}
+      # DocService runs as `ds`, but otherwise inherits HOME=/root. That makes
+      # the native image module's runtime cache unwritable and disables it.
+      - HOME=/var/lib/euro-office
+      - XDG_CACHE_HOME=/var/lib/euro-office/.cache
+      - PKG_CACHE_PATH=/var/lib/euro-office/.cache/pkg
 
     env_file:
       - '.env'
@@ -41,3 +54,52 @@ services:
     volumes:
       - ${EURO_OFFICE_PATH}/data:/var/lib/euro-office
       - ${EURO_OFFICE_PATH}/sdkjs-plugins:/var/www/euro-office/documentserver/sdkjs-plugins
+
+  office-tailnet-proxy:
+    image: nginx:1.29-alpine
+    container_name: office-tailnet-proxy
+    restart: unless-stopped
+    depends_on:
+      - euro-office
+    ports:
+      - "${TAILSCALE_IP}:443:443"
+    volumes:
+      - ${EURO_OFFICE_PATH}/tailnet-proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${EURO_OFFICE_PATH}/tailnet-proxy/certs:/etc/nginx/certs:ro
+
+  nextcloud-redis:
+    image: redis:7-alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --save 60 1
+    volumes:
+      - ${CLOUD_PATH}/redis:/data
+
+  nextcloud-db:
+    image: mariadb:lts
+    container_name: nextcloud-db
+    restart: unless-stopped
+    command:
+      - --transaction-isolation=READ-COMMITTED
+      - --binlog-format=ROW
+      - --innodb-file-per-table=1
+      - --skip-name-resolve
+      - --innodb-buffer-pool-size=512M
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+    environment:
+      - MARIADB_AUTO_UPGRADE=1
+      - MARIADB_DATABASE=nextcloud
+      - MARIADB_USER=nextcloud
+      - MARIADB_PASSWORD=${NEXTCLOUD_DB_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${NEXTCLOUD_DB_ROOT_PASSWORD}
+    volumes:
+      # Keep the latency-sensitive database on the mSATA SSD. User files stay
+      # on their existing storage and are not moved by this service.
+      - /mnt/hdd01/nextcloud/mariadb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "healthcheck.sh --connect --innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s

@@ -1,0 +1,81 @@
+#!/usr/bin/with-contenv bash
+set -euo pipefail
+
+# Keep the public Euro-Office integration usable from mobile WebViews.  The
+# app already whitelists the Office host for scripts/frames, but older 11.0.x
+# builds omit it from connect-src, which blocks editor fetch/WebSocket calls.
+php /dev/stdin <<'PHP'
+<?php
+$files = [
+    '/app/www/public/apps/eurooffice/lib/Controller/EditorController.php',
+    '/app/www/public/apps/eurooffice/lib/DirectEditor.php',
+];
+
+$pattern = '/^([ \\t]*)\\$csp->addAllowedFrameDomain\\(\\$documentServerUrl\\);\\R/m';
+
+foreach ($files as $path) {
+    if (!is_file($path)) {
+        echo "Euro-Office CSP patch skipped (missing $path)\n";
+        continue;
+    }
+    $source = file_get_contents($path);
+    if (str_contains($source, "addAllowedConnectDomain(\$documentServerUrl)")) {
+        echo "Euro-Office CSP patch already applied to $path\n";
+        continue;
+    }
+    if (!preg_match($pattern, $source)) {
+        fwrite(STDERR, "Euro-Office CSP patch skipped (unexpected source in $path)\n");
+        continue;
+    }
+    $source = preg_replace_callback($pattern, static function (array $match): string {
+        $indent = $match[1];
+        return $match[0] . $indent . "if (method_exists(\$csp, 'addAllowedConnectDomain')) {\n"
+            . $indent . "    \$csp->addAllowedConnectDomain(\$documentServerUrl);\n"
+            . $indent . "    \$csp->addAllowedConnectDomain(preg_replace('/^https:/i', 'wss:', \$documentServerUrl));\n"
+            . $indent . "}\n";
+    }, $source, -1, $count);
+    if ($count !== 1 || file_put_contents($path, $source) === false) {
+        fwrite(STDERR, "Failed to apply Euro-Office CSP patch to $path\n");
+        exit(1);
+    }
+    echo "Applied Euro-Office CSP patch to $path\n";
+}
+PHP
+
+# Establish the Office origin connection while Nextcloud is generating the
+# document configuration. This overlaps the cross-origin TLS handshake with
+# the config request and cuts the editor's cold-start latency on mobile links.
+php /dev/stdin <<'PHP'
+<?php
+$files = [
+    '/app/www/public/apps/eurooffice/lib/Controller/EditorController.php',
+    '/app/www/public/apps/eurooffice/lib/DirectEditor.php',
+];
+
+$pattern = '/^([ \\t]*)\\$response->setContentSecurityPolicy\\(\\$csp\\);\\R/m';
+foreach ($files as $path) {
+    if (!is_file($path)) {
+        continue;
+    }
+    $source = file_get_contents($path);
+    if (str_contains($source, 'rel=preconnect')) {
+        continue;
+    }
+    if (!preg_match($pattern, $source)) {
+        fwrite(STDERR, "Euro-Office preconnect patch skipped (unexpected source in $path)\n");
+        continue;
+    }
+    $source = preg_replace_callback($pattern, static function (array $match): string {
+        $indent = $match[1];
+        return $match[0]
+            . $indent . "if (method_exists(\$response, 'addHeader')) {\n"
+            . $indent . "    \$response->addHeader('Link', '<' . rtrim(\$documentServerUrl, '/') . '>; rel=preconnect; crossorigin');\n"
+            . $indent . "}\n";
+    }, $source, -1, $count);
+    if ($count !== 1 || file_put_contents($path, $source) === false) {
+        fwrite(STDERR, "Failed to apply Euro-Office preconnect patch to $path\n");
+        exit(1);
+    }
+    echo "Applied Euro-Office preconnect patch to $path\n";
+}
+PHP
