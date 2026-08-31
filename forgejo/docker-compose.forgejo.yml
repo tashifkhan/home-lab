@@ -1,0 +1,61 @@
+name: forgejo
+
+services:
+  forgejo-db:
+    image: postgres:16-alpine
+    container_name: forgejo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${FORGEJO_DB_USER}
+      POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD}
+      POSTGRES_DB: ${FORGEJO_DB_NAME}
+    volumes:
+      - /mnt/hdd01/forgejo/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  forgejo:
+    image: codeberg.org/forgejo/forgejo:16-rootless
+    container_name: forgejo
+    user: "1000:1000"
+    restart: unless-stopped
+    depends_on:
+      forgejo-db:
+        condition: service_healthy
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: forgejo-db:5432
+      FORGEJO__database__NAME: ${FORGEJO_DB_NAME}
+      FORGEJO__database__USER: ${FORGEJO_DB_USER}
+      FORGEJO__database__PASSWD: ${FORGEJO_DB_PASSWORD}
+      FORGEJO__server__DOMAIN: git.taf.sh
+      FORGEJO__server__ROOT_URL: https://git.taf.sh/
+      FORGEJO__server__HTTP_ADDR: 0.0.0.0
+      FORGEJO__server__HTTP_PORT: "3000"
+      FORGEJO__server__SSH_DOMAIN: git.taf.sh
+      FORGEJO__server__START_SSH_SERVER: "true"
+      FORGEJO__server__SSH_PORT: "2222"
+      FORGEJO__server__SSH_LISTEN_PORT: "2222"
+      FORGEJO__server__LFS_START_SERVER: "true"
+      FORGEJO__server__OFFLINE_MODE: "false"
+      FORGEJO__security__INSTALL_LOCK: "true"
+      FORGEJO__security__SECRET_KEY: ${FORGEJO_SECRET_KEY}
+      FORGEJO__service__DISABLE_REGISTRATION: "true"
+      # Public repositories are readable without a Forgejo account.
+      FORGEJO__service__REQUIRE_SIGNIN_VIEW: "false"
+      FORGEJO__service__DEFAULT_KEEP_EMAIL_PRIVATE: "true"
+      FORGEJO__service__DEFAULT_ALLOW_CREATE_ORGANIZATION: "false"
+      FORGEJO__service__DEFAULT_USER_VISIBILITY: private
+      FORGEJO__repository__DEFAULT_PRIVATE: "private"
+      FORGEJO__actions__ENABLED: "false"
+    volumes:
+      - /mnt/hdd01/forgejo/data:/var/lib/gitea
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "${TAILSCALE_IP}:3000:3000"
+      - "${TAILSCALE_IP}:2222:2222"
