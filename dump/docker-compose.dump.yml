@@ -9,14 +9,26 @@ services:
     container_name: dump-lab
     ports:
       - "${TAILSCALE_IP}:4214:80"
+    # Secrets live next to this compose file (not in git).
+    # JOURNEY_API_KEY protects / and access: locked dumps.
+    # Optional: DUMP_INDEX_PASSWORD, DUMP_LOCKED, DUMP_PASSPHRASES
+    env_file:
+      - .env
+    environment:
+      DUMP_STATE_DIR: /var/lib/dump-lab
+    volumes:
+      - dump-state:/var/lib/dump-lab
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    mem_limit: 128m
-    cpus: 0.25
+    mem_limit: 256m
+    cpus: 0.5
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
       interval: 30s
       timeout: 3s
       retries: 3
-      start_period: 5s
+      start_period: 10s
+
+volumes:
+  dump-state:
