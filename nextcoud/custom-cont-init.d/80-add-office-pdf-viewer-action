@@ -1,0 +1,174 @@
+#!/usr/bin/with-contenv bash
+set -euo pipefail
+
+office_bundle="/app/www/public/apps/eurooffice/js/eurooffice-main.mjs"
+
+if [[ ! -f "${office_bundle}" ]]; then
+	echo "Euro-Office bundle is not installed; skipping PDF viewer action"
+	exit 0
+fi
+
+php /dev/stdin "${office_bundle}" <<'PHP'
+<?php
+$path = $argv[1];
+$source = file_get_contents($path);
+$marker = 'taf-eurooffice-pdf-viewer-action-v2';
+
+if (str_contains($source, $marker)) {
+	echo "Euro-Office PDF viewer action is already installed\n";
+	exit(0);
+}
+
+// Replace the first bridge revision when this script is upgraded in place.
+// The bridge is appended to the bundle, so removing from its marker to EOF is
+// safe and keeps this patch idempotent across container restarts.
+$oldMarker = "\n/* taf-eurooffice-pdf-viewer-action-v1 */";
+if (($offset = strpos($source, $oldMarker)) !== false) {
+	$source = substr($source, 0, $offset);
+}
+
+// The connector registers this only in the Files action menu. Give the action
+// a label that describes what it does when PDF preview remains the default.
+$source = str_replace(
+	'displayName:()=>t(e.Eurooffice.AppName,"Open in Nextcloud Office")',
+	'displayName:()=>t(e.Eurooffice.AppName,"Edit in Nextcloud Office")',
+	$source,
+);
+
+$bridge = <<<'JS'
+
+/* taf-eurooffice-pdf-viewer-action-v2 */
+(() => {
+	const actionId = 'eurooffice-pdf-viewer-edit';
+	const styleId = `${actionId}-style`;
+
+	const value = (object, key) => object?.[key] ?? object?.get?.(key);
+	const currentPdf = () => {
+		const viewer = window.OCA?.Viewer;
+		const info = viewer?.fileInfo;
+		const filename = value(info, 'filename')
+			|| value(info, 'path')
+			|| viewer?.file
+			|| '';
+		const mime = value(info, 'mime') || value(info, 'mimetype') || '';
+		return mime === 'application/pdf' || filename.toLowerCase().endsWith('.pdf')
+			? { info, filename }
+			: null;
+	};
+
+	const showError = (message) => {
+		if (window.OCP?.Toast?.error) {
+			window.OCP.Toast.error(message);
+		} else {
+			console.error(message);
+		}
+	};
+
+	const openEditor = (event) => {
+		event.preventDefault();
+		event.stopPropagation();
+
+		const current = currentPdf();
+		const office = window.OCA?.Eurooffice;
+		if (!current || typeof office?.FileClickExec !== 'function') {
+			showError('Nextcloud Office is not ready. Reload the page and try again.');
+			return;
+		}
+
+		const info = current.info;
+		const filename = current.filename.startsWith('/')
+			? current.filename
+			: `/${current.filename}`;
+		const basename = value(info, 'basename')
+			|| value(info, 'name')
+			|| filename.split('/').pop();
+		const dirname = value(info, 'dirname')
+			|| filename.slice(0, Math.max(filename.lastIndexOf('/'), 1));
+		const fileid = value(info, 'fileid')
+			|| value(info, 'id')
+			|| window.OCP?.Files?.Router?.params?.fileid
+			|| window.location.pathname.match(/\/files\/(\d+)(?:\/|$)/)?.[1];
+
+		if (!fileid || !basename) {
+			showError('Nextcloud could not identify this PDF. Close the preview and use the file menu.');
+			return;
+		}
+
+		window.OCA.Viewer.close();
+		office.FileClickExec({
+			nodes: [{ fileid, dirname, basename }],
+			view: window.OCP?.Files?.Router?._router?.app?.currentView,
+			isDefault: false,
+		});
+	};
+
+	const installStyle = () => {
+		if (document.getElementById(styleId)) return;
+		const style = document.createElement('style');
+		style.id = styleId;
+		style.textContent = `
+			#${actionId} {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: 44px;
+				height: 44px;
+				min-width: 44px;
+				border: 0;
+				border-radius: var(--border-radius-pill, 999px);
+				color: currentColor;
+				background: transparent;
+				cursor: pointer;
+			}
+			#${actionId}:hover,
+			#${actionId}:focus-visible {
+				background: rgba(255, 255, 255, .12);
+			}
+			#${actionId} svg { width: 22px; height: 22px; fill: currentColor; }
+		`;
+		document.head.appendChild(style);
+	};
+
+	const syncAction = () => {
+		const oldButton = document.getElementById(actionId);
+		const menu = document.querySelector('#viewer.modal-mask .modal-header .icons-menu');
+		if (!menu || !currentPdf()) {
+			oldButton?.remove();
+			return;
+		}
+		if (oldButton) return;
+
+		installStyle();
+		const button = document.createElement('button');
+		button.id = actionId;
+		button.type = 'button';
+		button.title = 'Edit in Nextcloud Office';
+		button.setAttribute('aria-label', 'Edit PDF in Nextcloud Office');
+		button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25m17.71-10.04a.996.996 0 0 0 0-1.41l-2.5-2.5a.996.996 0 0 0-1.41 0l-1.96 1.96 3.75 3.75 2.12-1.8Z"/></svg>';
+		button.addEventListener('click', openEditor);
+		menu.prepend(button);
+	};
+
+	const start = () => {
+		syncAction();
+		new MutationObserver(syncAction).observe(document.body, {
+			childList: true,
+			subtree: true,
+		});
+	};
+
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', start, { once: true });
+	} else {
+		start();
+	}
+})();
+JS;
+
+if (file_put_contents($path, $source . $bridge) === false) {
+	fwrite(STDERR, "Failed to add the Euro-Office PDF viewer action\n");
+	exit(1);
+}
+
+echo "Added the Euro-Office PDF viewer action\n";
+PHP
