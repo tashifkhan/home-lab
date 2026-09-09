@@ -36,7 +36,7 @@ async def manifest():
     return FileResponse(
         STATIC_DIR / "manifest.webmanifest",
         media_type="application/manifest+json",
-        headers={"Cache-Control": "public, max-age=3600"},
+        headers={"Cache-Control": "no-cache, must-revalidate"},
     )
 
 

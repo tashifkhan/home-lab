@@ -1,4 +1,4 @@
-const CACHE_NAME = 'arr-dashboard-v1';
+const CACHE_NAME = 'arr-dashboard-v2';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
