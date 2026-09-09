@@ -30,8 +30,8 @@ async def index(
     )
 
 
-@router.get("/manifest.webmanifest", include_in_schema=False)
-@router.get("/manifest.json", include_in_schema=False)
+@router.api_route("/manifest.webmanifest", methods=["GET", "HEAD"], include_in_schema=False)
+@router.api_route("/manifest.json", methods=["GET", "HEAD"], include_in_schema=False)
 async def manifest():
     return FileResponse(
         STATIC_DIR / "manifest.webmanifest",
@@ -40,7 +40,7 @@ async def manifest():
     )
 
 
-@router.get("/sw.js", include_in_schema=False)
+@router.api_route("/sw.js", methods=["GET", "HEAD"], include_in_schema=False)
 async def service_worker():
     return FileResponse(
         STATIC_DIR / "sw.js",
