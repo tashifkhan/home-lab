@@ -1,14 +1,21 @@
-const CACHE_NAME = 'arr-dashboard-v2';
+const CACHE_NAME = 'arr-dashboard-v3';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
+  '/manifest.webmanifest?v=3',
   '/static/offline.html',
   '/static/favicon.png',
+  '/static/favicon.png?v=3',
   '/static/icons/icon-192x192.png',
+  '/static/icons/icon-192x192.png?v=3',
   '/static/icons/icon-512x512.png',
+  '/static/icons/icon-512x512.png?v=3',
   '/static/icons/icon-maskable-192x192.png',
+  '/static/icons/icon-maskable-192x192.png?v=3',
   '/static/icons/icon-maskable-512x512.png',
-  '/static/icons/apple-touch-icon.png'
+  '/static/icons/icon-maskable-512x512.png?v=3',
+  '/static/icons/apple-touch-icon.png',
+  '/static/icons/apple-touch-icon.png?v=3'
 ];
 
 self.addEventListener('install', (event) => {

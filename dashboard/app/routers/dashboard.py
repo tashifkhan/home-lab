@@ -36,7 +36,7 @@ async def manifest():
     return FileResponse(
         STATIC_DIR / "manifest.webmanifest",
         media_type="application/manifest+json",
-        headers={"Cache-Control": "no-cache, must-revalidate"},
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
     )
 
 
@@ -49,4 +49,14 @@ async def service_worker():
             "Service-Worker-Allowed": "/",
             "Cache-Control": "no-cache, no-store, must-revalidate",
         },
+    )
+
+
+@router.api_route("/favicon.ico", methods=["GET", "HEAD"], include_in_schema=False)
+@router.api_route("/favicon.png", methods=["GET", "HEAD"], include_in_schema=False)
+async def favicon():
+    return FileResponse(
+        STATIC_DIR / "favicon.png",
+        media_type="image/png",
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
     )
