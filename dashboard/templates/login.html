@@ -82,6 +82,7 @@
         {% endif %}
 
         <form method="post" action="/login" class="flex flex-col gap-4">
+          <input type="hidden" name="next" value="{{ next | default('/', true) }}" />
           <label class="flex flex-col gap-1.5">
             <span class="text-[11px] font-semibold tracking-widest uppercase text-zinc-300">Password</span>
             <div class="relative">

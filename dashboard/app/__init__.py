@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from .routers import auth, dashboard, health, tailscale
+from .routers import auth, dashboard, go, health, tailscale
 
 
 def create_app() -> FastAPI:
@@ -11,4 +11,6 @@ def create_app() -> FastAPI:
     app.include_router(dashboard.router)
     app.include_router(health.router)
     app.include_router(tailscale.router)
+    # last: owns the /{slug} catch-all, so every other route matches first
+    app.include_router(go.router)
     return app

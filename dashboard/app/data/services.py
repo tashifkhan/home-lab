@@ -45,6 +45,8 @@ SERVICES: list[dict] = [
     # ── storage ──────────────────────────────────────────────
     {
         "name": "Drive",
+        "slug": "drive",
+        "aliases": ["nextcloud", "nc", "files"],
         "app": "Nextcloud",
         "desc": "File storage & sync",
         "port": 4433,
@@ -60,6 +62,8 @@ SERVICES: list[dict] = [
     # ── media ────────────────────────────────────────────────
     {
         "name": "Taflix",
+        "slug": "taflix",
+        "aliases": ["jellyfin", "watch"],
         "app": "Jellyfin",
         "desc": "Media streaming",
         "port": 4201,
@@ -71,6 +75,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Encode",
+        "slug": "encode",
+        "aliases": ["tdarr", "transcode"],
         "app": "Tdarr",
         "desc": "Transcode queue",
         "port": 4210,
@@ -83,6 +89,8 @@ SERVICES: list[dict] = [
     # ── management ───────────────────────────────────────────
     {
         "name": "Manage",
+        "slug": "manage",
+        "aliases": ["seerr", "jellyseerr", "requests"],
         "app": "Seerr",
         "desc": "Request management",
         "port": 4202,
@@ -94,6 +102,7 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Homarr",
+        "slug": "homarr",
         "app": "Homarr",
         "desc": "Legacy dashboard",
         "port": 4209,
@@ -106,6 +115,8 @@ SERVICES: list[dict] = [
     # ── downloads ────────────────────────────────────────────
     {
         "name": "Torrent",
+        "slug": "torrent",
+        "aliases": ["qbit", "qbittorrent", "qb"],
         "app": "qBittorrent",
         "desc": "Download client",
         "port": 4203,
@@ -117,6 +128,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Crawl",
+        "slug": "crawl",
+        "aliases": ["prowlarr", "indexers"],
         "app": "Prowlarr",
         "desc": "Indexer manager",
         "port": 4204,
@@ -129,6 +142,8 @@ SERVICES: list[dict] = [
     # ── library ──────────────────────────────────────────────
     {
         "name": "Shows",
+        "slug": "shows",
+        "aliases": ["sonarr", "tv"],
         "app": "Sonarr",
         "desc": "TV series",
         "port": 4205,
@@ -140,6 +155,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Movies",
+        "slug": "movies",
+        "aliases": ["radarr", "films"],
         "app": "Radarr",
         "desc": "Films",
         "port": 4206,
@@ -151,6 +168,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Music",
+        "slug": "music",
+        "aliases": ["lidarr"],
         "app": "Lidarr",
         "desc": "Audio library",
         "port": 4207,
@@ -162,6 +181,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Books",
+        "slug": "books",
+        "aliases": ["readarr", "ebooks"],
         "app": "Readarr",
         "desc": "eBooks",
         "port": 4208,
@@ -174,6 +195,8 @@ SERVICES: list[dict] = [
     # ── productivity ─────────────────────────────────────────
     {
         "name": "Tasks",
+        "slug": "tasks",
+        "aliases": ["todo"],
         "app": "Nextcloud Tasks",
         "desc": "Task management",
         "port": 4433,
@@ -188,6 +211,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Office",
+        "slug": "office",
+        "aliases": ["nextcloud-office"],
         "app": "Nextcloud Office",
         "desc": "Docs inside Drive",
         "port": 4433,
@@ -202,6 +227,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Docs",
+        "slug": "docs",
+        "aliases": ["eurooffice", "euro-office"],
         "app": "Euro-Office",
         "desc": "Document server",
         "port": 4213,
@@ -215,6 +242,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "PDF",
+        "slug": "pdf",
+        "aliases": ["bentopdf"],
         "app": "BentoPDF",
         "desc": "Client-side PDF toolkit",
         "port": 3000,
@@ -228,6 +257,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Press",
+        "slug": "press",
+        "aliases": ["pressroom", "write"],
         "app": "Pressroom",
         "desc": "Markdown editor",
         "port": 3100,
@@ -240,6 +271,8 @@ SERVICES: list[dict] = [
     # ── sites & tools ────────────────────────────────────────
     {
         "name": "Search",
+        "slug": "search",
+        "aliases": ["searx", "searxng"],
         "app": "SearXNG",
         "desc": "Metasearch",
         "port": 4212,
@@ -251,6 +284,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Dump",
+        "slug": "dump",
+        "aliases": ["zine"],
         "app": "dump.lab",
         "desc": "Personal zine",
         "port": 4214,
@@ -264,6 +299,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Git",
+        "slug": "git",
+        "aliases": ["forgejo", "repo"],
         "app": "Forgejo",
         "desc": "Self-hosted git",
         "port": 3000,
@@ -278,6 +315,8 @@ SERVICES: list[dict] = [
     # ── mac-air AI ───────────────────────────────────────────
     {
         "name": "Gateway",
+        "slug": "gateway",
+        "aliases": ["llm", "ai"],
         "app": "Relay Room",
         "desc": "OpenAI-compat AI relay",
         "port": 8317,
@@ -290,6 +329,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "Relay",
+        "slug": "relay",
+        "aliases": ["relayroom", "console"],
         "app": "Relay Room",
         "desc": "Gateway admin console",
         "port": 8320,
@@ -301,6 +342,8 @@ SERVICES: list[dict] = [
     },
     {
         "name": "T3",
+        "slug": "t3",
+        "aliases": ["t3code", "agent"],
         "app": "T3 Code",
         "desc": "Remote coding agent",
         "port": 3773,
@@ -374,6 +417,11 @@ def _enrich(service: dict) -> dict:
         "has_public": bool(public),
         "public_url": public_url,
         "public_display": public,
+        "aliases": service.get("aliases", []),
+        # Short redirect, e.g. arr.tashif.codes/t3
+        "short_path": f"/{service['slug']}",
+        "target_url": public_url or local_url,
+        "target_kind": "public" if public_url else "local",
     }
     return out
 
@@ -410,3 +458,56 @@ def get_pinned_folders() -> list[dict]:
     return [
         _enrich_folder(f) for f in PINNED_FOLDERS
     ]
+
+
+# ── short redirects (arr.tashif.codes/<slug>) ────────────────
+# Paths the app itself owns; a slug may never shadow one of these.
+RESERVED_SLUGS: frozenset[str] = frozenset(
+    {
+        "api",
+        "favicon.ico",
+        "favicon.png",
+        "go",
+        "login",
+        "logout",
+        "manifest.json",
+        "manifest.webmanifest",
+        "static",
+        "sw.js",
+        "tailscale",
+    }
+)
+
+
+def _build_shortcuts() -> dict[str, str]:
+    """Map every slug and alias to its service slug, loudly rejecting clashes."""
+    table: dict[str, str] = {}
+    for service in SERVICES:
+        slug = service["slug"]
+        for key in (slug, *service.get("aliases", [])):
+            if key in RESERVED_SLUGS:
+                raise ValueError(f"shortcut {key!r} collides with a dashboard route")
+            if key in table:
+                raise ValueError(
+                    f"shortcut {key!r} claimed by both {table[key]!r} and {slug!r}"
+                )
+            table[key] = slug
+    return table
+
+
+SHORTCUTS: dict[str, str] = _build_shortcuts()
+
+
+def resolve_shortcut(key: str) -> dict | None:
+    """Look up an enriched service by slug or alias (case/slash insensitive)."""
+    slug = SHORTCUTS.get(key.strip("/").lower())
+    if not slug:
+        return None
+    for service in SERVICES:
+        if service["slug"] == slug:
+            return _enrich(service)
+    return None
+
+
+def get_shortcuts() -> list[dict]:
+    return [_enrich(s) for s in SERVICES]
