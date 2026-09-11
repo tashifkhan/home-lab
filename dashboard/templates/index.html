@@ -48,6 +48,7 @@
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 4px; }
     </style>
+    <link rel="stylesheet" href="/static/transitions.css?v=1" />
 </head>
 
 {%- macro icon(name, cls="w-[18px] h-[18px]") -%}
@@ -95,7 +96,7 @@
 {%- endmacro -%}
 
 {%- macro card_v(svc) -%}
-<div class="group flex flex-col bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5" data-svc="{{ svc.name | lower }}">
+<div class="motion-card group flex flex-col bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5" data-svc="{{ svc.name | lower }}">
     <div class="flex items-start justify-between mb-4">
         <div class="w-9 h-9 rounded-lg bg-white/[0.07] border border-white/[0.08] flex items-center justify-center text-zinc-300 group-hover:text-white transition-colors">
             {{ icon(svc.icon, "w-5 h-5") }}
@@ -119,7 +120,7 @@
 {%- endmacro -%}
 
 {%- macro card_w(svc) -%}
-<div class="group flex flex-col lg:flex-row lg:items-center gap-4 bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5 sm:px-6 overflow-hidden" data-svc="{{ svc.name | lower }}">
+<div class="motion-card group flex flex-col lg:flex-row lg:items-center gap-4 bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-5 sm:px-6 overflow-hidden" data-svc="{{ svc.name | lower }}">
     <div class="flex items-center gap-3 min-w-0 flex-1">
         <div class="w-10 h-10 rounded-lg bg-white/[0.07] border border-white/[0.08] flex items-center justify-center text-zinc-300 group-hover:text-white transition-colors shrink-0">
             {{ icon(svc.icon, "w-5 h-5") }}
@@ -152,7 +153,7 @@
 {%- endmacro -%}
 
 {%- macro folder_chip(folder) -%}
-<div class="group bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-4">
+<div class="motion-card group bg-card border border-line hover:border-line-strong hover:bg-card-hover transition-colors duration-150 p-4">
     <div class="flex items-center gap-2.5 mb-3.5">
         <div class="w-8 h-8 rounded-lg bg-white/[0.06] border border-white/[0.08] flex items-center justify-center text-zinc-400 group-hover:text-zinc-200 transition-colors shrink-0">
             {{ icon('folder', 'w-4 h-4') }}

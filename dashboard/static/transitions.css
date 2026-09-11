@@ -1,0 +1,44 @@
+/* Native page navigation keeps links, history, and form submissions intact. */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    ::view-transition-group(root) {
+        animation-duration: 180ms;
+        animation-timing-function: ease-out;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 180ms;
+        animation-timing-function: ease-out;
+    }
+
+    .motion-card {
+        transition: transform 180ms ease-out, background-color 150ms ease-out,
+                    border-color 150ms ease-out;
+    }
+
+    .svc-status {
+        transition: background-color 220ms ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .motion-card:hover {
+            transform: translateY(-2px);
+        }
+    }
+
+    .motion-card:focus-within {
+        border-color: #e8a040;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
