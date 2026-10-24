@@ -56,7 +56,7 @@ services:
       - ${EURO_OFFICE_PATH}/sdkjs-plugins:/var/www/euro-office/documentserver/sdkjs-plugins
 
   office-tailnet-proxy:
-    image: nginx:1.29-alpine
+    image: nginx:stable-alpine
     container_name: office-tailnet-proxy
     restart: unless-stopped
     depends_on:
@@ -68,7 +68,7 @@ services:
       - ${EURO_OFFICE_PATH}/tailnet-proxy/certs:/etc/nginx/certs:ro
 
   nextcloud-redis:
-    image: redis:7-alpine
+    image: redis:8.10-alpine
     container_name: nextcloud-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --save 60 1

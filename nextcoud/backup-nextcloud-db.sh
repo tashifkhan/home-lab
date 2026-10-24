@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+mountpoint -q /mnt/hdd03 || { echo "$(date -Is) /mnt/hdd03 not mounted, aborting" >&2; exit 1; }
+
 backup_dir=/mnt/hdd03/nextcloud-backups/mariadb
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 partial="$backup_dir/nextcloud-$stamp.sql.gz.partial"

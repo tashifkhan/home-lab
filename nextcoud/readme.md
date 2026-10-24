@@ -150,6 +150,11 @@ versioned reference is `config-snippets/php-local.ini`. The PHP-FPM pool is
 configured at `${CLOUD_PATH}/config/php/www2.conf` for 20 workers. Avoid raising
 that value without measuring worker RSS and available memory.
 
+The `55-limit-php-fpm-timeouts` init hook sets a five-minute
+`request_terminate_timeout` in that pool. This prevents a stalled WebDAV,
+preview, or Office request from pinning every PHP worker indefinitely. The
+Nextcloud and database data volumes are not touched by this setting.
+
 ### MIME mappings + previews
 
 Custom extension mappings and icon aliases live on the server at
