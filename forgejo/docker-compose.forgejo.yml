@@ -2,7 +2,7 @@ name: forgejo
 
 services:
   forgejo-db:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: forgejo-db
     restart: unless-stopped
     environment:
@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${FORGEJO_DB_PASSWORD}
       POSTGRES_DB: ${FORGEJO_DB_NAME}
     volumes:
-      - /mnt/hdd01/forgejo/postgres:/var/lib/postgresql/data
+      - /mnt/hdd01/forgejo/postgres18:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
@@ -52,10 +52,44 @@ services:
       FORGEJO__service__DEFAULT_ALLOW_CREATE_ORGANIZATION: "false"
       FORGEJO__service__DEFAULT_USER_VISIBILITY: private
       FORGEJO__repository__DEFAULT_PRIVATE: "private"
-      FORGEJO__actions__ENABLED: "false"
+      FORGEJO__actions__ENABLED: "true"
     volumes:
       - /mnt/hdd01/forgejo/data:/var/lib/gitea
       - /etc/localtime:/etc/localtime:ro
     ports:
       - "${TAILSCALE_IP}:3000:3000"
       - "${TAILSCALE_IP}:2222:2222"
+
+  # Forgejo Actions runner. Jobs run as sibling containers on the host's
+  # Docker; the runner joins the Forgejo network to reach http://forgejo:3000.
+  # Registered once with `forgejo-runner register` (see /mnt/hdd01/forgejo/runner/.runner).
+  forgejo-runner:
+    image: data.forgejo.org/forgejo/runner:13
+    container_name: forgejo-runner
+    restart: unless-stopped
+    user: "1000:999" # taf:docker, for the socket
+    depends_on:
+      - forgejo
+    working_dir: /data
+    command: forgejo-runner daemon --config /data/config.yml
+    volumes:
+      - /mnt/hdd01/forgejo/runner:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  # Deploy runner for taf/dump only (registered with --scope taf/dump, label
+  # dump-deploy). Its jobs get the Docker socket plus /home/taf/dump and
+  # home-lab-yaml/dump (see valid_volumes in /mnt/hdd01/forgejo/runner-dump/
+  # config.yml) so .forgejo/workflows/deploy.yml can rebuild dump-lab on every
+  # push to main. Kept apart from forgejo-runner so other repos never see the socket.
+  forgejo-runner-dump:
+    image: data.forgejo.org/forgejo/runner:13
+    container_name: forgejo-runner-dump
+    restart: unless-stopped
+    user: "1000:999" # taf:docker, for the socket
+    depends_on:
+      - forgejo
+    working_dir: /data
+    command: forgejo-runner daemon --config /data/config.yml
+    volumes:
+      - /mnt/hdd01/forgejo/runner-dump:/data
+      - /var/run/docker.sock:/var/run/docker.sock
