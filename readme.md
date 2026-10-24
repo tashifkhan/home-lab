@@ -2,11 +2,12 @@
 
 this is a repo for my home server
 having self hosted `nextcloud`, `jellyfin`, `arr stack (radarr and stuff)`,
-`searxng`, and a client-side PDF toolkit.
+`searxng`, `bazarr`, and a client-side PDF toolkit.
 
 ## Services
 
 - BentoPDF: `https://pdf.taf.sh`
+- Bazarr: port `4215`, automatic english subtitles via sonarr/radarr
 
 ## planing to self host
 

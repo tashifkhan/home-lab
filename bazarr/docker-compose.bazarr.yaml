@@ -1,0 +1,20 @@
+# Bazarr: automatic English subtitles for Sonarr/Radarr media.
+# Media mounts mirror arr_stack so paths match Sonarr (/data/tvshows) and Radarr (/data/movies).
+# Port 4215 (4211 = tdarr server, 4212 = searxng, 4213/4214 in use on the tailscale IP).
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    platform: linux/amd64
+    container_name: bazarr
+    hostname: bazarr
+    volumes:
+      - ${ARR_PATH}/config/bazarr:/config
+      - ${ARR_PATH}/shows:/data/tvshows
+      - ${ARR_PATH}/movies:/data/movies
+    ports:
+      - 4215:6767
+    environment:
+      - TZ=Asia/Kolkata
+    env_file:
+      - ../arr_stack/.env
+    restart: unless-stopped
