@@ -8,14 +8,17 @@ services:
     image: dump-lab:latest
     container_name: dump-lab
     ports:
-      - "${TAILSCALE_IP}:4214:80"
+      - "${TAILSCALE_IP}:4214:8080"
     # Secrets live next to this compose file (not in git).
-    # JOURNEY_API_KEY protects / and access: locked dumps.
-    # Optional: DUMP_INDEX_PASSWORD, DUMP_LOCKED, DUMP_PASSPHRASES
+    # DUMP_CREDENTIALS=user:pass,user2:pass2 — master user (DUMP_MASTER_USER,
+    # default taf) skips passcodes; locked dumps need DUMP_LOCKED_PASSWORDS.
+    # Optional: DUMP_JWT_SECRET, DUMP_JWT_TTL, DUMP_LOCKED, DUMP_PASSPHRASES
     env_file:
       - .env
     environment:
       DUMP_STATE_DIR: /var/lib/dump-lab
+      # /sites/ captures: the headless Chrome below, over the compose network
+      DUMP_CHROME_URL: ws://chrome:9222
     volumes:
       - dump-state:/var/lib/dump-lab
     restart: unless-stopped
@@ -24,11 +27,20 @@ services:
     mem_limit: 256m
     cpus: 0.5
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
+
+  # Headless Chrome for /sites/ captures. Only dump-api talks to it; no
+  # ports are published.
+  chrome:
+    image: chromedp/headless-shell:stable
+    container_name: dump-chrome
+    shm_size: 1gb
+    mem_limit: 1536m
+    restart: unless-stopped
 
 volumes:
   dump-state:
