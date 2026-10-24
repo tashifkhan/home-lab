@@ -104,7 +104,7 @@ services:
   homarr:
     container_name: homarr
     # Migrated from 0.15.10 through v1.10.0 on 2026-10-11.
-    image: ghcr.io/homarr-labs/homarr:v2.4.1
+    image: ghcr.io/homarr-labs/homarr:v2.8.2
     restart: unless-stopped
     volumes:
       - ${ARR_PATH}/homarr-v2:/appdata
