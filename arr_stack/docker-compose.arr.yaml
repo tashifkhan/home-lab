@@ -87,6 +87,7 @@ services:
       - '.env'
 
   readarr:
+    # Retired upstream. Retain the installed image; the registry no longer serves it.
     image: hotio/readarr:latest
     container_name: readarr
     hostname: readarr
@@ -102,18 +103,16 @@ services:
 
   homarr:
     container_name: homarr
-    # Homarr 1.x needs an explicit export/import migration from 0.15.x.
-    # Keep the legacy dashboard on the final 0.x release until that is done.
-    image: ghcr.io/ajnart/homarr:0.15.10
+    # Migrated from 0.15.10 through v1.10.0 on 2026-10-11.
+    image: ghcr.io/homarr-labs/homarr:v2.4.1
     restart: unless-stopped
     volumes:
-      - ${ARR_PATH}/configs/homarr:/app/data/configs
-      - ${ARR_PATH}/icons/homarr:/app/public/icons
-      - ${ARR_PATH}/data/homarr:/data
+      - ${ARR_PATH}/homarr-v2:/appdata
     ports:
       - '4209:7575'
     env_file:
       - '.env'
+      - '${ARR_PATH}/homarr-v2/.env'
 
   qbittorrent:
     image: ghcr.io/hotio/qbittorrent:latest
@@ -163,7 +162,7 @@ services:
       - webUIPort=8265
       - internalNode=false
       - inContainer=true
-      - ffmpegVersion=6
+      - ffmpegVersion=7
     env_file:
       - '.env'
     restart: unless-stopped
@@ -188,7 +187,7 @@ services:
       - serverIP=tdarr
       - serverPort=8266
       - inContainer=true
-      - ffmpegVersion=6
+      - ffmpegVersion=7
     env_file:
       - '.env'
     depends_on:
