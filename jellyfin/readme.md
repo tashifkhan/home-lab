@@ -1,6 +1,6 @@
 # JellyFin
 
-[Branding CSS imports](branding.md) document the local Catppuccin theme patch and its Jellyfin 12.3 dashboard limitation.
+[Branding CSS imports](branding.md) document the Catppuccin theme and the optional Jellyfin 12.3 dashboard fix.
 
 - port jellyfine --> 4202
 - port jellyseerr --> 4201

@@ -4,48 +4,57 @@ Paste a theme import and exactly one flavour import into Dashboard > Branding > 
 Keep imports before any other CSS rules. Save, then reload the web client.
 The default web layout uses Display mode "Auto".
 
-The local theme patch is commit `8ad2032258a5c252fc7c38819686d7e31b2e5bc9` on `theme/default-layout` in
+The theme CSS is commit `1aacccfede039001039f5b7a9f846a57859be602` on `theme/default-layout` in
 [tashifkhan/catppuccin-jellyfin](https://github.com/tashifkhan/catppuccin-jellyfin).
 It builds on [catppuccin/jellyfin#62](https://github.com/catppuccin/jellyfin/pull/62).
 
-This commit has not been pushed. The pinned URLs below become available after it is published.
-The fork's `main` branch does not include this patch yet.
+The fork's `main` branch does not include this patch yet. These imports pin the tested CSS commit.
 
 ## Imports through jsDelivr
 
 Import the shared rules first:
 
 ```css
-@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@8ad2032258a5c252fc7c38819686d7e31b2e5bc9/themes/theme.css");
+@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@1aacccfede039001039f5b7a9f846a57859be602/themes/theme.css");
 ```
 
 Then choose one flavour:
 
 ```css
 /* Latte */
-@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@8ad2032258a5c252fc7c38819686d7e31b2e5bc9/themes/catppuccin-latte.css");
+@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@1aacccfede039001039f5b7a9f846a57859be602/themes/catppuccin-latte.css");
 /* Frappe */
-@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@8ad2032258a5c252fc7c38819686d7e31b2e5bc9/themes/catppuccin-frappe.css");
+@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@1aacccfede039001039f5b7a9f846a57859be602/themes/catppuccin-frappe.css");
 /* Macchiato */
-@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@8ad2032258a5c252fc7c38819686d7e31b2e5bc9/themes/catppuccin-macchiato.css");
+@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@1aacccfede039001039f5b7a9f846a57859be602/themes/catppuccin-macchiato.css");
 /* Mocha */
-@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@8ad2032258a5c252fc7c38819686d7e31b2e5bc9/themes/catppuccin-mocha.css");
+@import url("https://cdn.jsdelivr.net/gh/tashifkhan/catppuccin-jellyfin@1aacccfede039001039f5b7a9f846a57859be602/themes/catppuccin-mocha.css");
 ```
 
 GitHub's raw file URLs return `text/plain` with `nosniff`, which browsers reject as stylesheets.
 Use jsDelivr for imports. It serves the CSS files as `text/css`.
 
-## Jellyfin 12.3 limits
+## Dashboard support on Jellyfin 12.3
 
-A disposable Jellyfin 12.3.0 container with a fresh config passed the home, details,
-video player OSD and user Display settings checks for all four flavours in Chromium.
-The theme uses relative RGB colors for translucent controls and needs a browser that supports them.
+Stock Jellyfin 12.3 does not load custom CSS in the server dashboard. The optional image below
+builds the v12.3 web client with a two-line patch that renders its existing CustomCss component
+in the dashboard. It uses the same Branding CSS and per-user opt-out as the default layout.
+The server image and web source are pinned to 12.3. The regular compose file stays unchanged.
 
-The full test failed because Jellyfin's server dashboard does not load Branding Custom CSS.
-Its [dashboard layout](https://github.com/jellyfin/jellyfin-web/blob/v12.3/src/apps/dashboard/AppLayout.tsx)
-omits the CustomCss component. Changing CSS selectors cannot make the dashboard load it.
-The dashboard keeps its built-in theme. This needs a Jellyfin web client change before a theme can
-cover every requested page.
+To use the patched client, run from this directory:
 
-The theme branch and this note remain local because of that failure.
-The live server's Branding CSS was not changed.
+```sh
+docker compose -f docker-compose.jelly.yaml -f docker-compose.branding.yaml up -d --build --no-deps jellyfin
+```
+
+The build runs type checking first and limits bundler concurrency to fit a Docker VM with 4 GB
+of memory. The runtime image contains the patched production web build.
+
+Save the imports in Dashboard > Branding, then reload. A fresh local 12.3 container passed all 28 page checks across the four flavours.
+The checks covered home, details, video playback and OSD, dashboard, Branding, General
+and user Display settings in Auto mode. Disabling server CSS removed the dashboard theme,
+and re-enabling it restored the theme. Screenshots and computed colours confirmed the results.
+The theme uses relative RGB colors and needs a browser that supports them.
+
+To return to the stock client, recreate Jellyfin with only `docker-compose.jelly.yaml`.
+No command in this change alters the saved Branding CSS.
