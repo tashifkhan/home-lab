@@ -10,6 +10,7 @@ services:
     
     volumes:
       - ${JELLY_PATH}/config:/config
+      - ./custom-cont-init.d:/custom-cont-init.d:ro
       - ${ARR_PATH}/movies:/data/Movies
       - ${ARR_PATH}/shows:/data/TVShows
       - ${ARR_PATH}/music:/data/Music
