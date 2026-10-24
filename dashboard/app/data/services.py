@@ -1,3 +1,10 @@
+import os
+
+# Host IPs come from the environment (see .env.example)
+_HOME_TS_IP = os.environ.get("HOME_SERVER_TS_IP", "home-server")
+_HOME_LAN_IP = os.environ.get("HOME_SERVER_LAN_IP", "home-server")
+_MAC_AIR_TS_IP = os.environ.get("MAC_AIR_TS_IP", "mac-air")
+
 CATEGORIES: list[dict] = [
     {
         "id": "storage",
@@ -236,8 +243,8 @@ SERVICES: list[dict] = [
         "category": "productivity",
         "icon": "document-edit",
         "num": 14,
-        # Bound on Tailscale only; LAN hostname resolves to ${HOME_SERVER_LAN_IP}
-        "local_host": "${TAILSCALE_IP}",
+        # Bound on Tailscale only
+        "local_host": _HOME_TS_IP,
         "hosts": ["home-server"],
     },
     {
@@ -252,7 +259,7 @@ SERVICES: list[dict] = [
         "icon": "pdf",
         "num": 15,
         # LAN-only bind; Tailscale :3000 is Forgejo
-        "local_host": "${HOME_SERVER_LAN_IP}",
+        "local_host": _HOME_LAN_IP,
         "hosts": ["home-server"],
     },
     {
@@ -293,7 +300,7 @@ SERVICES: list[dict] = [
         "category": "sites",
         "icon": "zine",
         "num": 18,
-        "local_host": "${TAILSCALE_IP}",
+        "local_host": _HOME_TS_IP,
         "health_path": "/healthz",
         "hosts": ["home-server"],
     },
@@ -309,7 +316,7 @@ SERVICES: list[dict] = [
         "icon": "git",
         "num": 19,
         # Same host port as BentoPDF on LAN; Forgejo is Tailscale-only
-        "local_host": "${TAILSCALE_IP}",
+        "local_host": _HOME_TS_IP,
         "hosts": ["home-server"],
     },
     # ── mac-air AI ───────────────────────────────────────────
@@ -357,8 +364,8 @@ SERVICES: list[dict] = [
 
 # Tailscale IPv4 for local links (MagicDNS names are not shown in the UI)
 HOST_IPS: dict[str, str] = {
-    "home-server": "${TAILSCALE_IP}",
-    "mac-air": "${MAC_AIR_TS_IP}",
+    "home-server": _HOME_TS_IP,
+    "mac-air": _MAC_AIR_TS_IP,
 }
 
 # Pinned Nextcloud folder shortcuts

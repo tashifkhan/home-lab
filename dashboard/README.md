@@ -8,7 +8,7 @@ Tailscale device page, and short redirects.
 Every service has a slug that redirects from the dashboard host:
 
 ```
-arr.tashif.codes/t3      → http://${MAC_AIR_TS_IP}:3773
+arr.tashif.codes/t3      → http://${MAC_AIR_IP}:3773
 arr.tashif.codes/taflix  → https://taflix.tashif.codes
 ```
 
