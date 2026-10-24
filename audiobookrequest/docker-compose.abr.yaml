@@ -1,0 +1,19 @@
+# AudioBookRequest: Jellyseerr-style request UI for audiobooks.
+# Searches via Prowlarr, which sends grabs to qBittorrent (category "audiobooks").
+# Port 4216 (4215 = bazarr). Copy .env.example to .env and fill in.
+services:
+  audiobookrequest:
+    image: markbeep/audiobookrequest:1
+    container_name: audiobookrequest
+    ports:
+      - 4216:8000
+    volumes:
+      - ${ARR_PATH}/config/audiobookrequest:/config
+    environment:
+      - TZ=Asia/Kolkata
+      - ABR_APP__INIT_ROOT_USERNAME=${ABR_ADMIN_USER}
+      - ABR_APP__INIT_ROOT_PASSWORD=${ABR_ADMIN_PASSWORD}
+    env_file:
+      - ../arr_stack/.env
+      - .env
+    restart: unless-stopped
