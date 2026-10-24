@@ -3,8 +3,8 @@
 Jellyfin uses port 4201. Seerr uses port 4202.
 
 `custom-cont-init.d/10-topbar.sh` runs when Jellyfin starts. It limits the desktop
-navigation to four library links, leaving Books, Music and Playlists under More
-with the current library order. It keeps the smaller-screen limit at three.
+navigation to three library links, leaving Collections, Books, Music and Playlists
+under More with the current library order.
 The script retains all library views.
 
 The script patches the navigation chunk, gives it a content-based filename,
