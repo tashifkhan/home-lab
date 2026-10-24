@@ -16,8 +16,8 @@ Brotli files, the script reports an error for review.
 The custom taflix Skins plugin is built from
 <https://github.com/tashifkhan/jellyfin-plugin-skin-manager>. Its DLL includes
 `skins-taflix.json`, so opening the selector does not depend on GitHub or Google
-Fonts. Selecting Set Skin writes the selected imports to Branding CSS.
-CSS imports still load from the theme hosts.
+Fonts. Choosing a skin saves Branding CSS and reloads Home to display it.
+Dashboard uses its own styling. CSS imports still load from the theme hosts.
 
 Before replacing the plugin or startup script, back up the configuration and
 SQLite databases under `/mnt/hdd03/backups`. Test with the running image ID and
