@@ -1,6 +1,7 @@
 services:
   searxng:
-    image: searxng/searxng:latest
+    # Updated 2026-10-11. Keep a tested digest after engine smoke tests.
+    image: searxng/searxng@sha256:85492ba800a861e3e8ff6014c430e81369fe6ca766a9990595f616d1ce95b272
     container_name: searxng
     hostname: searxng
     restart: unless-stopped
@@ -12,8 +13,6 @@ services:
     environment:
       - SEARXNG_BASE_URL=https://search.taf.sh/
       - SEARXNG_SECRET=${SEARXNG_SECRET}
-      - GOOGLE_CSE_API_KEY=${GOOGLE_CSE_API_KEY:-}
-      - GOOGLE_CSE_CX=${GOOGLE_CSE_CX:-}
       - TZ=${TIME_ZONE}
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1
@@ -24,16 +23,39 @@ services:
       - CHOWN
       - SETGID
       - SETUID
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     depends_on:
-      - valkey
+      valkey:
+        condition: service_healthy
     env_file:
       - '.env'
 
   valkey:
-    image: valkey/valkey:8-alpine
+    image: valkey/valkey:9-alpine
     container_name: searxng-valkey
     hostname: valkey
     restart: unless-stopped
     command: valkey-server --save 30 1 --loglevel warning
     volumes:
       - ${SEARXNG_PATH}/redis:/data
+
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

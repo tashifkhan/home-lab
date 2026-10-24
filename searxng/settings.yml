@@ -1,22 +1,22 @@
 use_default_settings:
   engines:
     remove:
-      - google cse
-      - google cse images
+      - ahmia
+      - torch
 
 general:
   instance_name: "SearXNG"
   debug: false
   privacypolicy_url: false
   contact_url: false
-  enable_metrics: false
+  enable_metrics: true
 
 search:
   safe_search: 0
   autocomplete: "google"
   default_lang: "en"
-  ban_time_on_fail: 5
-  max_ban_time_on_fail: 15
+  ban_time_on_fail: 30
+  max_ban_time_on_fail: 300
   formats:
     - html
     - json
@@ -48,17 +48,20 @@ ui:
     simple_style: auto
 
 outgoing:
-  request_timeout: 8
-  max_request_timeout: 15
+  request_timeout: 4
+  max_request_timeout: 6
   useragent_suffix: ""
   pool_connections: 100
   pool_maxsize: 20
   enable_http2: true
 
 engines:
+  # General search favors providers that passed the September 2026 audit.
+  # Google CSE adds coverage, but shares Google's index, so keep its weight at 1.
   - name: google
     engine: google
     shortcut: go
+    inactive: false
     weight: 2.0
     disabled: false
 
@@ -66,7 +69,7 @@ engines:
     engine: startpage
     shortcut: sp
     weight: 2.0
-    disabled: false
+    disabled: true
 
   - name: brave
     engine: brave
@@ -84,14 +87,12 @@ engines:
     engine: bing
     shortcut: bi
     weight: 0.75
-    disabled: false
+    disabled: true
 
   - name: google cse
     engine: google_cse
     shortcut: g
-    api_key: '${GOOGLE_CSE_API_KEY}'
-    cx: '${GOOGLE_CSE_CX}'
-    weight: 2.0
+    weight: 1.0
     disabled: false
 
   - name: wikipedia
@@ -122,19 +123,66 @@ engines:
   - name: mojeek
     engine: mojeek
     shortcut: mj
-    disabled: false
+    disabled: true
 
   - name: marginalia
     engine: marginalia
     shortcut: mg
-    disabled: false
+    disabled: true
 
   - name: wiby
     engine: json_engine
     shortcut: wib
     disabled: false
+    categories: [discovery, blogs]
 
   - name: yep
     engine: yep
     shortcut: yp
+    disabled: true
+
+  # The SPARQL endpoint rejected initialization from this server.
+  - name: wikidata
+    disabled: true
+    inactive: true
+
+  # Other video providers returned results; Vimeo returned an HTTP error.
+  - name: vimeo
+    disabled: true
+
+  # Small indexes and direct community sources, isolated from general ranking.
+  - name: mwmbl
     disabled: false
+    categories: [discovery]
+    timeout: 6
+
+  - name: hackernews
+    disabled: false
+    categories: [discovery, it]
+
+  - name: lemmy posts
+    disabled: false
+    categories: [discovery, social media]
+    timeout: 6
+
+  - name: odysee
+    disabled: false
+    categories: [discovery, videos]
+    timeout: 6
+
+  - name: sepiasearch
+    disabled: false
+    categories: [discovery, videos]
+
+categories_as_tabs:
+  general:
+  discovery:
+  images:
+  videos:
+  news:
+  map:
+  music:
+  it:
+  science:
+  files:
+  social media:
