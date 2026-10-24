@@ -1,16 +1,17 @@
 #!/bin/sh
 set -eu
 
-# Keep Books, Music and Playlists in More. Give changed assets new URLs so
+# Keep Collections, Books, Music and Playlists in More. Give changed assets new URLs so
 # browsers and CDNs cannot reuse the original hashed navigation chunk.
 web=${JELLYFIN_WEB_DIR:-/usr/share/jellyfin/web}
 original='return v?8:y?5:3'
-patched='return v?4:y?4:3'
+previous='return v?4:y?4:3'
+patched='return v?3:y?3:3'
 found=0
 
 for file in "$web"/*.chunk.js; do
-    if grep -qF "$original" "$file"; then
-        sed -i "s/return v?8:y?5:3/$patched/g" "$file"
+    if grep -qF "$original" "$file" || grep -qF "$previous" "$file"; then
+        sed -i -e "s/return v?8:y?5:3/$patched/g" -e "s/return v?4:y?4:3/$patched/g" "$file"
     elif ! grep -qF "$patched" "$file"; then
         continue
     fi
