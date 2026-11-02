@@ -1,215 +1,78 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Network · arr.tashif.codes</title>
-    <link rel="icon" type="image/png" href="/static/favicon.png?v=3" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png?v=3" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/static/icons/icon-512x512.png?v=3" />
-    <link rel="manifest" href="/manifest.webmanifest?v=3" />
-    <meta name="theme-color" content="#0a0a0b" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Home Lab" />
-    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png?v=3" />
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% set active = 'network' %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ["Geist", "system-ui", "-apple-system", "sans-serif"],
-                        mono: ["JetBrains Mono", "Geist Mono", "monospace"],
-                        papyrus: ["Papyrus", "Segoe Print", "Bradley Hand", "fantasy"],
-                    },
-                    colors: {
-                        bg: "#0a0a0b",
-                        card: "#131316",
-                        "card-hover": "#19191d",
-                        line: "#232326",
-                        "line-strong": "#2c2c32",
-                        accent: "#e8a040",
-                        ok: "#3ecf6e",
-                    },
-                },
-            },
-        };
-    </script>
-    <link rel="stylesheet" href="/static/transitions.css?v=2" />
-</head>
+{% block title %}Network · arr.tashif.codes{% endblock %}
 
-<body class="bg-bg text-zinc-100 font-papyrus antialiased min-h-screen">
-<div class="max-w-[1160px] mx-auto px-4 sm:px-6 lg:px-8">
-
-    <nav class="flex items-center justify-between h-[56px] border-b border-line">
-        <div class="flex items-center gap-6">
-            <a href="/" class="flex items-center gap-2.5 no-underline group shrink-0">
-                <span class="w-5 h-5 flex items-center justify-center shrink-0 text-zinc-400 group-hover:text-accent transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <rect x="3" y="3" width="18" height="5" rx="1.4"/>
-                        <rect x="3" y="9.5" width="18" height="5" rx="1.4"/>
-                        <rect x="3" y="16" width="18" height="5" rx="1.4"/>
-                        <circle cx="7" cy="5.5" r="0.9" fill="currentColor" stroke="none"/>
-                        <circle cx="7" cy="12" r="0.9" fill="currentColor" stroke="none"/>
-                        <circle cx="7" cy="18.5" r="0.9" fill="currentColor" stroke="none"/>
-                    </svg>
-                </span>
-                <span class="flex items-baseline gap-1.5 leading-none">
-                    <span class="text-[15px] font-bold tracking-tight text-white leading-none">arr.tashif.codes</span>
-                    <span class="hidden sm:inline text-[12px] font-papyrus text-zinc-500 leading-none">home lab</span>
-                </span>
-            </a>
-            <div class="hidden sm:flex items-center gap-4 ml-6">
-                <a href="/" class="text-[13px] font-medium text-zinc-500 hover:text-white transition-colors leading-none">Dashboard</a>
-                <span class="text-[13px] font-semibold tracking-wide text-white leading-none">Network</span>
-                <a href="/go" class="text-[13px] font-medium text-zinc-500 hover:text-white transition-colors leading-none">Links</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-5">
-            {% if total > 0 %}
-            <span class="hidden sm:flex items-center gap-1.5 text-[12px] font-papyrus font-medium text-zinc-400"><span class="w-2 h-2 rounded-full bg-ok"></span>{{ online_count }} online</span>
-            {% endif %}
-            <form method="post" action="/logout" class="contents">
-                <button type="submit" class="text-[12px] font-medium text-zinc-500 hover:text-white transition-colors leading-none">Sign out</button>
-            </form>
-        </div>
-    </nav>
-    <div class="flex sm:hidden items-center gap-4 py-3 border-b border-line">
-        <a href="/" class="text-[13px] font-medium text-zinc-500 leading-none">Dashboard</a>
-        <span class="text-[13px] font-semibold text-white leading-none">Network</span>
-        <a href="/go" class="text-[13px] font-medium text-zinc-500 leading-none">Links</a>
-        {% if total > 0 %}<span class="ml-auto text-[12px] font-papyrus font-medium text-zinc-300">{{ online_count }} / {{ total }} online</span>{% endif %}
-    </div>
-
-    <header class="py-8 sm:py-10">
-        <h1 class="text-[34px] sm:text-[44px] font-bold tracking-tight leading-none text-white">Network</h1>
-    </header>
-
-    <main class="pb-6">
-        {% if error %}
-        <div class="border border-red-500/25 bg-red-500/10 p-5 rounded-xl">
-            <div class="text-[12px] font-bold tracking-widest uppercase text-red-300 mb-2">Could not fetch devices</div>
-            <div class="text-[13px] font-papyrus text-zinc-300 break-all leading-relaxed">{{ error }}</div>
-            <div class="mt-4 flex flex-col gap-1.5 text-[12px] font-papyrus text-zinc-400 leading-relaxed">
-                <div>Tailnet: <code class="text-zinc-200 bg-white/[0.07] px-1.5 py-0.5 rounded">{{ tailnet }}</code> · set <code class="text-zinc-300">TAILSCALE_TAILNET</code> to <code class="text-zinc-200 bg-white/[0.07] px-1.5 py-0.5 rounded">-</code> or your tailnet name.</div>
-                <div>OAuth client needs <code class="text-zinc-200">devices:read</code> scope. Create one at login.tailscale.com → Settings → OAuth clients.</div>
-            </div>
-        </div>
-
-        {% elif total == 0 %}
-        <div class="border border-line bg-card p-10 text-center rounded-xl">
-            <div class="text-[15px] font-semibold text-white">No devices found</div>
-            <div class="text-[13px] font-papyrus text-zinc-400 mt-1.5">Check your Tailscale token and tailnet name.</div>
-        </div>
-
-        {% else %}
-        <div class="flex items-center gap-3 mb-3.5">
-            <h2 class="text-[12px] font-bold tracking-widest uppercase text-zinc-200">Devices</h2>
-            <div class="flex-1 h-px bg-line"></div>
-            <span class="text-[12px] font-papyrus font-medium text-zinc-400">{{ total }} devices</span>
-        </div>
-
-        <div class="hidden sm:block border border-line overflow-hidden rounded-xl font-mono">
-            <div class="grid px-5 py-3 bg-white/[0.03] border-b border-line text-[11px] font-papyrus font-semibold tracking-widest uppercase text-zinc-400" style="grid-template-columns: 1.3fr 1fr 10rem 5.5rem 6.5rem 7rem;">
-                <span>Hostname</span><span>User</span><span>Tailscale IP</span><span>OS</span><span>Status</span><span>Last seen</span>
-            </div>
-            {% for device in devices %}
-            <div class="group grid items-center px-5 py-4 bg-card hover:bg-card-hover border-b border-line last:border-b-0 transition-colors" style="grid-template-columns: 1.3fr 1fr 10rem 5.5rem 6.5rem 7rem;">
-                <div class="pr-4 min-w-0">
-                    <div class="text-[14px] font-papyrus font-semibold tracking-tight text-white truncate">{{ device.hostname }}</div>
-                    {% if device.client_version %}<div class="text-[11px] font-mono text-zinc-500 mt-1">v{{ device.client_version }}</div>{% endif %}
-                </div>
-                <div class="pr-4 text-[13px] font-mono text-zinc-300 truncate">{{ device.user }}</div>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-[13px] font-mono font-medium text-zinc-200">{{ device.tailscale_ip }}</span>
-                    {% if device.tailscale_ip != '—' %}
-                    <button onclick="copyIP(this, '{{ device.tailscale_ip }}')" title="Copy IP" class="opacity-0 group-hover:opacity-70 hover:!opacity-100 transition-opacity bg-transparent border-0 cursor-pointer text-zinc-400 hover:text-white p-1">
-                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    </button>
-                    {% endif %}
-                </div>
-                <div class="text-[13px] text-zinc-400 capitalize">{{ device.os }}</div>
-                <div class="flex items-center gap-1.5">
-                    {% if device.online %}<span class="w-2 h-2 rounded-full bg-ok"></span><span class="text-[12px] font-semibold text-ok">Online</span>
-                    {% else %}<span class="w-2 h-2 rounded-full bg-zinc-600"></span><span class="text-[12px] font-semibold text-zinc-500">Offline</span>{% endif %}
-                </div>
-                <div class="text-[12px] font-mono text-zinc-400">{{ device.last_seen }}</div>
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="sm:hidden flex flex-col gap-2.5 font-mono">
-            {% for device in devices %}
-            <div class="bg-card border border-line p-4 rounded-xl">
-                <div class="flex items-start justify-between mb-2">
-                    <div class="text-[15px] font-papyrus font-semibold tracking-tight text-white leading-tight">{{ device.hostname }}</div>
-                    <span class="inline-flex items-center gap-1.5 text-[11px] font-bold tracking-wide uppercase {% if device.online %}text-ok{% else %}text-zinc-500{% endif %}">
-                        <span class="w-2 h-2 rounded-full {% if device.online %}bg-ok{% else %}bg-zinc-600{% endif %}"></span>
-                        {% if device.online %}Online{% else %}Offline{% endif %}
-                    </span>
-                </div>
-                <div class="flex items-center gap-1.5 mb-2.5">
-                    <span class="text-[13px] font-mono font-medium text-zinc-200">{{ device.tailscale_ip }}</span>
-                    {% if device.tailscale_ip != '—' %}
-                    <button onclick="copyIP(this, '{{ device.tailscale_ip }}')" class="bg-transparent border-0 cursor-pointer text-zinc-400 p-1 -ml-1">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                    </button>
-                    {% endif %}
-                </div>
-                <div class="flex flex-wrap items-center gap-2 text-[12px] font-mono text-zinc-400">
-                    <span class="capitalize">{{ device.os }}</span><span class="text-zinc-600">·</span><span>{{ device.last_seen }}</span>
-                    {% if device.user %}<span class="text-zinc-600">·</span><span>{{ device.user }}</span>{% endif %}
-                </div>
-                {% if device.client_version %}<div class="text-[11px] font-mono text-zinc-500 mt-2">v{{ device.client_version }}</div>{% endif %}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if checked_at %}
-        <div class="mt-5 flex items-center justify-between text-[12px] font-papyrus text-zinc-500">
-            <span>Cached for {{ cache_ttl }}s · refreshes automatically</span>
-            <span id="ts-checked"></span>
-        </div>
-        {% endif %}
-    </main>
-
-    <footer class="border-t border-line py-4 flex items-center justify-between text-[12px] font-papyrus text-zinc-500">
-        <span>arr.tashif.codes · home lab</span>
-        <span class="text-zinc-600">Tailscale Network</span>
-    </footer>
+{% block content %}
+<div class="head">
+    <h1>Network</h1>
+    {% if total > 0 %}
+    <p class="head-sub"><span class="dot dot-live" data-state="{{ 'up' if online_count == total else 'warn' }}"></span>{{ online_count }} of {{ total }} devices online</p>
+    {% endif %}
 </div>
 
-<script>
-    const CACHE_TTL = {{ cache_ttl }};
-    const checkedAt = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
-    if (checkedAt) {
-        const el = document.getElementById('ts-checked');
-        if (el) el.textContent = 'Checked ' + new Date(checkedAt).toLocaleTimeString();
-    }
-    if (CACHE_TTL) setTimeout(() => location.reload(), (CACHE_TTL + 2) * 1000);
-    function copyIP(btn, ip) {
-        navigator.clipboard.writeText(ip).then(() => {
-            const orig = btn.innerHTML;
-            btn.innerHTML = '<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
-            setTimeout(() => { btn.innerHTML = orig; }, 1500);
-        });
-    }
-</script>
+{% if error %}
+<div class="notice notice-bad">
+    <p class="notice-title">Couldn't fetch devices</p>
+    <p class="notice-body mono">{{ error }}</p>
+    <p class="notice-body">Tailnet is <code>{{ tailnet }}</code>. Set <code>TAILSCALE_TAILNET</code> to <code>-</code> or your tailnet name. The OAuth client needs the <code>devices:read</code> scope.</p>
+</div>
 
+{% elif total == 0 %}
+<div class="notice">
+    <p class="notice-title">No devices found</p>
+    <p class="notice-body">Check the Tailscale token and tailnet name.</p>
+</div>
+
+{% else %}
+<ul class="list">
+    {% for device in devices %}
+    <li class="row device{% if not device.online %} is-off{% endif %}">
+        <div class="row-main">
+            <span class="dot" data-state="{{ 'up' if device.online else 'off' }}"></span>
+            <span class="row-body">
+                <span class="row-title">{{ device.hostname }}</span>
+                <span class="row-sub">
+                    <span>{{ device.os | capitalize if device.os == device.os | lower else device.os }}</span><span class="sep">·</span>{{ 'online' if device.online else device.last_seen }}
+                    {%- if device.user %}<span class="sep hide-sm">·</span><span class="hide-sm">{{ device.user }}</span>{% endif %}
+                    {%- if device.client_version %}<span class="sep hide-sm">·</span><span class="hide-sm">v{{ device.client_version }}</span>{% endif %}
+                </span>
+            </span>
+        </div>
+        {% if device.tailscale_ip != '—' %}
+        <button type="button" class="ip" data-ip="{{ device.tailscale_ip }}" aria-label="Copy {{ device.tailscale_ip }}">
+            <span>{{ device.tailscale_ip }}</span>{{ icon('copy') }}
+        </button>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if checked_at %}
+<p class="foot-note"><span id="ts-checked"></span>Refreshes every {{ cache_ttl }}s</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
 <script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js', { scope: '/' })
-            .catch(err => console.debug('SW registration error:', err));
+(() => {
+    const ttl = {{ cache_ttl }};
+    const checkedAt = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
+    const el = document.getElementById('ts-checked');
+    if (checkedAt && el) el.textContent = 'Checked ' + new Date(checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ';
+    if (ttl) setTimeout(() => location.reload(), (ttl + 2) * 1000);
+
+    document.querySelectorAll('.ip').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(btn.dataset.ip);
+                btn.classList.add('is-copied');
+                setTimeout(() => btn.classList.remove('is-copied'), 1400);
+            } catch {}
+        });
     });
-}
+})();
 </script>
-</body>
-</html>
+{% endblock %}
