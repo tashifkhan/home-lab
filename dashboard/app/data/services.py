@@ -127,7 +127,9 @@ SERVICES: list[dict] = [
         "app": "qBittorrent",
         "desc": "Download client",
         "port": 4203,
-        "public": "torrent.arr.tashif.codes",
+        # torrent.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "downloads",
         "icon": "download",
         "num": 6,
@@ -140,7 +142,9 @@ SERVICES: list[dict] = [
         "app": "Prowlarr",
         "desc": "Indexer manager",
         "port": 4204,
-        "public": "crawl.arr.tashif.codes",
+        # crawl.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "downloads",
         "icon": "search",
         "num": 7,
@@ -154,7 +158,9 @@ SERVICES: list[dict] = [
         "app": "Sonarr",
         "desc": "TV series",
         "port": 4205,
-        "public": "shows.arr.tashif.codes",
+        # shows.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "library",
         "icon": "monitor",
         "num": 8,
@@ -167,7 +173,9 @@ SERVICES: list[dict] = [
         "app": "Radarr",
         "desc": "Films",
         "port": 4206,
-        "public": "movies.arr.tashif.codes",
+        # movies.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "library",
         "icon": "film",
         "num": 9,
@@ -180,7 +188,9 @@ SERVICES: list[dict] = [
         "app": "Lidarr",
         "desc": "Audio library",
         "port": 4207,
-        "public": "music.arr.tashif.codes",
+        # music.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "library",
         "icon": "music",
         "num": 10,
@@ -193,7 +203,9 @@ SERVICES: list[dict] = [
         "app": "Readarr",
         "desc": "eBooks",
         "port": 4208,
-        "public": "books.arr.tashif.codes",
+        # books.arr.tashif.codes fails TLS: Cloudflare's certificate covers one
+        # subdomain level only. Tailscale link until it moves to a one-level name.
+        "public": None,
         "category": "library",
         "icon": "book",
         "num": 11,
