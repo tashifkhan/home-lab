@@ -33,7 +33,8 @@
             <span class="dot" data-state="{{ 'up' if device.online else 'off' }}"></span>
             <span class="row-body">
                 <span class="row-title">{{ device.hostname }}
-                    {%- if battery and device.hostname == battery_host %}
+                    {%- set battery = batteries.get(device.tailscale_ip) %}
+                    {%- if battery %}
                     <span class="battery{% if battery.percent <= 20 and not battery.charging %} is-low{% endif %}" title="Battery {{ battery.status | lower }}">{{ icon('bolt' if battery.charging else 'battery', 'i') }}{{ battery.percent }}%</span>
                     {%- endif %}</span>
                 <span class="row-sub">

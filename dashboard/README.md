@@ -56,3 +56,20 @@ docker compose up -d    # prod
 
 Config comes from `.env` (see `.env.example`): dashboard password, JWT secret,
 and Tailscale OAuth credentials for the network page.
+
+## Battery levels
+
+The Network page shows a battery level next to any device that reports one.
+The home server reads its own from `/sys/class/power_supply`. Other machines
+run `agents/battery_agent.py`, which serves `GET /battery` on their Tailscale
+IP at port 8399. The dashboard polls every IP in `BATTERY_AGENT_IPS`, which
+defaults to `MAC_AIR_TS_IP`.
+
+To install the agent on a Mac:
+
+```
+dashboard/agents/install-mac.sh
+```
+
+It copies the script to `~/.local/bin/battery-agent` and loads the
+`sh.taf.battery-agent` launchd agent, bound to the Mac's Tailscale IP only.

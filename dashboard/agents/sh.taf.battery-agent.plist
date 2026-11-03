@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>sh.taf.battery-agent</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>__HOME__/.local/bin/battery-agent</string>
+        <string>__TS_IP__</string>
+        <string>8399</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- Binding fails until Tailscale is up after boot; launchd retries. -->
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+    <key>StandardErrorPath</key>
+    <string>/tmp/battery-agent.log</string>
+</dict>
+</plist>
