@@ -32,7 +32,10 @@
         <div class="row-main">
             <span class="dot" data-state="{{ 'up' if device.online else 'off' }}"></span>
             <span class="row-body">
-                <span class="row-title">{{ device.hostname }}</span>
+                <span class="row-title">{{ device.hostname }}
+                    {%- if battery and device.hostname == battery_host %}
+                    <span class="battery{% if battery.percent <= 20 and not battery.charging %} is-low{% endif %}" title="Battery {{ battery.status | lower }}">{{ icon('bolt' if battery.charging else 'battery', 'i') }}{{ battery.percent }}%</span>
+                    {%- endif %}</span>
                 <span class="row-sub">
                     <span>{{ device.os | capitalize if device.os == device.os | lower else device.os }}</span><span class="sep">·</span>{{ 'online' if device.online else device.last_seen }}
                     {%- if device.user %}<span class="sep hide-sm">·</span><span class="hide-sm">{{ device.user }}</span>{% endif %}

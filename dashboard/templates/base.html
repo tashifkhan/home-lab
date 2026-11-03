@@ -18,14 +18,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/app.css?v=4" />
+    <link rel="stylesheet" href="/static/app.css?v=5" />
 </head>
 <body>
 {% block shell %}
 <header class="top">
     <div class="wrap top-inner">
         <a href="/" class="brand" aria-label="Dashboard">
-            <span class="brand-mark"></span>
+            {{ icon('flame', 'brand-mark') }}
             <span>arr<span class="accent">.tashif</span>.codes</span>
         </a>
         <nav class="top-nav" aria-label="Primary">

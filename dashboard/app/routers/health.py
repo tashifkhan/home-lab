@@ -25,7 +25,7 @@ async def _ping(client: httpx.AsyncClient, service: dict) -> tuple[str, bool]:
     # its admin on :8320 answers /healthz with no auth).
     port = service.get("health_port", service["port"])
     host = _primary_host(service)
-    url = f"{proto}://{host}:{port}{path}"
+    url = service.get("health_url") or f"{proto}://{host}:{port}{path}"
     svc_id = service["name"].lower()
     try:
         resp = await client.get(url, follow_redirects=False)

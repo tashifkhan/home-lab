@@ -15,7 +15,7 @@
         </span>
         <span class="row-slug">{{ svc.short_path }}</span>
     </a>
-    {%- if svc.has_public %}
+    {%- if svc.has_public and svc.has_local %}
     <a class="row-alt" href="{{ svc.local_url }}" title="{{ svc.local_display }}" target="_blank" rel="noopener noreferrer" aria-label="Open {{ svc.name }} over Tailscale">local</a>
     {%- endif %}
 </li>

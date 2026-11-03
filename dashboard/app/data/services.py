@@ -258,21 +258,10 @@ SERVICES: list[dict] = [
         "category": "productivity",
         "icon": "pdf",
         "num": 15,
-        # LAN-only bind; Tailscale :3000 is Forgejo
-        "local_host": _HOME_LAN_IP,
-        "hosts": ["home-server"],
-    },
-    {
-        "name": "Press",
-        "slug": "press",
-        "aliases": ["pressroom", "write"],
-        "app": "Pressroom",
-        "desc": "Markdown editor",
-        "port": 3100,
-        "public": None,
-        "category": "productivity",
-        "icon": "pen",
-        "num": 16,
+        # No host port: BentoPDF is only reachable through nginx-proxy-manager,
+        # so skip the local link and health-check the public hostname.
+        "local": False,
+        "health_url": "https://pdf.taf.sh",
         "hosts": ["home-server"],
     },
     # ── sites & tools ────────────────────────────────────────
@@ -331,7 +320,9 @@ SERVICES: list[dict] = [
         "category": "ai",
         "icon": "zap",
         "num": 20,
-        "health_path": "/v1/models",
+        # Unauthenticated, unlogged relay probe: 200 when the relay can
+        # route, 503 when its upstream is down.
+        "health_path": "/readyz",
         "hosts": ["mac-air"],
     },
     {
@@ -345,6 +336,7 @@ SERVICES: list[dict] = [
         "category": "ai",
         "icon": "terminal",
         "num": 21,
+        "health_path": "/healthz",
         "hosts": ["mac-air"],
     },
     {
@@ -422,6 +414,7 @@ def _enrich(service: dict) -> dict:
         # Compact mono label; full URL stays on href / title
         "local_display": f"{host}:{port}",
         "has_public": bool(public),
+        "has_local": service.get("local", True),
         "public_url": public_url,
         "public_display": public,
         "aliases": service.get("aliases", []),

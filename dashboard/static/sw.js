@@ -1,10 +1,10 @@
-const CACHE_NAME = 'arr-dashboard-v4';
+const CACHE_NAME = 'arr-dashboard-v5';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
   '/manifest.webmanifest?v=3',
   '/static/offline.html',
-  '/static/app.css?v=4',
+  '/static/app.css?v=5',
   '/static/favicon.png',
   '/static/favicon.png?v=3',
   '/static/icons/icon-192x192.png',

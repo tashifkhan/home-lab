@@ -38,7 +38,6 @@ key or a key shadows a real route (`login`, `api`, `static`, …).
 | `/office` | Office · Nextcloud Office | `/nextcloud-office` |
 | `/docs` | Docs · Euro-Office | `/eurooffice`, `/euro-office` |
 | `/pdf` | PDF · BentoPDF | `/bentopdf` |
-| `/press` | Press · Pressroom | `/pressroom`, `/write` |
 | `/search` | Search · SearXNG | `/searx`, `/searxng` |
 | `/dump` | Dump · dump.lab | `/zine` |
 | `/git` | Git · Forgejo | `/forgejo`, `/repo` |

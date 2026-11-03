@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.config import settings
 from app.deps.auth import verify_token
+from app.services.battery import BATTERY_HOST, read_battery
 from app.services.tailscale import _DEVICE_CACHE_TTL, get_devices
 
 router = APIRouter(tags=["tailscale"])
@@ -38,6 +39,8 @@ async def tailscale_page(
             "cache_ttl": _DEVICE_CACHE_TTL,
             "error": error,
             "tailnet": settings.tailscale_tailnet,
+            "battery": read_battery(),
+            "battery_host": BATTERY_HOST,
         },
     )
 
