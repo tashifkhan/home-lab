@@ -18,14 +18,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/app.css?v=5" />
+    <link rel="stylesheet" href="/static/app.css?v=6" />
+    <script>
+    // Slide left or right between tabs depending on their order.
+    (() => {
+        const order = { dashboard: 0, network: 1, links: 2 };
+        const cur = order["{{ active | default('', true) }}"];
+        const read = () => { try { return sessionStorage.getItem("tab"); } catch { return null; } };
+        addEventListener("pagereveal", (e) => {
+            const prev = read();
+            if (!e.viewTransition || cur === undefined || prev === null || !e.viewTransition.types) return;
+            if (+prev !== cur) e.viewTransition.types.add(cur > +prev ? "forward" : "back");
+        });
+        addEventListener("pageshow", () => { try { if (cur !== undefined) sessionStorage.setItem("tab", cur); } catch {} });
+    })();
+    </script>
+    <script type="speculationrules">{"prefetch": [{"where": {"href_matches": ["/", "/tailscale", "/go"]}, "eagerness": "moderate"}]}</script>
 </head>
 <body>
 {% block shell %}
 <header class="top">
     <div class="wrap top-inner">
         <a href="/" class="brand" aria-label="Dashboard">
-            {{ icon('flame', 'brand-mark') }}
+            <img class="brand-mark" src="/static/icons/icon-192x192.png?v=3" alt="" width="24" height="24" decoding="async">
             <span>arr<span class="accent">.tashif</span>.codes</span>
         </a>
         <nav class="top-nav" aria-label="Primary">

@@ -34,6 +34,7 @@ body {
     font: 400 15px/1.45 var(--sans);
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* no double-tap zoom delay */
 }
 ::selection { background: rgba(232, 160, 64, 0.28); }
 
@@ -75,8 +76,8 @@ code.accent { color: var(--accent); background: rgba(232, 160, 64, 0.1); }
 .top-inner { display: flex; align-items: center; gap: 28px; height: 52px; }
 
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
-.brand-mark { flex: none; width: 18px; height: 18px; color: var(--accent); filter: drop-shadow(0 0 6px rgba(232, 160, 64, 0.35)); }
-.brand-mark.lg { width: 30px; height: 30px; }
+.brand-mark { flex: none; display: block; width: 24px; height: 24px; border-radius: 50%; }
+.brand-mark.lg { width: 44px; height: 44px; }
 
 .top-nav { display: none; gap: 4px; }
 .top-nav a { padding: 6px 10px; border-radius: 8px; font-size: 14px; color: var(--muted); transition: color .15s, background-color .15s; }
@@ -106,6 +107,9 @@ code.accent { color: var(--accent); background: rgba(232, 160, 64, 0.1); }
 .tabbar a { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; font-size: 11px; font-weight: 500; color: var(--faint); transition: color .15s; }
 .tabbar a .i { width: 22px; height: 22px; }
 .tabbar a[aria-current="page"] { color: var(--text); }
+.tabbar a, .top-nav a, .brand { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.tabbar a .i { transition: transform .15s ease-out, color .15s; }
+.tabbar a:active .i { transform: scale(0.88); }
 .tabbar a[aria-current="page"] .i { color: var(--accent); }
 
 @media (min-width: 720px) { .tabbar { display: none; } }
@@ -181,6 +185,8 @@ p.head-note { display: block; line-height: 1.6; }
 }
 a.row-main:hover { background: rgba(255, 255, 255, 0.025); }
 a.row-main:active { background: rgba(255, 255, 255, 0.05); }
+.chip:active, .ip:active, .row-alt:active, .icon-btn:active { transform: scale(0.96); }
+.chip, .ip, .row-alt, .icon-btn { transition-property: color, background-color, border-color, transform; transition-duration: .15s; }
 
 .tile {
     position: relative; flex: none;
@@ -305,10 +311,43 @@ a.row-main:active { background: rgba(255, 255, 255, 0.05); }
 
 /* ── motion ──────────────────────────────────────────── */
 
+/* Page changes use cross-document view transitions (Safari 18.2+, Chrome 126+).
+   The top bar and tab bar stay put; only the page content moves. */
 @media (prefers-reduced-motion: no-preference) {
     @view-transition { navigation: auto; }
-    ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 160ms; }
+
+    .top { view-transition-name: top; }
+    .tabbar { view-transition-name: tabbar; }
+    .page, .login-card { view-transition-name: page; }
+
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+    /* Bars swap instantly. A crossfade of two near-identical images dims them in WebKit. */
+    ::view-transition-group(top), ::view-transition-group(tabbar) { animation: none; }
+    ::view-transition-old(top), ::view-transition-old(tabbar) { animation: none; opacity: 0; }
+    ::view-transition-new(top), ::view-transition-new(tabbar) { animation: none; }
+    ::view-transition-group(page) { animation: none; }
+
+    ::view-transition-old(page) { animation: vt-out 100ms ease-in both; }
+    ::view-transition-new(page) { animation: vt-in 280ms cubic-bezier(.2, .8, .2, 1) 80ms both; }
+
+    html:active-view-transition-type(forward)::view-transition-old(page) { animation-name: vt-out-left; }
+    html:active-view-transition-type(forward)::view-transition-new(page) { animation-name: vt-in-right; }
+    html:active-view-transition-type(back)::view-transition-old(page) { animation-name: vt-out-right; }
+    html:active-view-transition-type(back)::view-transition-new(page) { animation-name: vt-in-left; }
+
+    /* Browsers without view transitions get a plain entrance on load. */
+    @supports not (view-transition-name: page) {
+        .page, .login-card { animation: vt-in 300ms cubic-bezier(.2, .8, .2, 1) both; }
+    }
 }
+
+@keyframes vt-in       { from { opacity: 0; transform: translateY(10px); } }
+@keyframes vt-out      { to   { opacity: 0; } }
+@keyframes vt-in-right { from { opacity: 0; transform: translateX(24px); } }
+@keyframes vt-in-left  { from { opacity: 0; transform: translateX(-24px); } }
+@keyframes vt-out-left { to   { opacity: 0; transform: translateX(-16px); } }
+@keyframes vt-out-right{ to   { opacity: 0; transform: translateX(16px); } }
+
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { transition: none !important; animation: none !important; }
 }
