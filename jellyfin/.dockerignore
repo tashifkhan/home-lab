@@ -1,0 +1,5 @@
+*
+!Dockerfile.dashboard-css
+!webpack.dashboard-css.cjs
+!patches/
+!patches/dashboard-custom-css.patch

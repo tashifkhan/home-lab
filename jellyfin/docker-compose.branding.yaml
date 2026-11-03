@@ -1,0 +1,6 @@
+services:
+  jellyfin:
+    image: home-lab/jellyfin:12.3-dashboard-css
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard-css
