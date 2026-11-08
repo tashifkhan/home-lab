@@ -5,138 +5,67 @@
     {{ ui.head("Network · arr.tashif.codes") }}
 </head>
 
-{%- macro copy_btn(ip) -%}
-<button type="button" onclick="copyIP(this, '{{ ip }}')" title="Copy IP" aria-label="Copy {{ ip }}"
-        class="m3-icon-btn m3-icon-btn--sm m3-state -my-2">{{ ui.icon('copy', 'w-[18px] h-[18px]') }}</button>
-{%- endmacro -%}
-
-{%- macro online_chip(online) -%}
-{% if online %}
-<span class="m3-pill m3-pill--tonal !h-7 !text-[12px]"><span class="m3-dot m3-dot--ok"></span>Online</span>
-{% else %}
-<span class="m3-pill !h-7 !text-[12px]"><span class="m3-dot"></span>Offline</span>
-{% endif %}
-{%- endmacro -%}
-
 <body class="m3">
 {{ ui.appbar('network', 'Network') }}
 
 <div class="m3-page">
     <section class="m3-hero">
         <h1 class="m3-display">Network</h1>
-        {% if total > 0 %}
-        <div class="flex flex-wrap items-center gap-2 mt-5">
-            <span class="m3-pill m3-pill--tonal"><span class="m3-dot m3-dot--ok"></span>{{ online_count }} of {{ total }} online</span>
-        </div>
-        {% endif %}
+        <div id="hero-pills" class="flex flex-wrap items-center gap-2 mt-5 min-h-8"></div>
     </section>
 
-    <main>
-        {% if error %}
-        <div class="m3-card m3-card--static !bg-[var(--md-error-container)] !text-[var(--md-on-error-container)]">
-            <div class="flex items-center gap-3 mb-3">
-                {{ ui.icon('alert', 'w-6 h-6 shrink-0') }}
-                <div class="m3-title-lg">Could not fetch devices</div>
-            </div>
-            <div class="m3-body break-all">{{ error }}</div>
-            <div class="mt-4 flex flex-col gap-2 m3-body opacity-90">
-                <div>Tailnet: <code class="m3-code">{{ tailnet }}</code>. Set <code class="m3-code">TAILSCALE_TAILNET</code> to <code class="m3-code">-</code> or your tailnet name.</div>
-                <div>The OAuth client needs the <code class="m3-code">devices:read</code> scope. Create one at login.tailscale.com, under Settings, then OAuth clients.</div>
-            </div>
+    <main id="devices" aria-busy="true" aria-live="polite">
+        <div class="m3-loading-block">
+            {{ ui.loader() }}
+            <span class="m3-body m3-variant">Asking Tailscale for devices…</span>
         </div>
-
-        {% elif total == 0 %}
-        <div class="m3-card m3-card--static !p-10 text-center">
-            <div class="m3-shape m3-shape--2 mx-auto mb-4">{{ ui.icon('network', 'w-6 h-6') }}</div>
-            <div class="m3-title-lg">No devices found</div>
-            <div class="m3-body m3-variant mt-1.5">Check your Tailscale token and tailnet name.</div>
-        </div>
-
-        {% else %}
-        <div class="m3-section-head">
-            <h2 class="m3-headline">Devices</h2>
-            <span class="m3-count">{{ total }}</span>
-        </div>
-
-        {#- wide screens: a segmented table -#}
-        <div class="hidden sm:flex m3-list">
-            <div class="m3-list__item m3-list__head grid items-center m3-label m3-variant uppercase !tracking-wider" style="grid-template-columns: 1.3fr 1fr 11rem 5.5rem 7rem 7rem;">
-                <span>Hostname</span><span>User</span><span>Tailscale IP</span><span>OS</span><span>Status</span><span>Last seen</span>
-            </div>
-            {% for device in devices %}
-            <div class="m3-list__item grid items-center" style="grid-template-columns: 1.3fr 1fr 11rem 5.5rem 7rem 7rem;">
-                <div class="pr-4 min-w-0">
-                    <div class="m3-title-md flex items-center gap-2 min-w-0"><span class="truncate">{{ device.hostname }}</span>{%- set battery = batteries.get(device.tailscale_ip) -%}
-                    {%- if battery %} <span class="m3-battery{% if battery.percent <= 20 and not battery.charging %} is-low{% endif %}" title="Battery {{ battery.status | lower }}">{{ ui.icon('bolt' if battery.charging else 'battery', 'w-4 h-4') }}{{ battery.percent }}%</span>{% endif %}</div>
-                    {% if device.client_version %}<div class="m3-mono text-[11px] m3-outline-text mt-0.5">v{{ device.client_version }}</div>{% endif %}
-                </div>
-                <div class="pr-4 m3-mono text-[13px] m3-variant truncate">{{ device.user }}</div>
-                <div class="flex items-center gap-1">
-                    <span class="m3-mono text-[13px] font-medium">{{ device.tailscale_ip }}</span>
-                    {% if device.tailscale_ip != '—' %}{{ copy_btn(device.tailscale_ip) }}{% endif %}
-                </div>
-                <div class="m3-body m3-variant">{{ device.os | capitalize if device.os == device.os | lower else device.os }}</div>
-                <div>{{ online_chip(device.online) }}</div>
-                <div class="m3-mono text-[12px] m3-variant">{{ device.last_seen }}</div>
-            </div>
-            {% endfor %}
-        </div>
-
-        {#- phones: one segmented list item per device -#}
-        <div class="sm:hidden m3-list">
-            {% for device in devices %}
-            <div class="m3-list__item m3-enter !p-4" style="--i: {{ [loop.index0, 12] | min }}">
-                <div class="flex items-center gap-3">
-                    <div class="m3-shape m3-shape--sm m3-shape--{{ loop.index0 % 4 }} {{ '' if device.online else 'opacity-60' }}">{{ ui.icon('monitor', 'w-5 h-5') }}</div>
-                    <div class="min-w-0 flex-1">
-                        <div class="m3-title-md flex items-center gap-2 min-w-0"><span class="truncate">{{ device.hostname }}</span>{%- set battery = batteries.get(device.tailscale_ip) -%}
-                    {%- if battery %} <span class="m3-battery{% if battery.percent <= 20 and not battery.charging %} is-low{% endif %}" title="Battery {{ battery.status | lower }}">{{ ui.icon('bolt' if battery.charging else 'battery', 'w-4 h-4') }}{{ battery.percent }}%</span>{% endif %}</div>
-                        <div class="flex items-center gap-1 m3-mono text-[13px] m3-variant">
-                            <span>{{ device.tailscale_ip }}</span>
-                            {% if device.tailscale_ip != '—' %}{{ copy_btn(device.tailscale_ip) }}{% endif %}
-                        </div>
-                    </div>
-                    {{ online_chip(device.online) }}
-                </div>
-                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 pl-[52px] m3-mono text-[12px] m3-outline-text">
-                    <span>{{ device.os | capitalize if device.os == device.os | lower else device.os }}</span><span>·</span><span>{{ device.last_seen }}</span>
-                    {% if device.user %}<span>·</span><span class="truncate">{{ device.user }}</span>{% endif %}
-                    {% if device.client_version %}<span>·</span><span>v{{ device.client_version }}</span>{% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-
-        {% if checked_at %}
-        <div class="mt-5 px-1 flex flex-wrap items-center justify-between gap-2 m3-body m3-outline-text">
-            <span>Cached for {{ cache_ttl }}s, refreshes on its own</span>
-            <span id="ts-checked"></span>
-        </div>
-        {% endif %}
     </main>
-
 </div>
 
 {{ ui.navbar('network') }}
 
 <script>
-    const CACHE_TTL = {{ cache_ttl }};
-    const checkedAt = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
-    if (checkedAt) {
-        const el = document.getElementById('ts-checked');
-        if (el) el.textContent = 'Checked ' + new Date(checkedAt).toLocaleTimeString();
-    }
-    if (CACHE_TTL) setTimeout(() => location.reload(), (CACHE_TTL + 2) * 1000);
+(() => {
+    const box = document.getElementById("devices");
+    const pills = document.getElementById("hero-pills");
     const CHECK = '{{ ui.icon("check", "w-[18px] h-[18px]") | replace("\n", "") }}';
-    function copyIP(btn, ip) {
+    let timer;
+
+    async function load() {
+        clearTimeout(timer);
+        let ttl = 60;
+        try {
+            const r = await fetch("/tailscale/devices", { headers: { Accept: "text/html" } });
+            if (r.status === 401) { location.href = "/login?next=/tailscale"; return; }
+            ttl = +r.headers.get("X-Refresh-After") || ttl;
+            box.innerHTML = await r.text();
+        } catch {
+            if (box.getAttribute("aria-busy") === "true") {
+                box.innerHTML = '<p class="m3-body m3-variant text-center py-10">Could not reach the dashboard. Retrying…</p>';
+            }
+            ttl = 10;
+        }
+        box.setAttribute("aria-busy", "false");
+        const summary = box.querySelector("#devices-summary");
+        pills.innerHTML = summary ? summary.innerHTML : "";
+        box.querySelectorAll(".js-checked").forEach(el => {
+            el.textContent = "Checked " + new Date(el.dataset.at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        });
+        timer = setTimeout(load, (ttl + 2) * 1000);
+    }
+
+    window.copyIP = (btn, ip) => {
         navigator.clipboard.writeText(ip).then(() => {
             const orig = btn.innerHTML;
             btn.innerHTML = CHECK;
-            if (window.m3Snackbar) m3Snackbar('Copied ' + ip);
+            if (window.m3Snackbar) m3Snackbar("Copied " + ip);
             setTimeout(() => { btn.innerHTML = orig; }, 1500);
         });
-    }
+    };
+
+    load();
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+})();
 </script>
 </body>
 </html>

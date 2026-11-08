@@ -36,6 +36,28 @@
     addEventListener("scroll", sync, { passive: true });
     sync();
 
+    // Navigation feedback: the tapped tab lights up at once and a progress
+    // bar runs under the app bar until the next page paints.
+    const root = document.documentElement;
+    function navigating(on) { root.classList.toggle("is-navigating", on); }
+    document.addEventListener("click", (e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const a = e.target.closest("a[href]");
+        if (!a || a.target === "_blank" || a.hasAttribute("download")) return;
+        const url = new URL(a.href, location.href);
+        if (url.origin !== location.origin || (url.pathname === location.pathname && url.search === location.search)) return;
+        const tab = a.closest(".m3-navitem, .m3-tab");
+        if (tab) {
+            document.querySelectorAll(".m3-navitem[aria-current], .m3-tab[aria-current]").forEach((el) => el.removeAttribute("aria-current"));
+            document.querySelectorAll(`.m3-navitem[href="${a.getAttribute("href")}"], .m3-tab[href="${a.getAttribute("href")}"]`)
+                .forEach((el) => el.setAttribute("aria-current", "page"));
+        }
+        navigating(true);
+    });
+    document.addEventListener("submit", (e) => { if (!e.defaultPrevented) navigating(true); });
+    // Coming back through the back/forward cache should not show a stale bar.
+    addEventListener("pageshow", () => navigating(false));
+
     // Snackbar
     let snack, timer;
     window.m3Snackbar = function (text) {
