@@ -1,28 +1,54 @@
-{% extends "base.html" %}
-{% from "_icons.html" import icon %}
-{% set active = 'links' %}
+{%- import "_ui.html" as ui -%}
+<!doctype html>
+<html lang="en">
+<head>
+    {{ ui.head("Links · arr.tashif.codes") }}
+</head>
 
-{% block title %}Links · arr.tashif.codes{% endblock %}
+<body class="m3">
+{{ ui.appbar('links', 'Links') }}
 
-{% block content %}
-<div class="head">
-    <h1>Links</h1>
-    <p class="head-sub head-note">Type <code class="accent">arr.tashif.codes/t3</code> to jump straight to a service. The public hostname wins, Tailscale is the fallback.</p>
+<div class="m3-page">
+    <section class="m3-hero">
+        <h1 class="m3-display">Links</h1>
+        <p class="m3-body m3-variant mt-4 max-w-[60ch]">
+            Short paths on this host jump straight to a service. They use the public hostname when there is one
+            and the Tailscale address otherwise. <code class="m3-code m3-code--primary">arr.tashif.codes/t3</code>
+            and <code class="m3-code">/go/t3</code> both work.
+        </p>
+    </section>
+
+    <main>
+        <div class="m3-section-head">
+            <h2 class="m3-headline">Shortcuts</h2>
+            <span class="m3-count">{{ shortcuts | length }}</span>
+        </div>
+
+        <div class="m3-list">
+            {% for s in shortcuts %}
+            <a href="{{ s.short_path }}" title="{{ s.target_url }}"
+               class="m3-list__item m3-state m3-enter grid grid-cols-[1fr_auto] sm:grid-cols-[9.5rem_1fr_auto] items-center gap-x-4 gap-y-2" style="--i: {{ [loop.index0, 12] | min }}">
+                <span class="m3-mono text-[13px] font-semibold m3-primary-text col-span-2 sm:col-span-1">{{ s.short_path }}</span>
+                <span class="min-w-0">
+                    <span class="flex items-baseline gap-2 min-w-0">
+                        <span class="m3-title-md shrink-0">{{ s.name }}</span>
+                        <span class="m3-body m3-variant truncate">{{ s.app }}</span>
+                    </span>
+                    <span class="block m3-mono text-[11px] m3-outline-text truncate mt-1">{{ s.target_url | replace('https://', '') | replace('http://', '') }}</span>
+                    {% if s.aliases %}
+                    <span class="block m3-mono text-[10px] m3-outline-text opacity-70 truncate mt-0.5">
+                        {% for a in s.aliases %}/{{ a }}{{ ' ' if not loop.last }}{% endfor %}
+                    </span>
+                    {% endif %}
+                </span>
+                <span class="m3-chip !font-sans !h-7 !text-[11px] uppercase tracking-wider {{ 'm3-chip--primary' if s.target_kind == 'public' else 'm3-chip--tonal' }}">{{ s.target_kind }}</span>
+            </a>
+            {% endfor %}
+        </div>
+    </main>
+
 </div>
 
-<ul class="list">
-    {% for s in shortcuts %}
-    <li class="row">
-        <a class="row-main" href="{{ s.short_path }}" title="{{ s.target_url }}">
-            <span class="link-slug">{{ s.short_path }}</span>
-            <span class="row-body">
-                <span class="row-title">{{ s.name }}<span class="kind" data-kind="{{ s.target_kind }}">{{ s.target_kind }}</span></span>
-                <span class="row-sub mono">{{ s.target_url | replace('https://', '') | replace('http://', '') }}</span>
-                {% if s.aliases %}<span class="row-sub mono faint">{% for a in s.aliases %}/{{ a }}{{ ' ' if not loop.last }}{% endfor %}</span>{% endif %}
-            </span>
-            {{ icon('chevron', 'i chev') }}
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endblock %}
+{{ ui.navbar('links') }}
+</body>
+</html>

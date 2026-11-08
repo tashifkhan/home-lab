@@ -1,0 +1,33 @@
+/* Native cross-document transitions keep links, history, and form posts intact.
+   The app bar, nav bar and active nav indicator carry view-transition-names
+   (see m3.css), so they stay put or slide between pages instead of flashing. */
+@media (prefers-reduced-motion: no-preference) {
+    @view-transition {
+        navigation: auto;
+    }
+
+    ::view-transition-group(root) {
+        animation-duration: 220ms;
+        animation-timing-function: cubic-bezier(0.31, 0.94, 0.34, 1);
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 220ms;
+        animation-timing-function: cubic-bezier(0.31, 0.94, 0.34, 1);
+    }
+
+    ::view-transition-group(nav-indicator),
+    ::view-transition-group(tab-indicator) {
+        animation-duration: 420ms;
+        animation-timing-function: cubic-bezier(0.38, 1.21, 0.22, 1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+}
