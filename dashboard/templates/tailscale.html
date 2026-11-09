@@ -5,6 +5,7 @@
 {% block title %}Network · arr.tashif.codes{% endblock %}
 
 {% block content %}
+<div class="refresh-progress" id="refresh-progress" aria-hidden="true"><span></span></div>
 <div class="head head-row">
     <div class="head-titles">
         <h1>Network</h1>
@@ -72,18 +73,46 @@
     const ttl = {{ cache_ttl }};
     const checkedAt = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
     const el = document.getElementById('ts-checked');
-    if (checkedAt && el) el.textContent = 'Checked ' + new Date(checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ';
-    if (ttl) setTimeout(() => location.reload(), (ttl + 2) * 1000);
+    const topBtn = document.getElementById('refresh-top');
+    const fab = document.getElementById('refresh-fab');
+    const progress = document.getElementById('refresh-progress');
 
-    // Drop ?refresh=1 / ?fresh=1 so auto-reload doesn't force every cycle.
+    function setBusy(on) {
+        document.body.classList.toggle('is-refreshing', on);
+        for (const b of [topBtn, fab]) {
+            if (!b) continue;
+            b.classList.toggle('is-loading', on);
+            if (on) b.setAttribute('aria-disabled', 'true');
+            else b.removeAttribute('aria-disabled');
+        }
+        if (on && progress) void progress.offsetWidth; // paint the loader before the network hop
+    }
+
+    // Returning from a manual refresh (same-tab flag or ?refresh= fallback):
+    // keep the loader visible until the fresh content is painted.
+    let justRefreshed = false;
     try {
         const u = new URL(location.href);
-        if (u.searchParams.has('refresh') || u.searchParams.has('fresh')) {
+        const viaParam = u.searchParams.has('refresh') || u.searchParams.has('fresh');
+        const viaFlag = sessionStorage.getItem('ts-just-refreshed') === '1';
+        justRefreshed = viaParam || viaFlag;
+        if (viaParam) {
             u.searchParams.delete('refresh');
             u.searchParams.delete('fresh');
             history.replaceState(null, '', u.pathname + (u.search ? '?' + u.searchParams.toString() : ''));
         }
+        sessionStorage.removeItem('ts-just-refreshed');
     } catch {}
+
+    if (checkedAt && el) el.textContent = (justRefreshed ? 'Updated just now · Checked ' : 'Checked ') + new Date(checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ';
+    if (ttl) setTimeout(() => location.reload(), (ttl + 2) * 1000);
+
+    if (justRefreshed) {
+        setBusy(true);
+        const clear = () => setBusy(false);
+        if (document.readyState === 'complete') setTimeout(clear, 900);
+        else addEventListener('load', () => setTimeout(clear, 900), { once: true });
+    }
 
     document.querySelectorAll('.ip').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -95,18 +124,23 @@
         });
     });
 
-    // Manual refresh: warm the server cache via the JSON API, then reload once.
-    const topBtn = document.getElementById('refresh-top');
-    const fab = document.getElementById('refresh-fab');
+    // Manual refresh: show the loader instantly, warm the server cache via the
+    // JSON API, then reload onto fresh data. Loader state survives the reload
+    // via sessionStorage (or the ?refresh= fallback below).
     let busy = false;
     async function manualRefresh(e) {
         if (e) e.preventDefault();
-        if (busy) return;
+        if (busy || document.body.classList.contains('is-refreshing')) return;
         busy = true;
-        for (const b of [topBtn, fab]) if (b) b.classList.add('is-loading');
+        setBusy(true);
+        await new Promise(r => setTimeout(r, 60)); // let the loader paint first
         try {
-            const r = await fetch('/api/tailscale/devices?fresh=1', { headers: { 'Accept': 'application/json' } });
+            const ctrl = new AbortController();
+            const t = setTimeout(() => ctrl.abort(), 15000);
+            const r = await fetch('/api/tailscale/devices?fresh=1', { headers: { 'Accept': 'application/json' }, signal: ctrl.signal });
+            clearTimeout(t);
             if (!r.ok) throw new Error('refresh failed');
+            try { sessionStorage.setItem('ts-just-refreshed', '1'); } catch {}
             location.reload();
         } catch {
             location.href = '/tailscale?refresh=1';
