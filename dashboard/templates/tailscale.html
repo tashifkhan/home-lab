@@ -71,7 +71,7 @@
 <script>
 (() => {
     const ttl = {{ cache_ttl }};
-    const checkedAt = {{ ('"' + checked_at + '"') if checked_at else 'null' }};
+    const checkedAt = {{ checked_at | tojson }};
     const el = document.getElementById('ts-checked');
     const topBtn = document.getElementById('refresh-top');
     const fab = document.getElementById('refresh-fab');
@@ -130,8 +130,9 @@
     let busy = false;
     async function manualRefresh(e) {
         if (e) e.preventDefault();
-        if (busy || document.body.classList.contains('is-refreshing')) return;
+        if (busy) return;
         busy = true;
+        const started = performance.now();
         setBusy(true);
         await new Promise(r => setTimeout(r, 60)); // let the loader paint first
         try {
@@ -140,6 +141,9 @@
             const r = await fetch('/api/tailscale/devices?fresh=1', { headers: { 'Accept': 'application/json' }, signal: ctrl.signal });
             clearTimeout(t);
             if (!r.ok) throw new Error('refresh failed');
+            // Keep the loader up long enough to read, even on a fast local network.
+            const wait = Math.max(0, 700 - (performance.now() - started));
+            if (wait) await new Promise(r => setTimeout(r, wait));
             try { sessionStorage.setItem('ts-just-refreshed', '1'); } catch {}
             location.reload();
         } catch {
