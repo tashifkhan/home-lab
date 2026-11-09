@@ -117,6 +117,8 @@ code.accent { color: var(--accent); background: rgba(232, 160, 64, 0.1); }
 /* ── page head ───────────────────────────────────────── */
 
 .head { margin-bottom: 20px; }
+.head-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.head-titles { min-width: 0; }
 .head h1 { font-size: 30px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.1; }
 .head-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 14px; color: var(--muted); }
 p.head-note { display: block; line-height: 1.6; }
@@ -255,6 +257,45 @@ a.row-main:active { background: rgba(255, 255, 255, 0.05); }
 
 .hide-sm { display: none; }
 @media (min-width: 720px) { .hide-sm { display: inline; } }
+
+/* ── manual refresh (M3 tonal button + FAB) ───────────── */
+
+.refresh-btn {
+    flex: none; display: none; align-items: center; gap: 8px;
+    height: 40px; padding: 0 18px 0 14px; margin-top: 4px;
+    border-radius: 20px; border: 1px solid var(--line);
+    background: var(--surface-2); color: var(--text);
+    font-size: 14px; font-weight: 500; letter-spacing: 0.01em;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: background-color .15s, border-color .15s, transform .15s, box-shadow .15s;
+}
+.refresh-btn:hover { background: #232326; border-color: var(--line-2); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); }
+.refresh-btn:active { transform: scale(0.97); }
+.refresh-icon { display: inline-flex; }
+.refresh-icon .i { width: 18px; height: 18px; }
+.refresh-btn.is-loading, .fab.is-loading { pointer-events: none; }
+.refresh-btn.is-loading .refresh-icon .i { animation: spin 0.9s linear infinite; }
+
+.fab {
+    position: fixed; z-index: 30;
+    right: 20px; bottom: calc(var(--tabbar-h) + var(--safe-b) + 20px);
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 56px; height: 56px; border-radius: 18px;
+    background: var(--accent); color: #141414;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: filter .15s, transform .15s, box-shadow .15s;
+}
+.fab .i { width: 24px; height: 24px; }
+.fab:hover { filter: brightness(1.07); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.4); }
+.fab:active { transform: scale(0.94); }
+.fab.is-loading .i { animation: spin 0.9s linear infinite; }
+
+@media (min-width: 720px) {
+    .refresh-btn { display: inline-flex; }
+    .fab { display: none; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .foot-note { margin-top: 14px; padding-left: 4px; font-size: 12px; color: var(--faint); }
 

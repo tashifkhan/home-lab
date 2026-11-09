@@ -19,8 +19,15 @@ async def tailscale_page(
     if not verify_token(access_token):
         return RedirectResponse("/login", status_code=303)
 
+    qp = request.query_params
+    force = qp.get("refresh") in ("1", "true", "yes") or qp.get("fresh") in (
+        "1",
+        "true",
+        "yes",
+    )
+
     try:
-        devices, checked_at = await get_devices()
+        devices, checked_at = await get_devices(force=force)
         error = None
 
     except Exception as exc:
@@ -74,6 +81,7 @@ async def tailscale_raw(
 
 @router.get("/api/tailscale/devices")
 async def tailscale_devices_api(
+    request: Request,
     access_token: str | None = Cookie(default=None),
 ):
     if not verify_token(access_token):
@@ -84,8 +92,15 @@ async def tailscale_devices_api(
             status_code=401,
         )
 
+    qp = request.query_params
+    force = qp.get("fresh") in ("1", "true", "yes") or qp.get("refresh") in (
+        "1",
+        "true",
+        "yes",
+    )
+
     try:
-        devices, checked_at = await get_devices()
+        devices, checked_at = await get_devices(force=force)
         return {
             "devices": devices,
             "checked_at": checked_at,

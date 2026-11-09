@@ -106,14 +106,15 @@ def _parse_device(raw: dict) -> dict:
     }
 
 
-async def get_devices() -> tuple[list[dict], str]:
+async def get_devices(force: bool = False) -> tuple[list[dict], str]:
     """Return (devices, checked_at_iso). Cached for _DEVICE_CACHE_TTL seconds."""
     global _device_cache, _device_cache_at
 
     now = datetime.now(timezone.utc)
 
     if (
-        _device_cache is not None
+        not force
+        and _device_cache is not None
         and _device_cache_at is not None
         and (now - _device_cache_at).total_seconds() < _DEVICE_CACHE_TTL
     ):

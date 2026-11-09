@@ -5,11 +5,16 @@
 {% block title %}Network · arr.tashif.codes{% endblock %}
 
 {% block content %}
-<div class="head">
-    <h1>Network</h1>
-    {% if total > 0 %}
-    <p class="head-sub"><span class="dot dot-live" data-state="{{ 'up' if online_count == total else 'warn' }}"></span>{{ online_count }} of {{ total }} devices online</p>
-    {% endif %}
+<div class="head head-row">
+    <div class="head-titles">
+        <h1>Network</h1>
+        {% if total > 0 %}
+        <p class="head-sub"><span class="dot dot-live" data-state="{{ 'up' if online_count == total else 'warn' }}"></span>{{ online_count }} of {{ total }} devices online</p>
+        {% endif %}
+    </div>
+    <a class="refresh-btn" id="refresh-top" href="/tailscale?refresh=1" aria-label="Refresh devices">
+        <span class="refresh-icon">{{ icon('refresh') }}</span><span class="refresh-label">Refresh</span>
+    </a>
 </div>
 
 {% if error %}
@@ -57,6 +62,8 @@
 {% if checked_at %}
 <p class="foot-note"><span id="ts-checked"></span>Refreshes every {{ cache_ttl }}s</p>
 {% endif %}
+
+<a class="fab" id="refresh-fab" href="/tailscale?refresh=1" aria-label="Refresh devices">{{ icon('refresh') }}</a>
 {% endblock %}
 
 {% block scripts %}
@@ -68,6 +75,16 @@
     if (checkedAt && el) el.textContent = 'Checked ' + new Date(checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ';
     if (ttl) setTimeout(() => location.reload(), (ttl + 2) * 1000);
 
+    // Drop ?refresh=1 / ?fresh=1 so auto-reload doesn't force every cycle.
+    try {
+        const u = new URL(location.href);
+        if (u.searchParams.has('refresh') || u.searchParams.has('fresh')) {
+            u.searchParams.delete('refresh');
+            u.searchParams.delete('fresh');
+            history.replaceState(null, '', u.pathname + (u.search ? '?' + u.searchParams.toString() : ''));
+        }
+    } catch {}
+
     document.querySelectorAll('.ip').forEach(btn => {
         btn.addEventListener('click', async () => {
             try {
@@ -77,6 +94,25 @@
             } catch {}
         });
     });
+
+    // Manual refresh: warm the server cache via the JSON API, then reload once.
+    const topBtn = document.getElementById('refresh-top');
+    const fab = document.getElementById('refresh-fab');
+    let busy = false;
+    async function manualRefresh(e) {
+        if (e) e.preventDefault();
+        if (busy) return;
+        busy = true;
+        for (const b of [topBtn, fab]) if (b) b.classList.add('is-loading');
+        try {
+            const r = await fetch('/api/tailscale/devices?fresh=1', { headers: { 'Accept': 'application/json' } });
+            if (!r.ok) throw new Error('refresh failed');
+            location.reload();
+        } catch {
+            location.href = '/tailscale?refresh=1';
+        }
+    }
+    for (const b of [topBtn, fab]) if (b) b.addEventListener('click', manualRefresh);
 })();
 </script>
 {% endblock %}
