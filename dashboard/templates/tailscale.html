@@ -1,156 +1,235 @@
-{% extends "base.html" %}
-{% from "_icons.html" import icon %}
-{% set active = 'network' %}
+{%- import "_ui.html" as ui -%}
+<!doctype html>
+<html lang="en">
+<head>
+    {{ ui.head("Network · arr.tashif.codes") }}
+</head>
 
-{% block title %}Network · arr.tashif.codes{% endblock %}
+{%- macro copy_btn(ip) -%}
+<button type="button" onclick="copyIP(this, '{{ ip }}')" title="Copy IP" aria-label="Copy {{ ip }}"
+        class="m3-icon-btn m3-icon-btn--sm m3-state -my-2">{{ ui.icon('copy', 'w-[18px] h-[18px]') }}</button>
+{%- endmacro -%}
 
-{% block content %}
-<div class="refresh-progress" id="refresh-progress" aria-hidden="true"><span></span></div>
-<div class="head head-row">
-    <div class="head-titles">
-        <h1>Network</h1>
-        {% if total > 0 %}
-        <p class="head-sub"><span class="dot dot-live" data-state="{{ 'up' if online_count == total else 'warn' }}"></span>{{ online_count }} of {{ total }} devices online</p>
-        {% endif %}
-    </div>
-    <a class="refresh-btn" id="refresh-top" href="/tailscale?refresh=1" aria-label="Refresh devices">
-        <span class="refresh-icon">{{ icon('refresh') }}</span><span class="refresh-label">Refresh</span>
-    </a>
-</div>
-
-{% if error %}
-<div class="notice notice-bad">
-    <p class="notice-title">Couldn't fetch devices</p>
-    <p class="notice-body mono">{{ error }}</p>
-    <p class="notice-body">Tailnet is <code>{{ tailnet }}</code>. Set <code>TAILSCALE_TAILNET</code> to <code>-</code> or your tailnet name. The OAuth client needs the <code>devices:read</code> scope.</p>
-</div>
-
-{% elif total == 0 %}
-<div class="notice">
-    <p class="notice-title">No devices found</p>
-    <p class="notice-body">Check the Tailscale token and tailnet name.</p>
-</div>
-
+{%- macro online_chip(online) -%}
+{% if online %}
+<span class="m3-pill m3-pill--tonal !h-7 !text-[12px]"><span class="m3-dot m3-dot--ok"></span>Online</span>
 {% else %}
-<ul class="list">
-    {% for device in devices %}
-    <li class="row device{% if not device.online %} is-off{% endif %}">
-        <div class="row-main">
-            <span class="dot" data-state="{{ 'up' if device.online else 'off' }}"></span>
-            <span class="row-body">
-                <span class="row-title">{{ device.hostname }}
-                    {%- set battery = batteries.get(device.tailscale_ip) %}
-                    {%- if battery %}
-                    <span class="battery{% if battery.percent <= 20 and not battery.charging %} is-low{% endif %}" title="Battery {{ battery.status | lower }}">{{ icon('bolt' if battery.charging else 'battery', 'i') }}{{ battery.percent }}%</span>
-                    {%- endif %}</span>
-                <span class="row-sub">
-                    <span>{{ device.os | capitalize if device.os == device.os | lower else device.os }}</span><span class="sep">·</span>{{ 'online' if device.online else device.last_seen }}
-                    {%- if device.user %}<span class="sep hide-sm">·</span><span class="hide-sm">{{ device.user }}</span>{% endif %}
-                    {%- if device.client_version %}<span class="sep hide-sm">·</span><span class="hide-sm">v{{ device.client_version }}</span>{% endif %}
-                </span>
-            </span>
+<span class="m3-pill !h-7 !text-[12px]"><span class="m3-dot"></span>Offline</span>
+{% endif %}
+{%- endmacro -%}
+
+{%- macro battery_chip(device) -%}
+{%- set battery = batteries.get(device.tailscale_ip) -%}
+{%- if battery -%}
+<span class="m3-pill !h-7 !text-[12px] {{ 'm3-pill--error' if battery.percent <= 20 and not battery.charging }}"
+      title="Battery {{ battery.status | lower }}">
+    {{ ui.icon('bolt' if battery.charging else 'battery', 'w-[15px] h-[15px]') }}{{ battery.percent }}%
+</span>
+{%- endif -%}
+{%- endmacro -%}
+
+<body class="m3">
+<div class="m3-progress" id="refresh-progress" aria-hidden="true"><span></span></div>
+
+{% call ui.appbar('network', 'Network') %}
+<button type="button" id="refresh-top" class="m3-icon-btn m3-state" title="Refresh devices" aria-label="Refresh devices">
+    {{ ui.icon('refresh', 'w-[22px] h-[22px]') }}
+</button>
+{% endcall %}
+
+<div class="m3-page">
+    <section class="m3-hero">
+        <h1 class="m3-display">Network</h1>
+        {% if total > 0 %}
+        <div class="flex flex-wrap items-center gap-2 mt-5">
+            <span class="m3-pill m3-pill--tonal"><span class="m3-dot m3-dot--ok"></span>{{ online_count }} of {{ total }} online</span>
         </div>
-        {% if device.tailscale_ip != '—' %}
-        <button type="button" class="ip" data-ip="{{ device.tailscale_ip }}" aria-label="Copy {{ device.tailscale_ip }}">
-            <span>{{ device.tailscale_ip }}</span>{{ icon('copy') }}
-        </button>
         {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
+    </section>
 
-{% if checked_at %}
-<p class="foot-note"><span id="ts-checked"></span>Refreshes every {{ cache_ttl }}s</p>
-{% endif %}
+    <main>
+        {% if error %}
+        <div class="m3-card m3-card--static !bg-[var(--md-error-container)] !text-[var(--md-on-error-container)]">
+            <div class="flex items-center gap-3 mb-3">
+                {{ ui.icon('alert', 'w-6 h-6 shrink-0') }}
+                <div class="m3-title-lg">Could not fetch devices</div>
+            </div>
+            <div class="m3-body break-all">{{ error }}</div>
+            <div class="mt-4 flex flex-col gap-2 m3-body opacity-90">
+                <div>Tailnet: <code class="m3-code">{{ tailnet }}</code>. Set <code class="m3-code">TAILSCALE_TAILNET</code> to <code class="m3-code">-</code> or your tailnet name.</div>
+                <div>The OAuth client needs the <code class="m3-code">devices:read</code> scope. Create one at login.tailscale.com, under Settings, then OAuth clients.</div>
+            </div>
+        </div>
 
-<a class="fab" id="refresh-fab" href="/tailscale?refresh=1" aria-label="Refresh devices">{{ icon('refresh') }}</a>
-{% endblock %}
+        {% elif total == 0 %}
+        <div class="m3-card m3-card--static !p-10 text-center">
+            <div class="m3-shape m3-shape--2 mx-auto mb-4">{{ ui.icon('network', 'w-6 h-6') }}</div>
+            <div class="m3-title-lg">No devices found</div>
+            <div class="m3-body m3-variant mt-1.5">Check your Tailscale token and tailnet name.</div>
+        </div>
 
-{% block scripts %}
+        {% else %}
+        <div class="m3-section-head">
+            <h2 class="m3-headline">Devices</h2>
+            <span class="m3-count">{{ total }}</span>
+        </div>
+
+        {#- wide screens: a segmented table -#}
+        <div class="hidden sm:flex m3-list">
+            <div class="m3-list__item m3-list__head grid items-center m3-label m3-variant uppercase !tracking-wider" style="grid-template-columns: 1.3fr 1fr 11rem 5.5rem 7rem 7rem;">
+                <span>Hostname</span><span>User</span><span>Tailscale IP</span><span>OS</span><span>Status</span><span>Last seen</span>
+            </div>
+            {% for device in devices %}
+            <div class="m3-list__item grid items-center" style="grid-template-columns: 1.3fr 1fr 11rem 5.5rem 7rem 7rem;">
+                <div class="pr-4 min-w-0">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="m3-title-md truncate">{{ device.hostname }}</span>
+                        {{ battery_chip(device) }}
+                    </div>
+                    {% if device.client_version %}<div class="m3-mono text-[11px] m3-outline-text mt-0.5">v{{ device.client_version }}</div>{% endif %}
+                </div>
+                <div class="pr-4 m3-mono text-[13px] m3-variant truncate">{{ device.user }}</div>
+                <div class="flex items-center gap-1">
+                    <span class="m3-mono text-[13px] font-medium">{{ device.tailscale_ip }}</span>
+                    {% if device.tailscale_ip != '—' %}{{ copy_btn(device.tailscale_ip) }}{% endif %}
+                </div>
+                <div class="m3-body m3-variant capitalize">{{ device.os }}</div>
+                <div>{{ online_chip(device.online) }}</div>
+                <div class="m3-mono text-[12px] m3-variant">{{ device.last_seen }}</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {#- phones: one segmented list item per device -#}
+        <div class="sm:hidden m3-list">
+            {% for device in devices %}
+            <div class="m3-list__item m3-enter !p-4" style="--i: {{ [loop.index0, 12] | min }}">
+                <div class="flex items-center gap-3">
+                    <div class="m3-shape m3-shape--sm m3-shape--{{ loop.index0 % 4 }} {{ '' if device.online else 'opacity-60' }}">{{ ui.icon('monitor', 'w-5 h-5') }}</div>
+                    <div class="min-w-0 flex-1">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="m3-title-md truncate">{{ device.hostname }}</span>
+                            {{ battery_chip(device) }}
+                        </div>
+                        <div class="flex items-center gap-1 m3-mono text-[13px] m3-variant">
+                            <span>{{ device.tailscale_ip }}</span>
+                            {% if device.tailscale_ip != '—' %}{{ copy_btn(device.tailscale_ip) }}{% endif %}
+                        </div>
+                    </div>
+                    {{ online_chip(device.online) }}
+                </div>
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 pl-[52px] m3-mono text-[12px] m3-outline-text">
+                    <span class="capitalize">{{ device.os }}</span><span>·</span><span>{{ device.last_seen }}</span>
+                    {% if device.user %}<span>·</span><span class="truncate">{{ device.user }}</span>{% endif %}
+                    {% if device.client_version %}<span>·</span><span>v{{ device.client_version }}</span>{% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if checked_at %}
+        <div class="mt-5 px-1 flex flex-wrap items-center justify-between gap-2 m3-body m3-outline-text">
+            <span>Cached for {{ cache_ttl }}s, refreshes on its own</span>
+            <span id="ts-checked"></span>
+        </div>
+        {% endif %}
+    </main>
+
+</div>
+
+<button type="button" id="refresh-fab" class="m3-fab m3-state" title="Refresh devices" aria-label="Refresh devices">
+    {{ ui.icon('refresh', 'w-6 h-6') }}
+</button>
+
+{{ ui.navbar('network') }}
+
 <script>
-(() => {
-    const ttl = {{ cache_ttl }};
-    const checkedAt = {{ checked_at | tojson }};
-    const el = document.getElementById('ts-checked');
-    const topBtn = document.getElementById('refresh-top');
-    const fab = document.getElementById('refresh-fab');
-    const progress = document.getElementById('refresh-progress');
+    const CACHE_TTL = {{ cache_ttl }};
+    const CHECKED_AT = {{ checked_at | tojson }};
+    const CHECK = '{{ ui.icon("check", "w-[18px] h-[18px]") | replace("\n", "") }}';
 
-    function setBusy(on) {
-        document.body.classList.toggle('is-refreshing', on);
-        for (const b of [topBtn, fab]) {
-            if (!b) continue;
-            b.classList.toggle('is-loading', on);
-            if (on) b.setAttribute('aria-disabled', 'true');
-            else b.removeAttribute('aria-disabled');
-        }
-        if (on && progress) void progress.offsetWidth; // paint the loader before the network hop
-    }
-
-    // Returning from a manual refresh (same-tab flag or ?refresh= fallback):
-    // keep the loader visible until the fresh content is painted.
-    let justRefreshed = false;
-    try {
-        const u = new URL(location.href);
-        const viaParam = u.searchParams.has('refresh') || u.searchParams.has('fresh');
-        const viaFlag = sessionStorage.getItem('ts-just-refreshed') === '1';
-        justRefreshed = viaParam || viaFlag;
-        if (viaParam) {
-            u.searchParams.delete('refresh');
-            u.searchParams.delete('fresh');
-            history.replaceState(null, '', u.pathname + (u.search ? '?' + u.searchParams.toString() : ''));
-        }
-        sessionStorage.removeItem('ts-just-refreshed');
-    } catch {}
-
-    if (checkedAt && el) el.textContent = (justRefreshed ? 'Updated just now · Checked ' : 'Checked ') + new Date(checkedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' · ';
-    if (ttl) setTimeout(() => location.reload(), (ttl + 2) * 1000);
-
-    if (justRefreshed) {
-        setBusy(true);
-        const clear = () => setBusy(false);
-        if (document.readyState === 'complete') setTimeout(clear, 900);
-        else addEventListener('load', () => setTimeout(clear, 900), { once: true });
-    }
-
-    document.querySelectorAll('.ip').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            try {
-                await navigator.clipboard.writeText(btn.dataset.ip);
-                btn.classList.add('is-copied');
-                setTimeout(() => btn.classList.remove('is-copied'), 1400);
-            } catch {}
+    function copyIP(btn, ip) {
+        navigator.clipboard.writeText(ip).then(() => {
+            const orig = btn.innerHTML;
+            btn.innerHTML = CHECK;
+            if (window.m3Snackbar) m3Snackbar('Copied ' + ip);
+            setTimeout(() => { btn.innerHTML = orig; }, 1500);
         });
-    });
-
-    // Manual refresh: show the loader instantly, warm the server cache via the
-    // JSON API, then reload onto fresh data. Loader state survives the reload
-    // via sessionStorage (or the ?refresh= fallback below).
-    let busy = false;
-    async function manualRefresh(e) {
-        if (e) e.preventDefault();
-        if (busy) return;
-        busy = true;
-        const started = performance.now();
-        setBusy(true);
-        await new Promise(r => setTimeout(r, 60)); // let the loader paint first
-        try {
-            const ctrl = new AbortController();
-            const t = setTimeout(() => ctrl.abort(), 15000);
-            const r = await fetch('/api/tailscale/devices?fresh=1', { headers: { 'Accept': 'application/json' }, signal: ctrl.signal });
-            clearTimeout(t);
-            if (!r.ok) throw new Error('refresh failed');
-            // Keep the loader up long enough to read, even on a fast local network.
-            const wait = Math.max(0, 700 - (performance.now() - started));
-            if (wait) await new Promise(r => setTimeout(r, wait));
-            try { sessionStorage.setItem('ts-just-refreshed', '1'); } catch {}
-            location.reload();
-        } catch {
-            location.href = '/tailscale?refresh=1';
-        }
     }
-    for (const b of [topBtn, fab]) if (b) b.addEventListener('click', manualRefresh);
-})();
+
+    (() => {
+        const topBtn = document.getElementById('refresh-top');
+        const fab = document.getElementById('refresh-fab');
+        const progress = document.getElementById('refresh-progress');
+        const checkedEl = document.getElementById('ts-checked');
+
+        function setBusy(on) {
+            document.body.classList.toggle('is-refreshing', on);
+            for (const b of [topBtn, fab]) {
+                if (!b) continue;
+                b.classList.toggle('is-loading', on);
+                if (on) b.setAttribute('aria-disabled', 'true');
+                else b.removeAttribute('aria-disabled');
+            }
+            if (on && progress) void progress.offsetWidth;
+        }
+
+        // Returning from a manual refresh (same-tab flag or ?refresh= fallback):
+        // keep the progress bar up until the fresh content is painted.
+        let justRefreshed = false;
+        try {
+            const u = new URL(location.href);
+            const viaParam = u.searchParams.has('refresh') || u.searchParams.has('fresh');
+            justRefreshed = viaParam || sessionStorage.getItem('ts-just-refreshed') === '1';
+            if (viaParam) {
+                u.searchParams.delete('refresh');
+                u.searchParams.delete('fresh');
+                history.replaceState(null, '', u.pathname + (u.search ? '?' + u.searchParams.toString() : ''));
+            }
+            sessionStorage.removeItem('ts-just-refreshed');
+        } catch {}
+
+        if (CHECKED_AT && checkedEl) {
+            const time = new Date(CHECKED_AT).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            checkedEl.textContent = (justRefreshed ? 'Updated just now · Checked ' : 'Checked ') + time;
+        }
+        if (CACHE_TTL) setTimeout(() => location.reload(), (CACHE_TTL + 2) * 1000);
+
+        if (justRefreshed) {
+            setBusy(true);
+            const clear = () => setBusy(false);
+            if (document.readyState === 'complete') setTimeout(clear, 900);
+            else addEventListener('load', () => setTimeout(clear, 900), { once: true });
+        }
+
+        let busy = false;
+        async function manualRefresh(e) {
+            if (e) e.preventDefault();
+            if (busy) return;
+            busy = true;
+            const started = performance.now();
+            setBusy(true);
+            try {
+                const ctrl = new AbortController();
+                const timer = setTimeout(() => ctrl.abort(), 15000);
+                const r = await fetch('/api/tailscale/devices?fresh=1', {
+                    headers: { 'Accept': 'application/json' },
+                    signal: ctrl.signal,
+                });
+                clearTimeout(timer);
+                if (!r.ok) throw new Error('refresh failed');
+                // Hold the loader long enough to read, even on a fast local network.
+                const wait = Math.max(0, 700 - (performance.now() - started));
+                if (wait) await new Promise(r => setTimeout(r, wait));
+                try { sessionStorage.setItem('ts-just-refreshed', '1'); } catch {}
+                location.reload();
+            } catch {
+                location.href = '/tailscale?refresh=1';
+            }
+        }
+        for (const b of [topBtn, fab]) if (b) b.addEventListener('click', manualRefresh);
+    })();
 </script>
-{% endblock %}
+</body>
+</html>

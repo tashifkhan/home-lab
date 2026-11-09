@@ -1,83 +1,182 @@
-{% extends "base.html" %}
-{% from "_icons.html" import icon %}
-{% set active = 'dashboard' %}
+{%- import "_ui.html" as ui -%}
+<!doctype html>
+<html lang="en">
+<head>
+    {{ ui.head("arr.tashif.codes · home lab · home-server + MacBook Air") }}
+</head>
 
-{% block title %}arr.tashif.codes · home lab{% endblock %}
-
-{%- macro row(svc) -%}
-{%- set q = [svc.name, svc.app, svc.desc, svc.slug] + svc.aliases -%}
-<li class="row" data-svc="{{ svc.name | lower }}" data-q="{{ q | join(' ') | lower }}">
-    <a class="row-main" href="{{ svc.target_url }}" title="{{ svc.target_url }}" target="_blank" rel="noopener noreferrer">
-        <span class="tile">{{ icon(svc.icon) }}<span class="dot svc-status"></span></span>
-        <span class="row-body">
-            <span class="row-title">{{ svc.name }}</span>
-            <span class="row-sub">{{ svc.app }}<span class="sep">·</span>{{ svc.desc }}</span>
-        </span>
-        <span class="row-slug">{{ svc.short_path }}</span>
-    </a>
-    {%- if svc.has_public and svc.has_local %}
-    <a class="row-alt" href="{{ svc.local_url }}" title="{{ svc.local_display }}" target="_blank" rel="noopener noreferrer" aria-label="Open {{ svc.name }} over Tailscale">local</a>
-    {%- endif %}
-</li>
+{%- macro link_btn(label, url, display, variant) -%}
+{%- set is_local = variant == 'local' -%}
+<a href="{{ url }}" title="{{ url }}" target="_blank" rel="noopener noreferrer"
+   class="m3-btn m3-state {{ 'm3-btn--tonal' if is_local else 'm3-btn--filled' }}">
+    <span class="m3-btn__label">{{ label }}</span>
+    <span class="m3-btn__url">{{ display }}</span>
+    <span class="m3-btn__icon">{{ ui.icon('arrow' if is_local else 'external', 'w-4 h-4') }}</span>
+</a>
 {%- endmacro -%}
 
-{% block content %}
-<div class="head">
-    <h1>Services</h1>
-    <p class="head-sub"><span class="dot dot-live" id="up-dot"></span><span id="up-count">{{ total }} services</span></p>
+{%- macro short_chip(svc) -%}
+<a href="{{ svc.short_path }}" title="{{ svc.short_path }} → {{ svc.target_url }}" target="_blank" rel="noopener noreferrer"
+   class="m3-chip">{{ svc.short_path }}</a>
+{%- endmacro -%}
+
+{%- macro status(svc) -%}
+<span class="svc-status m3-dot block m-2" title="Health"></span>
+{%- endmacro -%}
+
+{%- macro card_v(svc, i) -%}
+<div class="m3-card m3-enter flex flex-col" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}">
+    <div class="flex items-start justify-between mb-4">
+        <div class="m3-shape m3-shape--{{ svc.num % 4 }}">{{ ui.icon(svc.icon, "w-6 h-6") }}</div>
+        {{ status(svc) }}
+    </div>
+    <div class="m3-title-lg">{{ svc.name }}</div>
+    <div class="m3-body m3-variant mt-1">{{ svc.app }} · {{ svc.desc }}</div>
+    <div class="flex items-center gap-2 mt-3 mb-4 min-w-0">
+        <span class="m3-mono text-[11px] m3-outline-text truncate">{{ svc.hosts_display }}</span>
+        {{ short_chip(svc) }}
+    </div>
+    <div class="flex flex-col gap-2 mt-auto">
+        {{ link_btn("Local", svc.local_url, svc.local_display, "local") }}
+        {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "public") }}{% endif %}
+    </div>
 </div>
+{%- endmacro -%}
 
-<label class="search">
-    {{ icon('search') }}
-    <input id="q" type="search" placeholder="Search" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Search services">
-    <kbd>/</kbd>
-</label>
-
-<div class="groups">
-    {% for section in sections %}
-    <section class="group">
-        <h2 class="group-label">{{ section.label }}</h2>
-        <ul class="list">
-            {% for svc in section.services %}{{ row(svc) }}{% endfor %}
-        </ul>
-        {% if loop.first and pinned_folders %}
-        <div class="folders" aria-label="Pinned folders">
-            {% for folder in pinned_folders %}
-            <a class="chip" href="{{ folder.public_url }}" title="{{ folder.public_url }}" target="_blank" rel="noopener noreferrer" data-q="{{ folder.name | lower }} folder drive">
-                {{ icon('folder') }}<span>{{ folder.name }}</span>
-            </a>
-            {% endfor %}
+{%- macro card_w(svc, i) -%}
+<div class="m3-card m3-enter flex flex-col lg:flex-row lg:items-center gap-4 sm:px-6" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}">
+    <div class="flex items-center gap-4 min-w-0 flex-1">
+        <div class="m3-shape m3-shape--{{ svc.num % 4 }}">{{ ui.icon(svc.icon, "w-6 h-6") }}</div>
+        <div class="min-w-0 flex-1">
+            <div class="flex items-baseline gap-2.5 min-w-0">
+                <span class="m3-title-lg shrink-0">{{ svc.name }}</span>
+                <span class="hidden sm:inline m3-body m3-variant truncate">{{ svc.app }} · {{ svc.desc }}</span>
+            </div>
+            <div class="sm:hidden m3-body m3-variant mt-0.5">{{ svc.app }} · {{ svc.desc }}</div>
+            <div class="flex items-center gap-2 mt-2 min-w-0">
+                <span class="m3-mono text-[11px] m3-outline-text truncate">{{ svc.hosts_display }}</span>
+                {{ short_chip(svc) }}
+            </div>
         </div>
-        {% endif %}
-    </section>
-    {% endfor %}
-    <p class="empty" id="empty" hidden>Nothing matches.</p>
+        <div class="self-start lg:hidden">{{ status(svc) }}</div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full lg:w-[27rem] shrink-0 min-w-0">
+        {{ link_btn("Local", svc.local_url, svc.local_display, "local") }}
+        {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "public") }}{% else %}<div class="hidden sm:block"></div>{% endif %}
+    </div>
+    <div class="hidden lg:block shrink-0">{{ status(svc) }}</div>
 </div>
-{% endblock %}
+{%- endmacro -%}
 
-{% block scripts %}
+{%- macro folder_chip(folder) -%}
+<a href="{{ folder.public_url }}" target="_blank" rel="noopener noreferrer"
+   title="{{ folder.dir_display }}" class="m3-assist-chip m3-state"
+   data-local="{{ folder.local_url }}" data-public="{{ folder.public_url }}" data-name="{{ folder.name }}">
+    {{ ui.icon('folder', 'm3-assist-chip__icon') }}{{ folder.name }}
+</a>
+{%- endmacro -%}
+
+{%- macro section_head(label, count) -%}
+<div class="m3-section-head">
+    <h2 class="m3-headline">{{ label }}</h2>
+    <span class="m3-count">{{ count }}</span>
+</div>
+{%- endmacro -%}
+
+<body class="m3">
+{{ ui.appbar('dashboard', 'Dashboard') }}
+
+<div class="m3-page">
+    <section class="m3-hero">
+        <h1 class="m3-display">arr<span class="m3-primary-text">.tashif</span>.codes</h1>
+        <div class="flex flex-wrap items-center gap-2 mt-5">
+            <span class="m3-pill m3-pill--tonal"><span id="health-dot" class="m3-dot"></span><span id="health-summary">Checking {{ total }} services…</span></span>
+        </div>
+    </section>
+
+    <main class="flex flex-col gap-10">
+        {% for section in sections %}
+        <section>
+            {{ section_head(section.label, section.services | length) }}
+            {% if section.get('wide') %}
+            <div class="flex flex-col gap-3">
+                {% for svc in section.services %}{{ card_w(svc, loop.index0) }}{% endfor %}
+            </div>
+            {% elif section.cols == 4 %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                {% for svc in section.services %}{{ card_v(svc, loop.index0) }}{% endfor %}
+            </div>
+            {% elif section.cols == 2 %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {% for svc in section.services %}{{ card_v(svc, loop.index0) }}{% endfor %}
+            </div>
+            {% endif %}
+        </section>
+        {% if loop.index == 1 and pinned_folders %}
+        <section aria-label="Pinned folders">
+            <div class="m3-chip-row">
+                {% for folder in pinned_folders %}{{ folder_chip(folder) }}{% endfor %}
+            </div>
+        </section>
+        {% endif %}
+        {% endfor %}
+    </main>
+
+</div>
+
+{{ ui.navbar('dashboard') }}
+
+<div id="folder-menu" class="m3-menu" role="menu" hidden>
+    <div class="m3-menu__title m3-label m3-variant"></div>
+    <a role="menuitem" class="m3-menu__item m3-state" data-kind="public" target="_blank" rel="noopener noreferrer">{{ ui.icon('external', 'w-5 h-5') }}Open public</a>
+    <a role="menuitem" class="m3-menu__item m3-state" data-kind="local" target="_blank" rel="noopener noreferrer">{{ ui.icon('arrow', 'w-5 h-5') }}Open on tailnet</a>
+</div>
 <script>
-(() => {
-    const total = {{ total }};
-    const rows = [...document.querySelectorAll('.row')];
-    const countEl = document.getElementById('up-count');
-    const upDot = document.getElementById('up-dot');
+(function () {
+    // Long-press (touch) or right-click a folder chip for the tailnet link.
+    const menu = document.getElementById("folder-menu");
+    const title = menu.querySelector(".m3-menu__title");
+    function close() { menu.hidden = true; menu.classList.remove("is-open"); }
+    document.querySelectorAll(".m3-assist-chip[data-local]").forEach(chip => {
+        chip.addEventListener("contextmenu", e => {
+            e.preventDefault();
+            title.textContent = chip.dataset.name;
+            menu.querySelector('[data-kind="public"]').href = chip.dataset.public;
+            menu.querySelector('[data-kind="local"]').href = chip.dataset.local;
+            menu.hidden = false;
+            const r = chip.getBoundingClientRect(), w = menu.offsetWidth;
+            menu.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + "px";
+            menu.style.top = r.bottom + 6 + "px";
+            requestAnimationFrame(() => menu.classList.add("is-open"));
+        });
+    });
+    menu.addEventListener("click", e => { if (e.target.closest("a")) setTimeout(close, 0); });
+    document.addEventListener("pointerdown", e => { if (!menu.hidden && !menu.contains(e.target)) close(); });
+    addEventListener("scroll", close, { passive: true });
+    document.addEventListener("keydown", e => { if (e.key === "Escape") close(); });
+})();
+</script>
 
+<script>
+(function () {
+    const summary = document.getElementById("health-summary");
     function apply(results) {
-        let up = 0;
-        for (const r of rows) {
-            const ok = results[r.dataset.svc];
-            if (ok === undefined) continue;
-            if (ok) up++;
-            r.querySelector('.svc-status').dataset.state = ok ? 'up' : 'down';
+        const cards = {};
+        document.querySelectorAll("[data-svc]").forEach(c => { cards[c.dataset.svc] = c.querySelectorAll(".svc-status"); });
+        let up = 0, known = 0;
+        for (const [id, ok] of Object.entries(results)) {
+            const nodes = cards[id];
+            if (!nodes) continue;
+            known++; if (ok) up++;
+            nodes.forEach(d => { d.dataset.state = ok ? "up" : "down"; });
         }
-        countEl.textContent = up === total ? `All ${total} up` : `${up} of ${total} up`;
-        upDot.dataset.state = up === total ? 'up' : 'warn';
+        const dot = document.getElementById("health-dot");
+        if (dot && known) dot.dataset.state = up === known ? "up" : "down";
+        if (summary && known) summary.textContent = up === known ? `All ${known} services up` : `${up} of ${known} services up`;
     }
-
     async function check() {
         try {
-            const r = await fetch('/api/health');
+            const r = await fetch("/api/health");
             if (!r.ok) return;
             const { results, cached_for } = await r.json();
             apply(results);
@@ -85,39 +184,7 @@
         } catch { setTimeout(check, 15000); }
     }
     check();
-
-    // Search
-    const q = document.getElementById('q');
-    const groups = [...document.querySelectorAll('.group')];
-    const empty = document.getElementById('empty');
-    q.addEventListener('input', () => {
-        const term = q.value.trim().toLowerCase();
-        let any = false;
-        for (const g of groups) {
-            let shown = 0;
-            g.querySelectorAll('[data-q]').forEach(el => {
-                const hit = !term || el.dataset.q.includes(term);
-                el.hidden = !hit;
-                if (hit && el.classList.contains('row')) shown++;
-            });
-            const folders = g.querySelector('.folders');
-            if (folders) folders.hidden = term && !folders.querySelector('.chip:not([hidden])');
-            g.hidden = !shown && !(folders && !folders.hidden);
-            any = any || !g.hidden;
-        }
-        empty.hidden = any;
-    });
-    q.addEventListener('keydown', e => {
-        if (e.key === 'Enter') {
-            const first = document.querySelector('.row:not([hidden]) .row-main');
-            if (first) window.open(first.href, '_blank', 'noopener');
-        } else if (e.key === 'Escape') {
-            q.value = ''; q.dispatchEvent(new Event('input')); q.blur();
-        }
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === '/' && document.activeElement !== q) { e.preventDefault(); q.focus(); }
-    });
 })();
 </script>
-{% endblock %}
+</body>
+</html>
