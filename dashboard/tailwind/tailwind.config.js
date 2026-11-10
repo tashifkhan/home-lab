@@ -1,5 +1,8 @@
-// Tailwind CDN config shared by every template. Colours point at the M3 tokens in m3.css.
-tailwind.config = {
+// Builds static/tw.css from the templates. Rebuild after changing Tailwind
+// classes in templates/ or static/*.js:
+//   npx -y tailwindcss@3.4.17 -c tailwind/tailwind.config.js -i tailwind/input.css -o static/tw.css --minify
+module.exports = {
+    content: ["./templates/**/*.html", "./static/**/*.js"],
     theme: {
         extend: {
             fontFamily: {

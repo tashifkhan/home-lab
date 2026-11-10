@@ -54,6 +54,13 @@ uv run main.py          # dev, :4200
 docker compose up -d    # prod
 ```
 
+Styles are prebuilt, there is no Tailwind runtime in the browser. After changing
+Tailwind classes in `templates/` or `static/*.js`, rebuild `static/tw.css`:
+
+```sh
+npx -y tailwindcss@3.4.17 -c tailwind/tailwind.config.js -i tailwind/input.css -o static/tw.css --minify
+```
+
 Config comes from `.env` (see `.env.example`): dashboard password, JWT secret,
 and Tailscale OAuth credentials for the network page.
 

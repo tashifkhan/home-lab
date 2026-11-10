@@ -19,10 +19,12 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="/static/tw.js?v=1"></script>
+{#- Fonts load without blocking first paint; text shows in the system font until they arrive. -#}
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Roboto+Flex:opsz,wdth,wght@8..144,25..151,100..1000&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <link rel="stylesheet" href="/static/m3.css?v=5" />
+{#- Prebuilt from tailwind/ (see tailwind.config.js); no runtime compiler.
+    Loads after m3.css so utilities win ties, as they did with the CDN build. -#}
+<link rel="stylesheet" href="/static/tw.css?v=1" />
 <link rel="stylesheet" href="/static/transitions.css?v=3" />
 <script src="/static/m3.js?v=3" defer></script>
 <script type="speculationrules">{"prefetch": [{"where": {"href_matches": ["/", "/tailscale", "/go"]}, "eagerness": "moderate"}]}</script>

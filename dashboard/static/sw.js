@@ -1,4 +1,4 @@
-const CACHE_NAME = 'arr-dashboard-v8';
+const CACHE_NAME = 'arr-dashboard-v9';
 const PRECACHE_ASSETS = [
   '/',
   '/manifest.webmanifest',
@@ -6,7 +6,7 @@ const PRECACHE_ASSETS = [
   '/static/offline.html',
   '/static/m3.css?v=5',
   '/static/m3.js?v=3',
-  '/static/tw.js?v=1',
+  '/static/tw.css?v=1',
   '/static/transitions.css?v=3',
   '/static/favicon.png',
   '/static/favicon.png?v=3',
@@ -120,8 +120,7 @@ self.addEventListener('fetch', (event) => {
   // External fonts and CDNs (Google Fonts, Tailwind CDN)
   if (
     url.hostname.includes('fonts.googleapis.com') ||
-    url.hostname.includes('fonts.gstatic.com') ||
-    url.hostname.includes('cdn.tailwindcss.com')
+    url.hostname.includes('fonts.gstatic.com')
   ) {
     event.respondWith(
       caches.match(request).then((cached) => {
