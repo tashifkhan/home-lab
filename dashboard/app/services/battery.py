@@ -7,6 +7,7 @@ which serves GET /battery on their Tailscale IP.
 
 import asyncio
 import os
+import time
 from pathlib import Path
 
 import httpx
@@ -61,14 +62,37 @@ async def _read_agent(client: httpx.AsyncClient, ip: str) -> dict | None:
     }
 
 
+# Agent results are cached so an offline machine (connect timeout) doesn't
+# delay every page load. Stale results are served while a refresh runs.
+_AGENT_TTL = 30.0
+_agent_cache: dict[str, dict] = {}
+_agent_cache_at = 0.0
+_refresh: asyncio.Task | None = None
+
+
+async def _refresh_agents() -> None:
+    global _agent_cache, _agent_cache_at
+    async with httpx.AsyncClient(timeout=httpx.Timeout(2.0, connect=1.5)) as client:
+        results = await asyncio.gather(*[_read_agent(client, ip) for ip in _AGENT_IPS])
+    _agent_cache = {ip: b for ip, b in zip(_AGENT_IPS, results) if b}
+    _agent_cache_at = time.monotonic()
+
+
 async def get_batteries() -> dict[str, dict]:
     """Map Tailscale IP -> {"percent", "status", "charging"} for every reachable battery."""
+    global _refresh
     out: dict[str, dict] = {}
     local = _read_local()
     if local and _LOCAL_IP:
         out[_LOCAL_IP] = local
-    if _AGENT_IPS:
-        async with httpx.AsyncClient(timeout=httpx.Timeout(2.0, connect=1.5)) as client:
-            results = await asyncio.gather(*[_read_agent(client, ip) for ip in _AGENT_IPS])
-        out.update({ip: b for ip, b in zip(_AGENT_IPS, results) if b})
+    if not _AGENT_IPS:
+        return out
+    stale = time.monotonic() - _agent_cache_at > _AGENT_TTL
+    if stale and (_refresh is None or _refresh.done()):
+        _refresh = asyncio.create_task(_refresh_agents())
+    if _agent_cache_at == 0.0:
+        # First request after start: wait for the first answer.
+        await asyncio.shield(_refresh)
+    out.update(_agent_cache)
     return out
+

@@ -7,17 +7,23 @@
     <link rel="icon" type="image/png" href="/static/favicon.png" />
     <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#0a0a0b" />
-    <meta name="color-scheme" content="dark" />
-    <link rel="stylesheet" href="/static/app.css?v=6" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="stylesheet" href="/static/m3.css?v=6" />
+    <style>
+        main { min-height: 100dvh; display: grid; place-items: center; padding: 16px; }
+        .box { width: 100%; max-width: 420px; text-align: center; }
+        .box img { width: 64px; height: 64px; border-radius: 30%; margin: 0 auto 20px; display: block; }
+        .box p { margin: 8px 0 28px; }
+    </style>
 </head>
-<body>
-<main class="login">
-    <div class="login-card">
-        <img class="brand-mark lg" src="/static/icons/icon-192x192.png?v=3" alt="" width="44" height="44" decoding="async">
-        <h1>You're offline</h1>
-        <p class="head-sub">The dashboard needs a connection to your tailnet. Reconnect and try again.</p>
-        <div class="login-form"><button class="btn" onclick="location.reload()">Retry</button></div>
+<body class="m3">
+<main>
+    <div class="m3-card m3-card--static box">
+        <img src="/static/icons/icon-192x192.png?v=3" alt="" width="64" height="64">
+        <h1 class="m3-headline">You're offline</h1>
+        <p class="m3-body m3-variant">The dashboard needs a connection to your tailnet. Reconnect and try again.</p>
+        <button class="m3-btn m3-btn--filled m3-btn--lg" onclick="location.reload()">Retry</button>
     </div>
 </main>
 </body>

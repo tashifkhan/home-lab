@@ -1,5 +1,7 @@
+import asyncio
+
 from fastapi import APIRouter, Cookie, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.config import settings
@@ -16,28 +18,37 @@ async def tailscale_page(
     request: Request,
     access_token: str | None = Cookie(default=None),
 ):
+    # Shell only, so the tab opens instantly; devices load from /tailscale/devices.
     if not verify_token(access_token):
-        return RedirectResponse("/login", status_code=303)
+        return RedirectResponse("/login?next=/tailscale", status_code=303)
+    return templates.TemplateResponse(request, "tailscale.html", {})
 
-    qp = request.query_params
-    force = qp.get("refresh") in ("1", "true", "yes") or qp.get("fresh") in (
-        "1",
-        "true",
-        "yes",
+
+@router.get("/tailscale/devices")
+async def tailscale_devices(
+    request: Request,
+    access_token: str | None = Cookie(default=None),
+):
+    if not verify_token(access_token):
+        return HTMLResponse("", status_code=401)
+
+    fresh = request.query_params.get("fresh") in ("1", "true", "yes")
+
+    async def devices_or_error():
+        try:
+            devices, checked_at = await get_devices(force=fresh)
+            return devices, checked_at, None
+        except Exception as exc:
+            return [], None, str(exc)
+
+    (devices, checked_at, error), batteries = await asyncio.gather(
+        devices_or_error(), get_batteries()
     )
-
-    try:
-        devices, checked_at = await get_devices(force=force)
-        error = None
-
-    except Exception as exc:
-        devices, checked_at, error = [], None, str(exc)
-
     online_count = sum(1 for d in devices if d["online"])
 
     return templates.TemplateResponse(
         request,
-        "tailscale.html",
+        "_devices.html",
         {
             "devices": devices,
             "checked_at": checked_at,
@@ -46,7 +57,11 @@ async def tailscale_page(
             "cache_ttl": _DEVICE_CACHE_TTL,
             "error": error,
             "tailnet": settings.tailscale_tailnet,
-            "batteries": await get_batteries(),
+            "batteries": batteries,
+        },
+        headers={
+            "Cache-Control": "no-store",
+            "X-Refresh-After": str(_DEVICE_CACHE_TTL),
         },
     )
 
@@ -92,15 +107,10 @@ async def tailscale_devices_api(
             status_code=401,
         )
 
-    qp = request.query_params
-    force = qp.get("fresh") in ("1", "true", "yes") or qp.get("refresh") in (
-        "1",
-        "true",
-        "yes",
-    )
+    fresh = request.query_params.get("fresh") in ("1", "true", "yes")
 
     try:
-        devices, checked_at = await get_devices(force=force)
+        devices, checked_at = await get_devices(force=fresh)
         return {
             "devices": devices,
             "checked_at": checked_at,

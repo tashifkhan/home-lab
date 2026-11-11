@@ -1,4 +1,5 @@
 import os
+from urllib.parse import unquote
 
 # Host IPs come from the environment (see .env.example)
 _HOME_TS_IP = os.environ.get("HOME_SERVER_TS_IP", "home-server")
@@ -445,6 +446,8 @@ def _enrich_folder(folder: dict) -> dict:
         "local_display": f"{_DRIVE_IP}:4433",
         "public_url": f"{_DRIVE_PUBLIC}{folder['path']}",
         "public_display": "drive.tashif.codes",
+        # "/Documents/Phone%20Docs/VRecords/Call" -> "Documents/Phone Docs/VRecords/Call"
+        "dir_display": unquote(folder["path"].partition("dir=")[2]).strip("/"),
     }
 
 

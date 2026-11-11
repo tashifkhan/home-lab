@@ -34,7 +34,7 @@
                         <span class="m3-title-md shrink-0">{{ s.name }}</span>
                         <span class="m3-body m3-variant truncate">{{ s.app }}</span>
                     </span>
-                    <span class="block m3-mono text-[11px] m3-outline-text truncate mt-1">{{ s.target_url }}</span>
+                    <span class="block m3-mono text-[11px] m3-outline-text truncate mt-1">{{ s.target_url | replace('https://', '') | replace('http://', '') }}</span>
                     {% if s.aliases %}
                     <span class="block m3-mono text-[10px] m3-outline-text opacity-70 truncate mt-0.5">
                         {% for a in s.aliases %}/{{ a }}{{ ' ' if not loop.last }}{% endfor %}

@@ -24,8 +24,10 @@
 <span class="svc-status m3-dot block m-2" title="Health"></span>
 {%- endmacro -%}
 
+{%- macro q(svc) -%}{{ ([svc.name, svc.app, svc.desc, svc.slug] + svc.aliases) | join(' ') | lower }}{%- endmacro -%}
+
 {%- macro card_v(svc, i) -%}
-<div class="m3-card m3-enter flex flex-col" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}">
+<div class="m3-card m3-enter flex flex-col" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}" data-q="{{ q(svc) }}">
     <div class="flex items-start justify-between mb-4">
         <div class="m3-shape m3-shape--{{ svc.num % 4 }}">{{ ui.icon(svc.icon, "w-6 h-6") }}</div>
         {{ status(svc) }}
@@ -37,14 +39,14 @@
         {{ short_chip(svc) }}
     </div>
     <div class="flex flex-col gap-2 mt-auto">
-        {{ link_btn("Local", svc.local_url, svc.local_display, "local") }}
+        {% if svc.has_local %}{{ link_btn("Local", svc.local_url, svc.local_display, "local") }}{% endif %}
         {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "public") }}{% endif %}
     </div>
 </div>
 {%- endmacro -%}
 
 {%- macro card_w(svc, i) -%}
-<div class="m3-card m3-enter flex flex-col lg:flex-row lg:items-center gap-4 sm:px-6" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}">
+<div class="m3-card m3-enter flex flex-col lg:flex-row lg:items-center gap-4 sm:px-6" style="--i: {{ i }}" data-svc="{{ svc.name | lower }}" data-q="{{ q(svc) }}">
     <div class="flex items-center gap-4 min-w-0 flex-1">
         <div class="m3-shape m3-shape--{{ svc.num % 4 }}">{{ ui.icon(svc.icon, "w-6 h-6") }}</div>
         <div class="min-w-0 flex-1">
@@ -61,7 +63,7 @@
         <div class="self-start lg:hidden">{{ status(svc) }}</div>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full lg:w-[27rem] shrink-0 min-w-0">
-        {{ link_btn("Local", svc.local_url, svc.local_display, "local") }}
+        {% if svc.has_local %}{{ link_btn("Local", svc.local_url, svc.local_display, "local") }}{% else %}<div class="hidden sm:block"></div>{% endif %}
         {% if svc.has_public %}{{ link_btn("Public", svc.public_url, svc.public_display, "public") }}{% else %}<div class="hidden sm:block"></div>{% endif %}
     </div>
     <div class="hidden lg:block shrink-0">{{ status(svc) }}</div>
@@ -71,7 +73,7 @@
 {%- macro folder_chip(folder) -%}
 <a href="{{ folder.public_url }}" target="_blank" rel="noopener noreferrer"
    title="{{ folder.dir_display }}" class="m3-assist-chip m3-state"
-   data-local="{{ folder.local_url }}" data-public="{{ folder.public_url }}" data-name="{{ folder.name }}">
+   data-q="{{ folder.name | lower }} folder drive" data-local="{{ folder.local_url }}" data-public="{{ folder.public_url }}" data-name="{{ folder.name }}">
     {{ ui.icon('folder', 'm3-assist-chip__icon') }}{{ folder.name }}
 </a>
 {%- endmacro -%}
@@ -94,9 +96,16 @@
         </div>
     </section>
 
+    <label class="m3-search">
+        {{ ui.icon('search', 'w-6 h-6 shrink-0') }}
+        <input id="q" type="search" placeholder="Search services" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" aria-label="Search services">
+        <kbd class="hidden sm:inline-grid">/</kbd>
+        <button type="button" id="q-clear" class="m3-icon-btn m3-icon-btn--sm m3-state" aria-label="Clear search" hidden>{{ ui.icon('close', 'w-5 h-5') }}</button>
+    </label>
+
     <main class="flex flex-col gap-10">
         {% for section in sections %}
-        <section>
+        <section class="js-group">
             {{ section_head(section.label, section.services | length) }}
             {% if section.get('wide') %}
             <div class="flex flex-col gap-3">
@@ -113,13 +122,14 @@
             {% endif %}
         </section>
         {% if loop.index == 1 and pinned_folders %}
-        <section aria-label="Pinned folders">
+        <section class="js-group" aria-label="Pinned folders">
             <div class="m3-chip-row">
                 {% for folder in pinned_folders %}{{ folder_chip(folder) }}{% endfor %}
             </div>
         </section>
         {% endif %}
         {% endfor %}
+        <p id="empty" class="m3-body m3-variant text-center py-10" hidden>Nothing matches.</p>
     </main>
 
 </div>
@@ -184,6 +194,41 @@
         } catch { setTimeout(check, 15000); }
     }
     check();
+
+    // Search: filter cards and folder chips, Enter opens the first hit.
+    const q = document.getElementById("q");
+    const clear = document.getElementById("q-clear");
+    const groups = [...document.querySelectorAll(".js-group")];
+    const empty = document.getElementById("empty");
+    function filter() {
+        const term = q.value.trim().toLowerCase();
+        let any = false;
+        for (const g of groups) {
+            let shown = 0;
+            g.querySelectorAll("[data-q]").forEach(el => {
+                const hit = !term || el.dataset.q.includes(term);
+                el.hidden = !hit;
+                if (hit) shown++;
+            });
+            g.hidden = !shown;
+            any = any || shown > 0;
+        }
+        empty.hidden = any;
+        clear.hidden = !term;
+    }
+    q.addEventListener("input", filter);
+    clear.addEventListener("click", () => { q.value = ""; filter(); q.focus(); });
+    q.addEventListener("keydown", e => {
+        if (e.key === "Enter") {
+            const first = document.querySelector(".js-group:not([hidden]) [data-q]:not([hidden]) a[href]");
+            if (first) window.open(first.href, "_blank", "noopener");
+        } else if (e.key === "Escape") {
+            q.value = ""; filter(); q.blur();
+        }
+    });
+    document.addEventListener("keydown", e => {
+        if (e.key === "/" && document.activeElement !== q) { e.preventDefault(); q.focus(); }
+    });
 })();
 </script>
 </body>
