@@ -1,0 +1,25 @@
+# syntax=docker/dockerfile:1
+FROM node:24-bookworm-slim AS web
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+RUN git init . \
+    && git remote add origin https://github.com/jellyfin/jellyfin-web.git \
+    && git fetch --depth=1 origin c06cb17b274c10f9015412305edb0afdc010ae7a \
+    && git checkout --detach FETCH_HEAD
+
+COPY patches/dashboard-custom-css.patch /tmp/dashboard-custom-css.patch
+RUN git apply /tmp/dashboard-custom-css.patch
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
+COPY webpack.dashboard-css.cjs ./webpack.dashboard-css.cjs
+ENV JELLYFIN_VERSION=12.3.0-dashboard-css
+ENV NODE_OPTIONS=--max-old-space-size=2048
+RUN npm run build:check \
+    && NODE_ENV=production ./node_modules/.bin/webpack --config webpack.dashboard-css.cjs
+
+FROM lscr.io/linuxserver/jellyfin@sha256:4212ca390fbc6bd5002048d2d2ce2b8a5b1ad278ec4cbabe6519869117404308
+RUN rm -rf /usr/share/jellyfin/web/*
+COPY --from=web /src/dist/ /usr/share/jellyfin/web/

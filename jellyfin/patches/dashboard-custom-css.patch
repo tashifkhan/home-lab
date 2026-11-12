@@ -1,0 +1,20 @@
+diff --git a/src/apps/dashboard/AppLayout.tsx b/src/apps/dashboard/AppLayout.tsx
+index 8567f7e..8b69ce5 100644
+--- a/src/apps/dashboard/AppLayout.tsx
++++ b/src/apps/dashboard/AppLayout.tsx
+@@ -7,6 +7,7 @@ import React, { FC, StrictMode, useCallback, useEffect, useState } from 'react';
+ import { Outlet, useLocation } from 'react-router-dom';
+ 
+ import AppBody from 'components/AppBody';
++import CustomCss from 'components/CustomCss';
+ import OffsetAppBar from 'components/OffsetAppBar';
+ import AppToolbar from 'components/toolbar/AppToolbar';
+ import ServerButton from 'components/toolbar/ServerButton';
+@@ -113,6 +114,7 @@ export const Component: FC = () => {
+                 </Box>
+             </Box>
+             <ThemeCss dashboard />
++            <CustomCss />
+         </LocalizationProvider>
+     );
+ };
