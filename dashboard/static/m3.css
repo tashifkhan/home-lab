@@ -876,6 +876,41 @@ html.is-refreshing .m3-progress { opacity: 1; }
 .m3-refresh.is-busy .m3-loader { display: grid; }
 .m3-refresh.is-busy .m3-loader__shape { background: var(--md-on-primary-container); }
 .m3-refresh.is-busy > svg { display: none; }
+/* ── FAB (compact widths) ──────────────────────────────────── */
+/* Phones get a FAB above the nav bar; the app bar refresh is for wider screens. */
+.m3-fab {
+    position: fixed;
+    right: calc(16px + env(safe-area-inset-right, 0px));
+    bottom: calc(var(--navbar-h) + var(--safe-bottom) + 16px);
+    z-index: 45;
+    width: 56px;
+    height: 56px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: var(--shape-lg);
+    background: var(--md-primary-container);
+    color: var(--md-on-primary-container);
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.3), 0 4px 8px 3px rgb(0 0 0 / 0.15);
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    view-transition-name: fab;
+    transition: border-radius var(--dur-fast) var(--spring-fast),
+                transform var(--dur-fast) var(--spring-fast),
+                box-shadow var(--dur-effects) var(--spring-effects);
+}
+.m3-fab:active { border-radius: var(--shape-xl); transform: scale(0.94); box-shadow: 0 1px 3px rgb(0 0 0 / 0.3), 0 1px 2px rgb(0 0 0 / 0.15); }
+.m3-fab.is-busy { border-radius: var(--shape-xl); }
+.m3-fab.m3-refresh .m3-loader { width: 32px; height: 32px; }
+.m3-fab.m3-refresh .m3-loader__shape { width: 28px; height: 28px; }
+@media (max-width: 639px) {
+    .m3-appbar .js-refresh { display: none; }
+    /* the snackbar sits above the FAB, and the last card clears it */
+    body:has(.m3-fab) .m3-snackbar { bottom: calc(var(--navbar-h) + var(--safe-bottom) + 88px); }
+    .m3-page:has(~ .m3-fab) { padding-bottom: calc(var(--navbar-h) + var(--safe-bottom) + 96px); }
+}
+@media (min-width: 640px) { .m3-fab { display: none; } }
+
 #devices { transition: opacity var(--dur-effects, 200ms) ease; }
 html.is-refreshing #devices { opacity: .6; }
 html.is-navigating .m3-appbar { background: var(--md-surface-container); }

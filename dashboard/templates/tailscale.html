@@ -7,7 +7,7 @@
 
 <body class="m3">
 {% call ui.appbar('network', 'Network') %}
-<button type="button" id="refresh" class="m3-icon-btn m3-refresh m3-state" title="Refresh devices" aria-label="Refresh devices">
+<button type="button" id="refresh" class="m3-icon-btn m3-refresh m3-state js-refresh" title="Refresh devices" aria-label="Refresh devices">
     {{ ui.icon('refresh', 'w-[22px] h-[22px]') }}{{ ui.loader(label="Refreshing") }}
 </button>
 {% endcall %}
@@ -26,6 +26,10 @@
     </main>
 </div>
 
+<button type="button" class="m3-fab m3-refresh m3-state js-refresh" title="Refresh devices" aria-label="Refresh devices">
+    {{ ui.icon('refresh', 'w-6 h-6') }}{{ ui.loader(label="Refreshing") }}
+</button>
+
 {{ ui.navbar('network') }}
 
 <script>
@@ -35,7 +39,8 @@
     const CHECK = '{{ ui.icon("check", "w-[18px] h-[18px]") | replace("\n", "") }}';
     let timer;
 
-    const btn = document.getElementById("refresh");
+    // Same action from the app bar button (wide screens) and the FAB (phones).
+    const btns = document.querySelectorAll(".js-refresh");
     let busy = false;
 
     async function load(fresh = false) {
@@ -61,20 +66,19 @@
         timer = setTimeout(load, (ttl + 2) * 1000);
     }
 
-    btn.addEventListener("click", async () => {
+    async function refresh() {
         if (busy) return;
         busy = true;
-        btn.classList.add("is-busy");
-        btn.setAttribute("aria-busy", "true");
+        btns.forEach(b => { b.classList.add("is-busy"); b.setAttribute("aria-busy", "true"); });
         document.documentElement.classList.add("is-refreshing");
         // Hold the loader at least 700ms so a fast reply still reads as a refresh.
         await Promise.all([load(true), new Promise(r => setTimeout(r, 700))]);
         document.documentElement.classList.remove("is-refreshing");
-        btn.classList.remove("is-busy");
-        btn.removeAttribute("aria-busy");
+        btns.forEach(b => { b.classList.remove("is-busy"); b.removeAttribute("aria-busy"); });
         busy = false;
         if (window.m3Snackbar) m3Snackbar("Devices updated");
-    });
+    }
+    btns.forEach(b => b.addEventListener("click", refresh));
 
     window.copyIP = (btn, ip) => {
         navigator.clipboard.writeText(ip).then(() => {
