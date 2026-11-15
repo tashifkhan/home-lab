@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the 22 Forgejo themes + profile UI and deploy them to git.taf.sh.
+# Build the 26 Forgejo themes, settings dock and profile UI and deploy them to git.taf.sh.
 #
 # Usage:
 #   ./deploy.sh

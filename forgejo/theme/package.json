@@ -7,6 +7,7 @@
     "check": "bun check.mjs"
   },
   "dependencies": {
-    "@material/material-color-utilities": "0.4.0"
+    "@material/material-color-utilities": "0.4.0",
+    "web-haptics": "0.0.6"
   }
 }

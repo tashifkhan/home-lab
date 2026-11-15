@@ -196,3 +196,20 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* The same, switched on from the settings dock instead of the OS. */
+:root[data-reduce-motion] *,
+:root[data-reduce-motion] *::before,
+:root[data-reduce-motion] *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-reduce-motion]::view-transition-old(root),
+:root[data-reduce-motion]::view-transition-new(root) {
+  animation: none !important;
+}

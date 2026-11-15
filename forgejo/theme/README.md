@@ -1,7 +1,7 @@
 # Forgejo theme + profile landing
 
-Source for the git.taf.sh look: 26 themes across seven families, a floating
-theme picker, and the profile-first landing with contribution heatmap and stats.
+Source for the git.taf.sh look: 26 themes across seven families, a settings
+dock, and the profile-first landing with contribution heatmap and stats.
 
 ## Build
 
@@ -36,8 +36,15 @@ The script:
 - `src/chrome.css` — components and family flourishes.
 - `src/chroma.css` — syntax, diff and console colors.
 - `src/profile.css`, `src/profile.js` — heatmap, stats and the profile mount.
-- `src/theme-picker.css`, `src/theme-picker.js` — the floating appearance panel.
-- Guests get a local override; signed-in users post the theme to Forgejo.
+- `src/settings-dock.css`, `src/settings-dock.js` — the appearance dock in the
+  bottom-right corner: color mode, the seven families (plus Material seeds),
+  haptics and reduce motion. It mirrors the dock on taf.sh.
+- Guests keep the theme in `localStorage["crt-theme"]`. Signed-in users get the
+  new stylesheet at once and the dock posts it to Forgejo in the background.
+- Haptics (`crt-haptics`) and reduce motion (`crt-reduce-motion`, which sets
+  `data-reduce-motion` on `<html>`) are per browser. `header.tmpl` restores the
+  motion flag before paint. `web-haptics` is bundled into
+  `dist/themes/web-haptics.js` and only fetched on the first tap with haptics on.
 - `templates/` — `header.tmpl`, `footer.tmpl`, `extra_links.tmpl`.
 - `assets/fonts/` — latin woff2 files, self-hosted.
 - `assets/img/` — taf.sh logo/favicon.

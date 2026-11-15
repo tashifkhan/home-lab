@@ -153,11 +153,21 @@ async function main() {
   await mkdir(join(dist, "themes"), { recursive: true });
   await mkdir(join(dist, "img"), { recursive: true });
 
-  for (const file of ["base.css", "chrome.css", "chroma.css", "fonts.css", "profile.css", "profile.js", "theme-picker.css", "theme-picker.js"]) {
+  for (const file of ["base.css", "chrome.css", "chroma.css", "fonts.css", "profile.css", "profile.js", "settings-dock.css", "settings-dock.js"]) {
     const src = join(here, "src", file);
     if (!existsSync(src)) throw new Error(`missing ${src}`);
     await copyFile(src, join(dist, "themes", file));
   }
+
+  // web-haptics ships as two ES module chunks; fold them into one file the
+  // dock can import() on the first tap.
+  const haptics = await Bun.build({
+    entrypoints: [join(here, "node_modules", "web-haptics", "dist", "index.mjs")],
+    format: "esm",
+    minify: true,
+  });
+  if (!haptics.success) throw new Error(haptics.logs.join("\n"));
+  await writeFile(join(dist, "themes", "web-haptics.js"), await haptics.outputs[0].text());
 
   await copyDir(join(here, "assets", "fonts"), join(dist, "themes", "fonts"));
   await copyDir(join(here, "assets", "img"), join(dist, "img"));

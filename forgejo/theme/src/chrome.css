@@ -46,6 +46,35 @@ a:hover {
 #navbar #navbar-logo:hover { background: transparent !important; }
 #navbar img { image-rendering: pixelated; }
 
+/* The navbar halves are .ui.menu too, so the popover card rule further down
+   turned each into its own floating box. They sit flat in one bar. */
+#navbar .ui.menu,
+#navbar .ui.secondary.menu {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#navbar .item {
+  border-radius: 8px !important;
+  margin-block: 6px;
+}
+
+/* A wordmark next to the logo, the way taf.sh pairs its mark with its name. */
+#navbar #navbar-logo {
+  gap: 10px;
+  margin-right: 6px;
+}
+
+#navbar #navbar-logo::after {
+  content: "git.taf.sh";
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
 .page-content .ui.attached.header,
 .page-content .ui.top.attached.header {
   background: var(--title-bg) !important;
@@ -178,8 +207,21 @@ textarea:focus-visible,
   color: var(--on-accent) !important;
 }
 
-overflow-menu.ui.secondary.pointing.menu {
-  border-bottom: 1px solid var(--line);
+/* Tab strips are layout, not popovers: no card, one hairline underneath.
+   The Explore strip used to be a full-bleed card with its rounded corners
+   cut off by the viewport. */
+overflow-menu.ui.secondary.pointing.menu,
+.ui.secondary.pointing.menu {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.secondary-nav {
+  background: var(--paper) !important;
+  border-bottom: 0 !important;
 }
 
 overflow-menu .overflow-menu-items > .item {
@@ -243,21 +285,36 @@ overflow-menu .overflow-menu-items > .item.active {
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
 
-.page-content.profile .flex-list:not(#activity-feed) > .flex-item::before,
-.page-content.explore .flex-list > .flex-item::before {
-  content: "";
-  position: absolute;
-  inset: 0 18px auto;
-  height: 2px;
-  background: var(--accent);
-  opacity: 0.45;
+/* The repo icon sits in a small tinted tile instead of floating at 24px. */
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading svg,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading img,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px;
 }
 
 .page-content.profile .flex-list:not(#activity-feed) > .flex-item:hover,
 .page-content.explore .flex-list > .flex-item:hover {
   transform: translateY(-2px);
-  border-color: var(--accent);
-  box-shadow: 0 10px 24px -16px var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .page-content.profile .flex-list:not(#activity-feed) > .flex-item + .flex-item,

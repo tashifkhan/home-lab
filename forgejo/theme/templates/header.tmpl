@@ -4,6 +4,10 @@
   window.__crtSignedIn = {{if .SignedUser}}true{{else}}false{{end}};
   (function () {
     try {
+      // The settings dock's reduce motion switch, set before anything animates.
+      if (localStorage.getItem("crt-reduce-motion") === "true") {
+        document.documentElement.setAttribute("data-reduce-motion", "");
+      }
       if (!window.__crtSignedIn) {
         var pref = JSON.parse(localStorage.getItem("crt-theme") || "null");
         if (pref && pref.family) {
@@ -30,4 +34,4 @@
   })();
 </script>
 <link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/profile.css?v=5">
-<link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/theme-picker.css?v=1">
+<link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/settings-dock.css?v=2">

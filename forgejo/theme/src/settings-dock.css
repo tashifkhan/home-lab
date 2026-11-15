@@ -1,0 +1,418 @@
+/* Settings dock. Every value reads the active theme's tokens, so the panel
+   re-skins with the theme it is choosing. */
+
+.crt-dock {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 90;
+  display: grid;
+  align-items: end;
+  justify-items: end;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  transition: opacity 260ms cubic-bezier(0.16, 1, 0.3, 1), translate 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crt-dock.is-away {
+  opacity: 0;
+  translate: 0 12px;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .crt-dock { right: 24px; bottom: 24px; }
+}
+
+@media print {
+  .crt-dock { display: none; }
+}
+
+/* The panel and the folded button share one grid cell, so either can animate
+   out while the other comes in. */
+.crt-dock > * { grid-area: 1 / 1; }
+
+.crt-dock__open,
+.crt-dock__panel {
+  transition:
+    opacity 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    scale 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    translate 320ms cubic-bezier(0.16, 1, 0.3, 1),
+    display 320ms allow-discrete;
+}
+
+.crt-dock__open[hidden],
+.crt-dock__panel[hidden] {
+  display: none !important;
+  opacity: 0;
+  scale: 0.85;
+}
+
+@starting-style {
+  .crt-dock__open,
+  .crt-dock__panel {
+    opacity: 0;
+    scale: 0.85;
+  }
+}
+
+/* ---- folded ---- */
+
+.crt-dock__open {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  color: var(--ink);
+  box-shadow: 0 12px 32px -14px rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.crt-dock__open svg {
+  transition: rotate 500ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crt-dock__open:hover {
+  border-color: var(--accent);
+}
+
+.crt-dock__open:hover svg {
+  rotate: 180deg;
+}
+
+/* ---- panel ---- */
+
+.crt-dock__panel {
+  width: min(calc(100vw - 32px), 356px);
+  max-height: calc(100dvh - 96px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  transform-origin: bottom right;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  box-shadow: 0 24px 64px -24px rgb(0 0 0 / 0.5);
+  backdrop-filter: blur(18px);
+}
+
+.crt-dock__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 6px;
+}
+
+.crt-dock__eyebrow,
+.crt-dock__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+}
+
+.crt-dock__eyebrow svg { width: 13px; height: 13px; }
+
+.crt-dock__label {
+  margin: 12px 0 6px 6px;
+}
+
+.crt-dock__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.crt-dock__icon-btn:hover {
+  background: var(--hover);
+  color: var(--ink);
+}
+
+/* ---- mode ---- */
+
+.crt-dock__modes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+  margin-top: 6px;
+  padding: 3px;
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.crt-dock__mode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 6px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+
+.crt-dock__mode:hover { color: var(--ink); }
+
+.crt-dock__mode[aria-checked="true"] {
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+}
+
+/* ---- families ---- */
+
+.crt-dock__families {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.crt-dock__family {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 5px 5px 7px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 140ms ease, translate 140ms ease;
+}
+
+.crt-dock__family:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--line));
+  translate: 0 -1px;
+}
+
+.crt-dock__family[aria-checked="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* Material spans the last row, under the six fixed families. */
+.crt-dock__family[data-family="material"] {
+  grid-column: 1 / -1;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+}
+
+.crt-dock__sample {
+  display: grid;
+  gap: 5px;
+  height: 46px;
+  align-content: center;
+  padding: 0 9px;
+  border-radius: 8px;
+  background: var(--sample-paper);
+  color: var(--sample-ink);
+  font-family: var(--sample-font);
+  font-size: 19px;
+  line-height: 1;
+}
+
+.crt-dock__sample i {
+  display: block;
+  width: 26px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--sample-accent);
+}
+
+.crt-dock__family-name {
+  padding: 0 3px;
+  font-size: 11.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crt-dock__tick {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--on-accent);
+  opacity: 0;
+  scale: 0.6;
+  transition: opacity 140ms ease, scale 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crt-dock__tick svg { width: 10px; height: 10px; stroke-width: 2; }
+
+.crt-dock__family[aria-checked="true"] .crt-dock__tick {
+  opacity: 1;
+  scale: 1;
+}
+
+/* ---- material seeds ---- */
+
+.crt-dock__seeds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 8px 8px 10px;
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.crt-dock__seeds[hidden] { display: none; }
+
+.crt-dock__seed {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--seed);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12);
+  cursor: pointer;
+  transition: scale 140ms ease;
+}
+
+.crt-dock__seed:hover { scale: 1.12; }
+
+.crt-dock__seed[aria-checked="true"] {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* ---- switches ---- */
+
+.crt-dock__toggles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.crt-dock__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px 7px 8px 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+}
+
+.crt-dock__toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--ink);
+}
+
+.crt-dock__toggle-label svg {
+  flex: none;
+  color: var(--muted);
+}
+
+.crt-dock__toggle-label span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.crt-dock__switch {
+  position: relative;
+  flex: none;
+  width: 36px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--muted) 35%, var(--line));
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.crt-dock__switch[aria-checked="true"] { background: var(--accent); }
+
+.crt-dock__switch[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.crt-dock__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  transition: translate 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crt-dock__switch[aria-checked="true"] .crt-dock__knob { translate: 16px 0; }
+
+.crt-dock__status {
+  margin: 8px 6px 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.crt-dock button:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+
+/* Keep the footer's right links clear of the folded button. */
+.page-footer .right-links { padding-right: 60px; }
+
+@media (min-width: 640px) {
+  .page-footer .right-links { padding-right: 68px; }
+}
+
+/* ---- theme reveal ---- */
+
+@keyframes crt-theme-reveal {
+  from { clip-path: circle(0 at var(--vt-x, 50%) var(--vt-y, 100%)); }
+  to { clip-path: circle(var(--vt-r, 150vmax) at var(--vt-x, 50%) var(--vt-y, 100%)); }
+}
+
+:root[data-theme-switch]::view-transition-old(root) { animation: none; }
+
+:root[data-theme-switch]::view-transition-new(root) {
+  animation: 650ms cubic-bezier(0.7, 0, 0.2, 1) both crt-theme-reveal;
+}
+
+/* The dock itself repaints with the page, not on its own. */
+:root[data-theme-switch] * { view-transition-name: none !important; }
