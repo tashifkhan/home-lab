@@ -1,0 +1,100 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * built: the project · redesign: polish · v2.0.0 */
+/* Chroma + diff + console. The stock theme hardcodes these, so every custom
+   theme overrides them from the same six syntax tokens. */
+
+.chroma .k,
+.chroma .kc,
+.chroma .kd,
+.chroma .kn,
+.chroma .kp,
+.chroma .kr,
+.chroma .kt,
+.chroma .ow {
+  color: var(--syn-keyword);
+}
+
+.chroma .s,
+.chroma .s1,
+.chroma .s2,
+.chroma .sb,
+.chroma .sc,
+.chroma .sd,
+.chroma .se,
+.chroma .sh,
+.chroma .si,
+.chroma .sr,
+.chroma .ss,
+.chroma .sx,
+.chroma .dl {
+  color: var(--syn-string);
+}
+
+.chroma .m,
+.chroma .mb,
+.chroma .mf,
+.chroma .mh,
+.chroma .mi,
+.chroma .mo,
+.chroma .il {
+  color: var(--syn-number);
+}
+
+.chroma .c,
+.chroma .c1,
+.chroma .ch,
+.chroma .cm,
+.chroma .cp,
+.chroma .cpf,
+.chroma .cs {
+  color: var(--syn-comment);
+  font-style: italic;
+}
+
+.chroma .nf,
+.chroma .fm,
+.chroma .na,
+.chroma .nb {
+  color: var(--syn-function);
+}
+
+.chroma .nc,
+.chroma .nn,
+.chroma .nt,
+.chroma .nv,
+.chroma .vc,
+.chroma .vg,
+.chroma .vi {
+  color: var(--syn-type);
+}
+
+.chroma .gd {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, transparent);
+}
+
+.chroma .gi {
+  color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 12%, transparent);
+}
+
+.chroma .gh,
+.chroma .gu {
+  color: var(--accent);
+}
+
+.chroma .gp {
+  color: var(--muted);
+}
+
+.chroma .err,
+.chroma .gr {
+  color: var(--danger);
+}
+
+.code-view .lines-code,
+.code-view .lines-num,
+.code-view .lines-escape {
+  background: var(--code-bg) !important;
+}

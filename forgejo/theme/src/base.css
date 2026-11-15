@@ -1,0 +1,215 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * answered F7 · one card recipe and one field recipe are the app shell; content differs, chrome does not
+ * built: the project · redesign: polish · v2.0.0 */
+/* Shared translation from the five semantic families to Forgejo variables.
+   Loaded by every generated theme; the token block comes after this file in
+   the cascade, so var() resolves against the active theme. */
+
+:root {
+  --fonts-override: var(--font-ui);
+  --fonts-proportional: var(--font-ui);
+  --fonts-monospace: var(--font-mono);
+
+  --color-body: var(--paper);
+  --color-text: var(--ink);
+  --color-text-dark: var(--ink);
+  --color-text-light: var(--muted);
+  --color-text-light-1: color-mix(in srgb, var(--muted) 78%, var(--ink));
+  --color-text-light-2: var(--muted);
+  --color-text-light-3: color-mix(in srgb, var(--muted) 66%, var(--paper));
+  --color-placeholder-text: color-mix(in srgb, var(--muted) 72%, var(--paper));
+
+  --color-secondary: var(--line);
+  --color-secondary-dark-1: color-mix(in srgb, var(--line) 80%, var(--ink));
+  --color-secondary-dark-2: color-mix(in srgb, var(--line) 65%, var(--ink));
+  --color-secondary-dark-3: color-mix(in srgb, var(--line) 50%, var(--ink));
+  --color-secondary-dark-4: color-mix(in srgb, var(--line) 35%, var(--ink));
+  --color-secondary-light-1: color-mix(in srgb, var(--line) 80%, var(--paper));
+  --color-secondary-light-2: color-mix(in srgb, var(--line) 65%, var(--paper));
+  --color-secondary-light-3: color-mix(in srgb, var(--line) 50%, var(--paper));
+  --color-secondary-light-4: color-mix(in srgb, var(--line) 35%, var(--paper));
+
+  --color-primary: var(--accent);
+  --color-primary-contrast: var(--on-accent);
+  --color-primary-dark-1: color-mix(in srgb, var(--accent) 88%, #fff);
+  --color-primary-dark-2: color-mix(in srgb, var(--accent) 76%, #fff);
+  --color-primary-dark-3: color-mix(in srgb, var(--accent) 64%, #fff);
+  --color-primary-dark-4: color-mix(in srgb, var(--accent) 52%, #fff);
+  --color-primary-dark-5: color-mix(in srgb, var(--accent) 40%, #fff);
+  --color-primary-dark-6: color-mix(in srgb, var(--accent) 28%, #fff);
+  --color-primary-dark-7: color-mix(in srgb, var(--accent) 16%, #fff);
+  --color-primary-light-1: color-mix(in srgb, var(--accent) 88%, #000);
+  --color-primary-light-2: color-mix(in srgb, var(--accent) 76%, #000);
+  --color-primary-light-3: color-mix(in srgb, var(--accent) 64%, #000);
+  --color-primary-light-4: color-mix(in srgb, var(--accent) 52%, #000);
+  --color-primary-light-5: color-mix(in srgb, var(--accent) 40%, #000);
+  --color-primary-light-6: color-mix(in srgb, var(--accent) 28%, #000);
+  --color-primary-light-7: color-mix(in srgb, var(--accent) 16%, #000);
+  --color-primary-alpha-10: color-mix(in srgb, var(--accent) 10%, transparent);
+  --color-primary-alpha-20: color-mix(in srgb, var(--accent) 20%, transparent);
+  --color-primary-alpha-30: color-mix(in srgb, var(--accent) 30%, transparent);
+  --color-primary-alpha-40: color-mix(in srgb, var(--accent) 40%, transparent);
+  --color-primary-alpha-50: color-mix(in srgb, var(--accent) 50%, transparent);
+  --color-primary-alpha-60: color-mix(in srgb, var(--accent) 60%, transparent);
+  --color-primary-alpha-70: color-mix(in srgb, var(--accent) 70%, transparent);
+  --color-primary-alpha-80: color-mix(in srgb, var(--accent) 80%, transparent);
+  --color-primary-alpha-90: color-mix(in srgb, var(--accent) 90%, transparent);
+  --color-primary-hover: var(--color-primary-light-1);
+  --color-primary-active: var(--color-primary-light-2);
+  --color-accent: var(--highlight);
+  --color-small-accent: var(--accent);
+
+  --color-box-body: var(--surface);
+  --color-box-body-highlight: var(--surface-2);
+  --color-box-header: var(--surface-2);
+  --color-card: var(--surface);
+  --color-nav-bg: var(--nav);
+  --color-nav-hover-bg: var(--hover);
+  --color-header-wrapper: transparent;
+  --color-footer: var(--paper);
+  --color-menu: var(--surface);
+  --color-button: var(--surface-2);
+  --color-light: var(--surface-2);
+  --color-light-border: var(--line);
+  --color-hover: var(--hover);
+  --color-active: var(--active);
+
+  --color-input-background: var(--surface);
+  --color-input-border: var(--line);
+  --color-input-border-hover: var(--accent);
+  --color-input-text: var(--ink);
+
+  --color-code-bg: var(--code-bg);
+  --color-markup-code-block: var(--code-bg);
+  --color-markup-code-inline: color-mix(in srgb, var(--highlight) 30%, var(--surface));
+  --color-markup-table-row: color-mix(in srgb, var(--accent) 4%, transparent);
+  --color-expand-button: var(--surface-2);
+  --color-editor-line-highlight: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  --color-reaction-bg: color-mix(in srgb, var(--accent) 7%, transparent);
+  --color-reaction-hover-bg: color-mix(in srgb, var(--accent) 15%, transparent);
+  --color-caret: var(--accent);
+  --color-shadow: rgb(0 0 0 / 0.14);
+  --color-project-column-bg: var(--surface-2);
+  --color-overlay-backdrop: rgb(0 0 0 / 0.65);
+
+  --color-red: var(--danger);
+  --color-orange: var(--warn);
+  --color-yellow: color-mix(in srgb, var(--warn) 70%, #fff);
+  --color-green: var(--ok);
+  --color-cyan: #2aa8b8;
+  --color-blue: #3b6fd4;
+  --color-purple: #7c5cbf;
+  --color-pink: #c94f8a;
+  --color-brown: #8b5e3c;
+  --color-grey: var(--muted);
+  --color-gold: #b8860b;
+
+  --color-error-bg: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  --color-error-bg-hover: color-mix(in srgb, var(--danger) 16%, var(--surface));
+  --color-error-bg-active: color-mix(in srgb, var(--danger) 22%, var(--surface));
+  --color-error-border: color-mix(in srgb, var(--danger) 40%, var(--line));
+  --color-error-text: var(--danger);
+
+  --color-diff-added-row-bg: color-mix(in srgb, var(--ok) 12%, var(--surface));
+  --color-diff-added-row-border: color-mix(in srgb, var(--ok) 35%, var(--line));
+  --color-diff-added-word-bg: color-mix(in srgb, var(--ok) 24%, var(--surface));
+  --color-diff-removed-row-bg: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  --color-diff-removed-row-border: color-mix(in srgb, var(--danger) 35%, var(--line));
+  --color-diff-removed-word-bg: color-mix(in srgb, var(--danger) 24%, var(--surface));
+  --color-diff-moved-row-bg: color-mix(in srgb, var(--warn) 10%, var(--surface));
+  --color-diff-moved-row-border: color-mix(in srgb, var(--warn) 30%, var(--line));
+  --color-diff-inactive: color-mix(in srgb, var(--muted) 20%, var(--surface));
+
+  --color-console-bg: var(--code-bg);
+  --color-console-fg: var(--ink);
+  --color-console-fg-subtle: var(--muted);
+  --color-console-border: var(--line);
+  --color-console-menu-bg: var(--surface-2);
+  --color-console-menu-border: var(--line);
+  --color-console-hover-bg: var(--hover);
+  --color-console-active-bg: var(--active);
+
+  --color-ansi-black: #1d1f21;
+  --color-ansi-red: #cc6666;
+  --color-ansi-green: #b5bd68;
+  --color-ansi-yellow: #f0c674;
+  --color-ansi-blue: #81a2be;
+  --color-ansi-magenta: #b294bb;
+  --color-ansi-cyan: #8abeb7;
+  --color-ansi-white: #e6e6e6;
+  --color-ansi-bright-black: #4c4c4c;
+  --color-ansi-bright-red: #ff7b7b;
+  --color-ansi-bright-green: #d7e08a;
+  --color-ansi-bright-yellow: #ffe39a;
+  --color-ansi-bright-blue: #a7c5e8;
+  --color-ansi-bright-magenta: #d7b8e0;
+  --color-ansi-bright-cyan: #a6dfd8;
+  --color-ansi-bright-white: #ffffff;
+
+  --color-git: var(--accent);
+  --border-radius: var(--radius-control);
+  --border-radius-medium: var(--radius-card);
+}
+
+html {
+  background: var(--paper);
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  letter-spacing: var(--ui-letter);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) var(--paper);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--line); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+::-webkit-scrollbar-corner { background: var(--paper); }
+::-webkit-scrollbar-button { display: none; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The same, switched on from the settings dock instead of the OS. */
+:root[data-reduce-motion] *,
+:root[data-reduce-motion] *::before,
+:root[data-reduce-motion] *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0s !important;
+  transition-delay: 0s !important;
+  scroll-behavior: auto !important;
+}
+
+:root[data-reduce-motion]::view-transition-old(root),
+:root[data-reduce-motion]::view-transition-new(root) {
+  animation: none !important;
+}

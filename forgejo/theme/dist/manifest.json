@@ -1,0 +1,172 @@
+{
+  "generatedAt": "2026-11-17T08:35:55.975Z",
+  "themes": [
+    {
+      "slug": "taf-light",
+      "name": "taf.sh",
+      "mode": "light"
+    },
+    {
+      "slug": "taf-dark",
+      "name": "taf.sh",
+      "mode": "dark"
+    },
+    {
+      "slug": "dump-light",
+      "name": "Dump / zine",
+      "mode": "light"
+    },
+    {
+      "slug": "dump-dark",
+      "name": "Dump / zine",
+      "mode": "dark"
+    },
+    {
+      "slug": "sleeck-light",
+      "name": "sleeck",
+      "mode": "light"
+    },
+    {
+      "slug": "sleeck-dark",
+      "name": "sleeck",
+      "mode": "dark"
+    },
+    {
+      "slug": "simple-light",
+      "name": "Simple",
+      "mode": "light"
+    },
+    {
+      "slug": "simple-dark",
+      "name": "Simple",
+      "mode": "dark"
+    },
+    {
+      "slug": "bubblegum-light",
+      "name": "Bubblegum",
+      "mode": "light"
+    },
+    {
+      "slug": "bubblegum-dark",
+      "name": "Bubblegum",
+      "mode": "dark"
+    },
+    {
+      "slug": "sketch-light",
+      "name": "Sketch",
+      "mode": "light"
+    },
+    {
+      "slug": "sketch-dark",
+      "name": "Sketch",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-purple-light",
+      "name": "Material · Purple",
+      "mode": "light"
+    },
+    {
+      "slug": "material-purple-dark",
+      "name": "Material · Purple",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-blue-light",
+      "name": "Material · Blue",
+      "mode": "light"
+    },
+    {
+      "slug": "material-blue-dark",
+      "name": "Material · Blue",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-teal-light",
+      "name": "Material · Teal",
+      "mode": "light"
+    },
+    {
+      "slug": "material-teal-dark",
+      "name": "Material · Teal",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-green-light",
+      "name": "Material · Green",
+      "mode": "light"
+    },
+    {
+      "slug": "material-green-dark",
+      "name": "Material · Green",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-amber-light",
+      "name": "Material · Amber",
+      "mode": "light"
+    },
+    {
+      "slug": "material-amber-dark",
+      "name": "Material · Amber",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-red-light",
+      "name": "Material · Red",
+      "mode": "light"
+    },
+    {
+      "slug": "material-red-dark",
+      "name": "Material · Red",
+      "mode": "dark"
+    },
+    {
+      "slug": "material-rose-light",
+      "name": "Material · Rose",
+      "mode": "light"
+    },
+    {
+      "slug": "material-rose-dark",
+      "name": "Material · Rose",
+      "mode": "dark"
+    }
+  ],
+  "seeds": [
+    {
+      "slug": "purple",
+      "name": "Purple",
+      "hex": "#6750a4"
+    },
+    {
+      "slug": "blue",
+      "name": "Blue",
+      "hex": "#0b57d0"
+    },
+    {
+      "slug": "teal",
+      "name": "Teal",
+      "hex": "#006a6a"
+    },
+    {
+      "slug": "green",
+      "name": "Green",
+      "hex": "#386a20"
+    },
+    {
+      "slug": "amber",
+      "name": "Amber",
+      "hex": "#8b5000"
+    },
+    {
+      "slug": "red",
+      "name": "Red",
+      "hex": "#b3261e"
+    },
+    {
+      "slug": "rose",
+      "name": "Rose",
+      "hex": "#984061"
+    }
+  ]
+}

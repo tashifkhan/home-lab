@@ -1,0 +1,37 @@
+{{/* Pre-paint root redirect + profile styles. The edge rule is the primary
+     redirect; this covers direct origin / tailnet access. */}}
+<script>
+  window.__crtSignedIn = {{if .SignedUser}}true{{else}}false{{end}};
+  (function () {
+    try {
+      // The settings dock's reduce motion switch, set before anything animates.
+      if (localStorage.getItem("crt-reduce-motion") === "true") {
+        document.documentElement.setAttribute("data-reduce-motion", "");
+      }
+      if (!window.__crtSignedIn) {
+        var pref = JSON.parse(localStorage.getItem("crt-theme") || "null");
+        if (pref && pref.family) {
+          var mode = pref.mode === "system"
+            ? (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")
+            : pref.mode;
+          var slug = pref.family === "material"
+            ? "material-" + pref.seed + "-" + mode
+            : pref.family + "-" + mode;
+          var link = document.querySelector('link[rel="stylesheet"][href*="/assets/css/theme-"]');
+          if (link) {
+            var url = new URL(link.href);
+            url.pathname = "/assets/css/theme-" + slug + ".css";
+            link.href = url.href;
+          }
+          document.documentElement.dataset.theme = slug;
+        }
+      }
+      if (location.pathname === "/" && !location.search) {
+        var target = "{{if .SignedUser}}/{{.SignedUser.Name}}{{else}}/taf{{end}}?tab=repositories";
+        location.replace(target);
+      }
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/profile.css?v=5">
+<link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/settings-dock.css?v=2">

@@ -1,0 +1,531 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * built: the project · redesign: polish · v2.0.0 */
+/* Component chrome. Everything reads the active theme's semantic tokens;
+   family-only flourishes are scoped by html[data-theme^="..."]. */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  text-wrap: balance;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+#navbar {
+  background: var(--nav) !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#navbar .item {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  border-radius: 0 !important;
+}
+
+#navbar .item:hover,
+#navbar .item.active {
+  background: var(--hover) !important;
+  color: var(--accent) !important;
+}
+
+#navbar #navbar-logo:hover { background: transparent !important; }
+#navbar img { image-rendering: pixelated; }
+
+/* The navbar halves are .ui.menu too, so the popover card rule further down
+   turned each into its own floating box. They sit flat in one bar. */
+#navbar .ui.menu,
+#navbar .ui.secondary.menu {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#navbar .item {
+  border-radius: 8px !important;
+  margin-block: 6px;
+}
+
+/* A wordmark next to the logo, the way taf.sh pairs its mark with its name. */
+#navbar #navbar-logo {
+  gap: 10px;
+  margin-right: 6px;
+}
+
+#navbar #navbar-logo::after {
+  content: "git.taf.sh";
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.page-content .ui.attached.header,
+.page-content .ui.top.attached.header {
+  background: var(--title-bg) !important;
+  color: var(--title-fg) !important;
+  border: var(--border-card) !important;
+  border-bottom: 0 !important;
+  border-radius: var(--radius-card) var(--radius-card) 0 0 !important;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ui.attached.segment,
+.ui.attached.header + .ui.segment {
+  border-color: var(--line) !important;
+  border-radius: 0 0 var(--radius-card) var(--radius-card) !important;
+  background: var(--surface) !important;
+}
+
+.ui.segment,
+.ui.card,
+.ui.cards > .card,
+.ui.message {
+  background: var(--surface) !important;
+  border: var(--border-card) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.ui.divider { border-color: var(--line) !important; }
+
+.ui.button {
+  border-radius: var(--button-radius) !important;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: var(--button-transform);
+  box-shadow: none;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.ui.button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--hover);
+}
+
+.ui.primary.button {
+  background: var(--accent) !important;
+  color: var(--on-accent) !important;
+  border-color: var(--accent) !important;
+  box-shadow: none;
+}
+
+.ui.primary.button:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--ink)) !important;
+  color: var(--on-accent) !important;
+}
+
+.ui.button:active {
+  transform: translateY(1px);
+}
+
+.ui.button:disabled,
+.ui.button[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ui.label,
+.ui.labels .label {
+  border-radius: var(--radius-control) !important;
+  border: 1px solid var(--line) !important;
+  background: var(--surface-2) !important;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+input[type="text"],
+input[type="search"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+input[type="number"],
+textarea,
+.ui.input > input,
+.ui.form input:not([type]),
+.ui.selection.dropdown {
+  border-radius: var(--radius-control) !important;
+  border: 1px solid var(--line) !important;
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  box-shadow: none !important;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+.ui.selection.dropdown:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 1px;
+  border-color: var(--line) !important;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px;
+}
+
+.ui.menu,
+.ui.dropdown .menu,
+.ui.popup,
+.tippy-box {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-control) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+.ui.dropdown .menu > .item:hover,
+.ui.menu .dropdown.item .menu .item:hover {
+  background: var(--accent) !important;
+  color: var(--on-accent) !important;
+}
+
+/* Tab strips are layout, not popovers: no card, one hairline underneath.
+   The Explore strip used to be a full-bleed card with its rounded corners
+   cut off by the viewport. */
+overflow-menu.ui.secondary.pointing.menu,
+.ui.secondary.pointing.menu {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--line) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.secondary-nav {
+  background: var(--paper) !important;
+  border-bottom: 0 !important;
+}
+
+overflow-menu .overflow-menu-items > .item {
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  color: var(--muted) !important;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0;
+  padding: 8px 12px !important;
+}
+
+overflow-menu .overflow-menu-items > .item:hover {
+  background: var(--hover) !important;
+  color: var(--accent) !important;
+}
+
+overflow-menu .overflow-menu-items > .item.active {
+  color: var(--accent) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+.ui.table {
+  background: transparent;
+  border-color: var(--line);
+}
+
+.ui.table > thead > tr > th {
+  background: var(--surface-2) !important;
+  color: var(--muted) !important;
+  border-color: var(--line) !important;
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.ui.table > tbody > tr > td { border-color: var(--line) !important; }
+.ui.table > tbody > tr:hover { background: var(--hover) !important; }
+
+.page-content.profile .flex-list:not(#activity-feed),
+.page-content.explore .flex-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 12px;
+  border: 0;
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item,
+.page-content.explore .flex-list > .flex-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px;
+  border: var(--border-card);
+  background: var(--surface);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+/* The repo icon sits in a small tinted tile instead of floating at 24px. */
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--accent);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading svg,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading svg {
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item > .flex-item-leading img,
+.page-content.explore .flex-list > .flex-item > .flex-item-leading img {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px;
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item:hover,
+.page-content.explore .flex-list > .flex-item:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--line));
+  box-shadow: 0 14px 30px -20px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item + .flex-item,
+.page-content.explore .flex-list > .flex-item + .flex-item {
+  border-top: var(--border-card);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-title,
+.page-content.explore .flex-list .flex-item-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: var(--display-weight);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-body,
+.page-content.explore .flex-list .flex-item-body {
+  color: var(--muted);
+}
+
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-trailing,
+.page-content.explore .flex-list .flex-item-trailing {
+  justify-content: flex-start;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+#repo-files-table,
+#readme,
+.repository .ui.segment {
+  border-radius: var(--radius-card) !important;
+  border-color: var(--line) !important;
+}
+
+#repo-files-table .repo-file-item:hover,
+#repo-files-table tbody tr:hover {
+  background: var(--hover);
+}
+
+.markup pre,
+.markup .highlight,
+.code-view,
+.editor-loading {
+  border-radius: var(--radius-control) !important;
+  border: 1px solid var(--line);
+  background: var(--code-bg) !important;
+}
+
+.markup blockquote {
+  border-left: 2px solid var(--accent);
+  background: var(--hover);
+}
+
+.markup code {
+  background: color-mix(in srgb, var(--highlight) 26%, var(--surface));
+  color: var(--ink);
+}
+
+.page-footer {
+  background: var(--paper);
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+
+/* ── Dump / zine ─────────────────────────────────────────────────────────── */
+
+html[data-theme^="dump"] h1,
+html[data-theme^="dump"] h2,
+html[data-theme^="dump"] .repo-title {
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+html[data-theme^="dump"] .flex-item-title,
+html[data-theme^="dump"] .crt-profile__head h3 {
+  text-transform: uppercase;
+}
+
+html[data-theme^="dump"] .ui.button {
+  border: 2px solid var(--ink);
+  border-radius: 0 !important;
+  box-shadow: 3px 3px 0 var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+html[data-theme^="dump"] .ui.button:hover {
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+html[data-theme^="dump"] .ui.primary.button {
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+html[data-theme^="dump"] body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147482000;
+  pointer-events: none;
+  opacity: 0.32;
+  background-image: repeating-conic-gradient(
+    color-mix(in srgb, var(--ink) 5%, transparent) 0% 0.0001%,
+    transparent 0.0002% 0.0004%
+  );
+  background-size: 180px 180px;
+  mix-blend-mode: multiply;
+}
+
+html[data-theme^="dump"] .ui.segment,
+html[data-theme^="dump"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
+html[data-theme^="dump"] .page-content.explore .flex-item {
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+/* ── sleeck ──────────────────────────────────────────────────────────────── */
+
+html[data-theme^="sleeck"] h1,
+html[data-theme^="sleeck"] h2,
+html[data-theme^="sleeck"] h3,
+html[data-theme^="sleeck"] .ui.header {
+  text-transform: uppercase;
+}
+
+html[data-theme^="sleeck"] .flex-item-title {
+  text-transform: uppercase;
+}
+
+html[data-theme^="sleeck"] .ui.button {
+  border: 3px solid var(--ink);
+  border-radius: 0 !important;
+  box-shadow: 5px 5px 0 var(--ink);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+}
+
+html[data-theme^="sleeck"] .ui.button:hover {
+  background: var(--highlight) !important;
+  color: var(--on-highlight) !important;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+html[data-theme^="sleeck"] .ui.primary.button {
+  border-color: var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+html[data-theme^="sleeck"] .ui.segment,
+html[data-theme^="sleeck"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
+html[data-theme^="sleeck"] .page-content.explore .flex-item {
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* ── Simple ──────────────────────────────────────────────────────────────── */
+
+html[data-theme^="simple"] .ui.button,
+html[data-theme^="simple"] .ui.segment,
+html[data-theme^="simple"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
+html[data-theme^="simple"] .page-content.explore .flex-item {
+  box-shadow: none !important;
+}
+
+/* ── Material 3 ──────────────────────────────────────────────────────────── */
+
+html[data-theme^="material"] .ui.button {
+  border-radius: 999px !important;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-weight: 500;
+  box-shadow: none !important;
+}
+
+html[data-theme^="material"] .ui.primary.button {
+  box-shadow: var(--shadow-card) !important;
+}
+
+html[data-theme^="material"] .ui.segment,
+html[data-theme^="material"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
+html[data-theme^="material"] .page-content.explore .flex-item {
+  box-shadow: var(--shadow-card) !important;
+}
+
+html[data-theme^="material"] .ui.attached.header,
+html[data-theme^="material"] .page-content .ui.top.attached.header {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#user-heatmap {
+  font-size: 10.5px;
+}
+
+#user-heatmap text {
+  font-family: var(--font-ui);
+}
+
+
+html[data-theme^="sketch"] .ui.button {
+  border-style: dashed;
+  border-radius: 9px 13px 10px 12px !important;
+}
+
+html[data-theme^="sketch"] .ui.attached.header,
+html[data-theme^="sketch"] .page-content .ui.top.attached.header {
+  border-style: dashed;
+  border-radius: 14px 10px 16px 9px !important;
+}
+
+html[data-theme^="sketch"] .ui.table > tbody > tr > td {
+  border-bottom-style: dashed;
+}
