@@ -67,6 +67,38 @@ a:hover {
   margin-right: 6px;
 }
 
+/* The logo sat off the page's content edge: 10px left of it on desktop,
+   14px right of it on phones. Pad the bar so the mark lands on
+   --page-margin-x, the edge every page container uses. On desktop 11.6px is
+   the logo item's own inline padding. On phones the menu rows stack under the
+   logo, so their padding moves to the same edge and the text lines up too. */
+@media (min-width: 768px) {
+  #navbar {
+    padding-inline: max(0px, calc(var(--page-margin-x) - 11.6px)) !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  #navbar {
+    padding-inline: 0 !important;
+  }
+
+  #navbar .navbar-left > .item,
+  #navbar .navbar-right > .item {
+    padding-inline: var(--page-margin-x) !important;
+  }
+
+  /* Rows span the full width here, so rounded ends would meet the screen edge. */
+  #navbar .navbar-left > .item:not(#navbar-logo),
+  #navbar .navbar-right > .item {
+    border-radius: 0 !important;
+  }
+
+  #navbar .navbar-mobile-right {
+    padding-inline: 0 var(--page-margin-x) !important;
+  }
+}
+
 #navbar #navbar-logo::after {
   content: "git.taf.sh";
   font-family: var(--font-mono);
