@@ -194,4 +194,5 @@ html[data-theme^="material"] .crt-profile { border-radius: 16px; }
   .crt-heatmap__months { grid-template-columns: repeat(53, 5px); gap: 0.5px; font-size: 8px; }
   .crt-heatmap__weeks { grid-template-rows: repeat(7, 5px); grid-auto-columns: 5px; gap: 0.5px; }
   .crt-heatmap__cell { width: 5px; height: 5px; }
+  .crt-heatmap__months span:nth-child(even) { display: none; }
 }
