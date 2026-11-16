@@ -1,3 +1,7 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * answered F7 · one card recipe and one field recipe are the app shell; content differs, chrome does not
+ * built: the project · redesign: polish · v2.0.0 */
 /* Shared translation from the five semantic families to Forgejo variables.
    Loaded by every generated theme; the token block comes after this file in
    the cascade, so var() resolves against the active theme. */
@@ -152,6 +156,11 @@ html {
   background: var(--paper);
 }
 
+html,
+body {
+  overflow-x: clip;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
@@ -175,3 +184,15 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 ::-webkit-scrollbar-corner { background: var(--paper); }
 ::-webkit-scrollbar-button { display: none; }
+
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

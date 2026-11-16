@@ -1,6 +1,9 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * built: the project · redesign: polish · v2.0.0 */
 .crt-profile {
   margin: 0 0 16px;
-  padding: 16px 18px;
+  padding: 16px 20px;
   background: var(--surface);
   border: var(--border-card);
   border-radius: var(--radius-card);
@@ -11,9 +14,9 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px 18px;
+  gap: 8px 16px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .crt-profile__head h3 {
@@ -35,7 +38,7 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1px;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-control);
   overflow: hidden;
@@ -43,7 +46,7 @@
 }
 
 .crt-profile__stat {
-  padding: 9px 12px;
+  padding: 8px 12px;
   background: var(--surface-2);
 }
 
@@ -59,16 +62,17 @@
 .crt-profile__stat span {
   display: block;
   margin-top: 4px;
-  font-size: 9px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
+  font-family: var(--font-ui);
+  font-size: 9.5px;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--muted);
 }
 
 .crt-heatmap {
   display: grid;
   grid-template-columns: 26px minmax(0, 1fr);
-  gap: 4px 6px;
+  gap: 4px 8px;
   align-items: start;
 }
 
@@ -140,17 +144,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px 18px;
+  gap: 8px 16px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .crt-heatmap__legend {
   display: flex;
   align-items: center;
-  gap: 3px;
-  font-family: var(--font-mono);
-  font-size: 9px;
+  gap: 4px;
+  font-family: var(--font-ui);
+  font-size: 9.5px;
   color: var(--muted);
 }
 
@@ -168,13 +172,13 @@
 .crt-heatmap__legend i[data-level="4"] { background: var(--accent); }
 
 .crt-heatmap__note {
-  font-family: var(--font-mono);
-  font-size: 9px;
+  font-family: var(--font-ui);
+  font-size: 9.5px;
   color: var(--muted);
 }
 
 @media (max-width: 760px) {
-  .crt-profile { padding: 14px; }
+  .crt-profile { padding: 16px; }
   .crt-profile__stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .crt-heatmap { grid-template-columns: 22px minmax(0, 1fr); }
   .crt-heatmap__months { grid-template-columns: repeat(53, 9px); }
@@ -195,4 +199,30 @@ html[data-theme^="material"] .crt-profile { border-radius: 16px; }
   .crt-heatmap__weeks { grid-template-rows: repeat(7, 5px); grid-auto-columns: 5px; gap: 0.5px; }
   .crt-heatmap__cell { width: 5px; height: 5px; }
   .crt-heatmap__months span:nth-child(even) { display: none; }
+}
+
+
+.crt-profile--loading .crt-profile__stat b {
+  width: 48px;
+  height: 16px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--line) 55%, var(--surface));
+}
+
+.crt-profile--loading .crt-profile__stat span {
+  width: 64px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--line) 40%, var(--surface));
+}
+
+.crt-profile--error {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--line));
+}
+
+.crt-profile__message {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
 }

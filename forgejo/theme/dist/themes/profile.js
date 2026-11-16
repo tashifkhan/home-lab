@@ -130,7 +130,7 @@ function buildSection({ user, heatmap, repos, profile }) {
   title.textContent = "Contribution activity";
   const total = document.createElement("span");
   total.className = "crt-profile__total";
-  total.textContent = `${fmt.format(stats.total)} in the last year · UTC`;
+  total.textContent = `${fmt.format(stats.total)} in the last year (UTC)`;
   head.append(title, total);
 
   const statGrid = document.createElement("div");
@@ -226,7 +226,10 @@ function buildSection({ user, heatmap, repos, profile }) {
 
   const note = document.createElement("span");
   note.className = "crt-heatmap__note";
-  note.textContent = `Longest ${stats.longest}d · Current ${stats.current}d · Best ${fmt.format(stats.best.count)}`;
+  note.textContent =
+    stats.total === 0
+      ? "No contributions in the last year."
+      : `Longest ${stats.longest}d, current ${stats.current}d, best ${fmt.format(stats.best.count)}`;
   foot.append(legend, note);
 
   heat.append(dayLabels, main);
@@ -270,13 +273,56 @@ async function mount() {
   const column = document.querySelector(".page-content.user.profile .ui.twelve.wide.column");
   if (!column) return;
 
+  const loading = document.createElement("section");
+  loading.id = "crt-profile";
+  loading.className = "crt-profile crt-profile--loading";
+  loading.setAttribute("aria-live", "polite");
+  const loadingHead = document.createElement("div");
+  loadingHead.className = "crt-profile__head";
+  const loadingTitle = document.createElement("h3");
+  loadingTitle.textContent = "Contribution activity";
+  const loadingText = document.createElement("span");
+  loadingText.className = "crt-profile__total";
+  loadingText.textContent = "Loading…";
+  loadingHead.append(loadingTitle, loadingText);
+  const skeleton = document.createElement("div");
+  skeleton.className = "crt-profile__stats";
+  for (let i = 0; i < 4; i++) {
+    const cell = document.createElement("div");
+    cell.className = "crt-profile__stat";
+    cell.append(document.createElement("b"), document.createElement("span"));
+    skeleton.append(cell);
+  }
+  loading.append(loadingHead, skeleton);
+  const tabs = column.querySelector("overflow-menu");
+  column.insertBefore(loading, tabs || column.firstChild);
+
   try {
     const data = await loadData(user);
     const section = buildSection({ user, ...data });
-    const tabs = column.querySelector("overflow-menu");
-    column.insertBefore(section, tabs || column.firstChild);
+    loading.replaceWith(section);
   } catch (error) {
     console.warn("[crt-profile] not mounted:", error.message);
+    loading.className = "crt-profile crt-profile--error";
+    loading.setAttribute("role", "status");
+    loading.replaceChildren();
+    const head = document.createElement("div");
+    head.className = "crt-profile__head";
+    const title = document.createElement("h3");
+    title.textContent = "Contribution activity";
+    head.append(title);
+    const message = document.createElement("p");
+    message.className = "crt-profile__message";
+    message.textContent = "Contribution data could not be loaded.";
+    const retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "ui small button";
+    retry.textContent = "Retry";
+    retry.addEventListener("click", () => {
+      loading.remove();
+      mount();
+    });
+    loading.append(head, message, retry);
   }
 }
 

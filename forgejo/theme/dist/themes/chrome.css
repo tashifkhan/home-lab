@@ -1,3 +1,6 @@
+/* Hallmark · checked: 2026-11-17 · genre: modern-minimal (inferred) · scope: app
+ * shape: app screen · floor: 0 FAIL · fixed: 10 · reflex: reviewed
+ * built: the project · redesign: polish · v2.0.0 */
 /* Component chrome. Everything reads the active theme's semantic tokens;
    family-only flourishes are scoped by html[data-theme^="..."]. */
 
@@ -5,6 +8,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   font-weight: var(--display-weight);
   letter-spacing: var(--display-tracking);
+  text-wrap: balance;
 }
 
 a {
@@ -49,11 +53,11 @@ a:hover {
   border: var(--border-card) !important;
   border-bottom: 0 !important;
   border-radius: var(--radius-card) var(--radius-card) 0 0 !important;
-  font-family: var(--font-mono);
-  font-size: 11px;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .ui.attached.segment,
@@ -106,14 +110,25 @@ a:hover {
   color: var(--on-accent) !important;
 }
 
+.ui.button:active {
+  transform: translateY(1px);
+}
+
+.ui.button:disabled,
+.ui.button[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .ui.label,
 .ui.labels .label {
   border-radius: var(--radius-control) !important;
   border: 1px solid var(--line) !important;
   background: var(--surface-2) !important;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.03em;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0;
   text-transform: none;
 }
 
@@ -134,10 +149,12 @@ textarea,
   box-shadow: none !important;
 }
 
-input:focus,
-textarea:focus,
-.ui.selection.dropdown:focus {
-  border-color: var(--accent) !important;
+input:focus-visible,
+textarea:focus-visible,
+.ui.selection.dropdown:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 1px;
+  border-color: var(--line) !important;
 }
 
 :focus-visible {
@@ -171,8 +188,8 @@ overflow-menu .overflow-menu-items > .item {
   color: var(--muted) !important;
   font-family: var(--font-mono);
   font-size: 11.5px;
-  letter-spacing: 0.04em;
-  padding: 9px 12px !important;
+  letter-spacing: 0;
+  padding: 8px 12px !important;
 }
 
 overflow-menu .overflow-menu-items > .item:hover {
@@ -194,10 +211,10 @@ overflow-menu .overflow-menu-items > .item.active {
   background: var(--surface-2) !important;
   color: var(--muted) !important;
   border-color: var(--line) !important;
-  font-family: var(--font-mono);
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-family: var(--font-ui);
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .ui.table > tbody > tr > td { border-color: var(--line) !important; }
@@ -218,7 +235,7 @@ overflow-menu .overflow-menu-items > .item.active {
   flex-direction: column;
   gap: 8px;
   min-width: 0;
-  padding: 16px 18px 14px;
+  padding: 16px;
   border: var(--border-card);
   background: var(--surface);
   border-radius: var(--radius-card);
@@ -302,8 +319,8 @@ overflow-menu .overflow-menu-items > .item.active {
   background: var(--paper);
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-family: var(--font-ui);
+  font-size: 11px;
 }
 
 /* ── Dump / zine ─────────────────────────────────────────────────────────── */
@@ -415,13 +432,13 @@ html[data-theme^="material"] .ui.button {
 }
 
 html[data-theme^="material"] .ui.primary.button {
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12), 0 2px 6px rgb(0 0 0 / 0.08) !important;
+  box-shadow: var(--shadow-card) !important;
 }
 
 html[data-theme^="material"] .ui.segment,
 html[data-theme^="material"] .page-content.profile .flex-item,
 html[data-theme^="material"] .page-content.explore .flex-item {
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.08) !important;
+  box-shadow: var(--shadow-card) !important;
 }
 
 html[data-theme^="material"] .ui.attached.header,
