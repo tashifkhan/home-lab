@@ -260,7 +260,8 @@ async function mount() {
   const user = profileUser();
   if (!user) return;
   const existing = document.getElementById("crt-profile");
-  if (currentTab() === "activity") {
+  const tab = currentTab();
+  if (tab !== "overview" && tab !== "repositories") {
     existing?.remove();
     return;
   }
