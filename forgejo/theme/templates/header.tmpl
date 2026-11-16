@@ -1,0 +1,12 @@
+{{/* Pre-paint root redirect + profile styles. The edge rule is the primary
+     redirect; this covers direct origin / tailnet access. */}}
+<script>
+  (function () {
+    try {
+      if (location.pathname === "/" && !location.search) {
+        location.replace("/taf?tab=repositories");
+      }
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="{{AssetUrlPrefix}}/themes/profile.css?v=2">
