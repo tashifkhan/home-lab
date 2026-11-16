@@ -93,3 +93,20 @@ services:
     volumes:
       - /mnt/hdd01/forgejo/runner-dump:/data
       - /var/run/docker.sock:/var/run/docker.sock
+
+  # CI runner for taf/dump branches and fork PRs (registered with --scope
+  # taf/dump, label dump-ci). Same image and socket as forgejo-runner-dump but
+  # none of the deploy paths (valid_volumes in /mnt/hdd01/forgejo/runner-dump-ci/
+  # config.yml). Keeps branch CI from holding up deploys on dump-deploy.
+  forgejo-runner-dump-ci:
+    image: data.forgejo.org/forgejo/runner:13
+    container_name: forgejo-runner-dump-ci
+    restart: unless-stopped
+    user: "1000:999" # taf:docker, for the socket
+    depends_on:
+      - forgejo
+    working_dir: /data
+    command: forgejo-runner daemon --config /data/config.yml
+    volumes:
+      - /mnt/hdd01/forgejo/runner-dump-ci:/data
+      - /var/run/docker.sock:/var/run/docker.sock
