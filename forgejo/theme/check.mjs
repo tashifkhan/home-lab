@@ -36,7 +36,7 @@ function varsFrom(css) {
 }
 
 const expected = [];
-for (const key of ["taf", "dump", "sleeck", "simple"]) {
+for (const key of ["taf", "dump", "sleeck", "simple", "bubblegum", "sketch"]) {
   for (const mode of ["light", "dark"]) expected.push(`${families[key].slug}-${mode}`);
 }
 for (const seed of MATERIAL_SEEDS) {

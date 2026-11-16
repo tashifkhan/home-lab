@@ -326,8 +326,17 @@ async function mount() {
   }
 }
 
+function stripNativeTitles(root = document) {
+  for (const node of root.querySelectorAll(".flex-item [title]")) {
+    const title = node.getAttribute("title");
+    if (title && !node.getAttribute("aria-label")) node.setAttribute("aria-label", title);
+    node.removeAttribute("title");
+  }
+}
+
 let timer = 0;
 function schedule() {
+  stripNativeTitles();
   clearTimeout(timer);
   timer = setTimeout(mount, 40);
 }

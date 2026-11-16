@@ -124,7 +124,7 @@
   width: 10px;
   height: 10px;
   border-radius: 1px;
-  background: color-mix(in srgb, var(--line) 78%, var(--surface));
+  background: color-mix(in srgb, var(--muted) 18%, var(--surface));
   outline: 1px solid transparent;
   outline-offset: 0;
 }
@@ -163,7 +163,7 @@
   width: 10px;
   height: 10px;
   border-radius: 1px;
-  background: color-mix(in srgb, var(--line) 78%, var(--surface));
+  background: color-mix(in srgb, var(--muted) 18%, var(--surface));
 }
 
 .crt-heatmap__legend i[data-level="1"] { background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
@@ -206,7 +206,7 @@ html[data-theme^="material"] .crt-profile { border-radius: 16px; }
   width: 48px;
   height: 16px;
   border-radius: 2px;
-  background: color-mix(in srgb, var(--line) 55%, var(--surface));
+  background: color-mix(in srgb, var(--muted) 18%, var(--surface));
 }
 
 .crt-profile--loading .crt-profile__stat span {
@@ -225,4 +225,10 @@ html[data-theme^="material"] .crt-profile { border-radius: 16px; }
   margin: 0 0 8px;
   color: var(--muted);
   font-size: 13px;
+}
+
+
+html[data-theme^="sketch"] .crt-profile,
+html[data-theme^="sketch"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item {
+  border-radius: 14px 10px 16px 9px !important;
 }

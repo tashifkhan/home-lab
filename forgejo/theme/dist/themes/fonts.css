@@ -158,3 +158,34 @@
   font-display: swap;
   src: url("./fonts/google-sans-flex-latin-wght-normal.woff2") format("woff2");
 }
+
+@font-face {
+  font-family: "Antic";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/antic-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Kalam";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/kalam-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kalam";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/kalam-700.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Recursive Mono Casual";
+  font-style: normal;
+  font-weight: 300 1000;
+  font-display: swap;
+  src: url("./fonts/recursive-mono-casual.woff2") format("woff2");
+}

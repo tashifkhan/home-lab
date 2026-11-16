@@ -456,3 +456,19 @@ html[data-theme^="material"] .page-content .ui.top.attached.header {
 #user-heatmap text {
   font-family: var(--font-ui);
 }
+
+
+html[data-theme^="sketch"] .ui.button {
+  border-style: dashed;
+  border-radius: 9px 13px 10px 12px !important;
+}
+
+html[data-theme^="sketch"] .ui.attached.header,
+html[data-theme^="sketch"] .page-content .ui.top.attached.header {
+  border-style: dashed;
+  border-radius: 14px 10px 16px 9px !important;
+}
+
+html[data-theme^="sketch"] .ui.table > tbody > tr > td {
+  border-bottom-style: dashed;
+}

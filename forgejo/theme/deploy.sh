@@ -66,7 +66,7 @@ def set_key(text, section, key, value):
     lines.insert(start + 1, f"{key} = {value}")
     return "\n".join(lines) + "\n"
 
-themes = "taf-light,taf-dark,dump-light,dump-dark,sleeck-light,sleeck-dark,simple-light,simple-dark,material-purple-light,material-purple-dark,material-blue-light,material-blue-dark,material-teal-light,material-teal-dark,material-green-light,material-green-dark,material-amber-light,material-amber-dark,material-red-light,material-red-dark,material-rose-light,material-rose-dark"
+themes = "taf-light,taf-dark,dump-light,dump-dark,sleeck-light,sleeck-dark,simple-light,simple-dark,bubblegum-light,bubblegum-dark,sketch-light,sketch-dark,material-purple-light,material-purple-dark,material-blue-light,material-blue-dark,material-teal-light,material-teal-dark,material-green-light,material-green-dark,material-amber-light,material-amber-dark,material-red-light,material-red-dark,material-rose-light,material-rose-dark"
 
 text = set_key(text, "ui", "DEFAULT_THEME", "taf-light")
 text = set_key(text, "ui", "THEMES", themes)

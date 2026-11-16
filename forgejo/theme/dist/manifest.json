@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-16T19:43:50.268Z",
+  "generatedAt": "2026-11-16T20:17:54.018Z",
   "themes": [
     {
       "slug": "taf-light",
@@ -39,6 +39,26 @@
     {
       "slug": "simple-dark",
       "name": "Simple",
+      "mode": "dark"
+    },
+    {
+      "slug": "bubblegum-light",
+      "name": "Bubblegum",
+      "mode": "light"
+    },
+    {
+      "slug": "bubblegum-dark",
+      "name": "Bubblegum",
+      "mode": "dark"
+    },
+    {
+      "slug": "sketch-light",
+      "name": "Sketch",
+      "mode": "light"
+    },
+    {
+      "slug": "sketch-dark",
+      "name": "Sketch",
       "mode": "dark"
     },
     {

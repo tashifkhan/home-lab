@@ -153,7 +153,7 @@ async function main() {
   await mkdir(join(dist, "themes"), { recursive: true });
   await mkdir(join(dist, "img"), { recursive: true });
 
-  for (const file of ["base.css", "chrome.css", "chroma.css", "fonts.css", "profile.css", "profile.js"]) {
+  for (const file of ["base.css", "chrome.css", "chroma.css", "fonts.css", "profile.css", "profile.js", "theme-picker.css", "theme-picker.js"]) {
     const src = join(here, "src", file);
     if (!existsSync(src)) throw new Error(`missing ${src}`);
     await copyFile(src, join(dist, "themes", file));
@@ -163,7 +163,7 @@ async function main() {
   await copyDir(join(here, "assets", "img"), join(dist, "img"));
 
   const themes = [];
-  for (const key of ["taf", "dump", "sleeck", "simple"]) {
+  for (const key of ["taf", "dump", "sleeck", "simple", "bubblegum", "sketch"]) {
     const family = families[key];
     for (const dark of [false, true]) {
       const slug = `${family.slug}-${dark ? "dark" : "light"}`;
