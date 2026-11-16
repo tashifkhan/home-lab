@@ -220,7 +220,7 @@ overflow-menu .overflow-menu-items > .item.active {
 .ui.table > tbody > tr > td { border-color: var(--line) !important; }
 .ui.table > tbody > tr:hover { background: var(--hover) !important; }
 
-.page-content.profile .flex-list,
+.page-content.profile .flex-list:not(#activity-feed),
 .page-content.explore .flex-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -228,7 +228,7 @@ overflow-menu .overflow-menu-items > .item.active {
   border: 0;
 }
 
-.page-content.profile .flex-list > .flex-item,
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item,
 .page-content.explore .flex-list > .flex-item {
   position: relative;
   display: flex;
@@ -243,7 +243,7 @@ overflow-menu .overflow-menu-items > .item.active {
   transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
 }
 
-.page-content.profile .flex-list > .flex-item::before,
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item::before,
 .page-content.explore .flex-list > .flex-item::before {
   content: "";
   position: absolute;
@@ -253,31 +253,31 @@ overflow-menu .overflow-menu-items > .item.active {
   opacity: 0.45;
 }
 
-.page-content.profile .flex-list > .flex-item:hover,
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item:hover,
 .page-content.explore .flex-list > .flex-item:hover {
   transform: translateY(-2px);
   border-color: var(--accent);
   box-shadow: 0 10px 24px -16px var(--accent);
 }
 
-.page-content.profile .flex-list > .flex-item + .flex-item,
+.page-content.profile .flex-list:not(#activity-feed) > .flex-item + .flex-item,
 .page-content.explore .flex-list > .flex-item + .flex-item {
   border-top: var(--border-card);
 }
 
-.page-content.profile .flex-list .flex-item-title,
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-title,
 .page-content.explore .flex-list .flex-item-title {
   font-family: var(--font-display);
   font-size: 17px;
   font-weight: var(--display-weight);
 }
 
-.page-content.profile .flex-list .flex-item-body,
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-body,
 .page-content.explore .flex-list .flex-item-body {
   color: var(--muted);
 }
 
-.page-content.profile .flex-list .flex-item-trailing,
+.page-content.profile .flex-list:not(#activity-feed) .flex-item-trailing,
 .page-content.explore .flex-list .flex-item-trailing {
   justify-content: flex-start;
   font-size: 11.5px;
@@ -369,7 +369,7 @@ html[data-theme^="dump"] body::after {
 }
 
 html[data-theme^="dump"] .ui.segment,
-html[data-theme^="dump"] .page-content.profile .flex-item,
+html[data-theme^="dump"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
 html[data-theme^="dump"] .page-content.explore .flex-item {
   box-shadow: 3px 3px 0 var(--ink);
 }
@@ -407,7 +407,7 @@ html[data-theme^="sleeck"] .ui.primary.button {
 }
 
 html[data-theme^="sleeck"] .ui.segment,
-html[data-theme^="sleeck"] .page-content.profile .flex-item,
+html[data-theme^="sleeck"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
 html[data-theme^="sleeck"] .page-content.explore .flex-item {
   box-shadow: 5px 5px 0 var(--ink);
 }
@@ -416,7 +416,7 @@ html[data-theme^="sleeck"] .page-content.explore .flex-item {
 
 html[data-theme^="simple"] .ui.button,
 html[data-theme^="simple"] .ui.segment,
-html[data-theme^="simple"] .page-content.profile .flex-item,
+html[data-theme^="simple"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
 html[data-theme^="simple"] .page-content.explore .flex-item {
   box-shadow: none !important;
 }
@@ -436,7 +436,7 @@ html[data-theme^="material"] .ui.primary.button {
 }
 
 html[data-theme^="material"] .ui.segment,
-html[data-theme^="material"] .page-content.profile .flex-item,
+html[data-theme^="material"] .page-content.profile .flex-list:not(#activity-feed) > .flex-item,
 html[data-theme^="material"] .page-content.explore .flex-item {
   box-shadow: var(--shadow-card) !important;
 }
@@ -447,4 +447,12 @@ html[data-theme^="material"] .page-content .ui.top.attached.header {
   letter-spacing: 0;
   font-size: 12px;
   font-weight: 600;
+}
+
+#user-heatmap {
+  font-size: 10.5px;
+}
+
+#user-heatmap text {
+  font-family: var(--font-ui);
 }
